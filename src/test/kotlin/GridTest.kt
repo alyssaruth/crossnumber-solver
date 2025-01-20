@@ -94,7 +94,7 @@ class GridTest {
 
     @Test
     fun `Should detect clues correctly`() {
-        val clues = parseGrid(VALID_GRID).detectClues()
+        val clues = parseGrid(VALID_GRID).detectWords()
         val idToLength = clues.associateBy { it.clueId }.mapValues { (_, clue) -> clue.squares.size }
 
         idToLength.shouldContainExactly(

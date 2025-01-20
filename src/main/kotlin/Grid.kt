@@ -43,31 +43,31 @@ class Grid(private val pointMap: Map<Point, String>) {
         }
     }
 
-    fun detectClues(): List<Solution> {
+    fun detectWords(): List<Word> {
         val pts = pointMap.keys.sortedWith(compareBy<Point> { it.y }.thenBy { it.x })
 
         return pts.fold(emptyList()) { cluesSoFar, pt ->
             val nextClueNumber = 1 + (cluesSoFar.maxOfOrNull { it.clueId.number } ?: 0)
 
-            val across = getClue(nextClueNumber, pt, Orientation.ACROSS)
-            val down = getClue(nextClueNumber, pt, Orientation.DOWN)
+            val across = getWord(nextClueNumber, pt, Orientation.ACROSS)
+            val down = getWord(nextClueNumber, pt, Orientation.DOWN)
 
             cluesSoFar + listOfNotNull(across, down)
         }
     }
 
-    private fun getClue(number: Int, startPt: Point, orientation: Orientation): Solution? {
+    private fun getWord(number: Int, startPt: Point, orientation: Orientation): Word? {
         if (lookupPoint(startPt) == BLACK) {
             return null
         }
 
         val unitVector = if (orientation == Orientation.ACROSS) Point(1, 0) else Point(0, 1)
-        if (lookupPoint(startPt - unitVector) != BLACK) {
+        if (lookupPoint(startPt - unitVector) == WHITE) {
             // White square to our left/above
             return null
         }
 
-        if (lookupPoint(startPt + unitVector) != WHITE) {
+        if (lookupPoint(startPt + unitVector) == BLACK) {
             // Black square or edge to our right/below
             return null
         }
@@ -79,7 +79,7 @@ class Grid(private val pointMap: Map<Point, String>) {
             nextPt += unitVector
         }
 
-        return Solution(ClueId(number, orientation), allPts.toList())
+        return Word(ClueId(number, orientation), allPts.toList())
     }
 
     private fun lookupPoint(pt: Point) = pointMap.getOrDefault(pt, BLACK)
