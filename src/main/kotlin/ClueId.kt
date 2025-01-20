@@ -2,7 +2,16 @@ package com.github.alyssaruth
 
 enum class Orientation {
     ACROSS,
-    DOWN
+    DOWN;
+
+    override fun toString() = when (this) {
+        ACROSS -> "A"
+        DOWN -> "D"
+    }
 }
 
-data class ClueId(val number: Int, val orientation: Orientation)
+data class ClueId(val number: Int, val orientation: Orientation) {
+    override fun toString() = "${number}$orientation"
+}
+
+data class Solution(val clueId: ClueId, val squares: List<Point>)
