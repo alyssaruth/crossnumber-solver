@@ -52,8 +52,7 @@ data class Crossnumber(
         }
 
         if (newCrossnumber == this) {
-            println("------------------------------------------")
-            println("Made no progress on latest sweep, exiting.")
+            println("Made no progress on latest pass, exiting.")
             println("------------------------------------------")
             println(newCrossnumber.completionString())
             println("------------------------------------------")
@@ -89,7 +88,10 @@ data class Crossnumber(
         }
 
         val (newSolution, newDigitMap) = solution.value.iterate(digitMap)
-        println("${solution.key}: ${solution.value.status()} -> ${newSolution.status()}")
+        if (solution.value != newSolution) {
+            println("${solution.key}: ${solution.value.status()} -> ${newSolution.status()}")
+        }
+
         return Crossnumber(originalGrid, newDigitMap, solutions + (solution.key to newSolution))
     }
 
