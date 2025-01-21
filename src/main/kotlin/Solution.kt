@@ -5,6 +5,10 @@ sealed interface ISolution {
     val clues: List<Clue>
 
     fun iterate(digitMap: Map<Point, List<Int>>): Pair<ISolution, Map<Point, List<Int>>>
+
+    fun status(): String
+
+    fun isSolved(): Boolean
 }
 
 // Pretty conservative, I think - could crank higher with a larger heap
@@ -13,9 +17,9 @@ const val BRUTE_FORCE_THRESHOLD = 1_000_000
 /**
  * A solution that hasn't yet been exploded out into remaining possibilities (because there are too many)
  */
-class PendingSolution(override val squares: List<Point>, override val clues: List<Clue>) : ISolution {
+data class PendingSolution(override val squares: List<Point>, override val clues: List<Clue>) : ISolution {
     override fun iterate(digitMap: Map<Point, List<Int>>): Pair<ISolution, Map<Point, List<Int>>> {
-        val possibilityCount = squares.map { digitMap.getValue(it).size }.fold(1, Int::times)
+        val possibilityCount = squares.map { digitMap.getValue(it).size }.fold(1, Long::times)
         if (possibilityCount > BRUTE_FORCE_THRESHOLD) {
             // Not narrowed down enough yet, do nothing
             return this to digitMap
@@ -32,12 +36,15 @@ class PendingSolution(override val squares: List<Point>, override val clues: Lis
 
         return PartialSolution(squares, clues, possibilities.map(String::toLong)).iterate(digitMap)
     }
+
+    override fun status() = "PENDING"
+    override fun isSolved() = false
 }
 
 /**
  * An "in-progress" solution with a list of the current possibilities we've narrowed down to
  */
-class PartialSolution(
+data class PartialSolution(
     override val squares: List<Point>,
     override val clues: List<Clue>,
     val possibilities: List<Long>
@@ -47,6 +54,9 @@ class PartialSolution(
 
         return reduced to reduced.restrictDigitMap(digitMap)
     }
+
+    override fun status() = "${possibilities.size} possibilities"
+    override fun isSolved() = possibilities.size == 1
 
     /**
      * Step 1: Narrow down our possibilities based on the current digit map

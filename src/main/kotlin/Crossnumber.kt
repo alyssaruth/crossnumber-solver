@@ -31,4 +31,33 @@ private fun initialiseDigitMap(solutions: List<Word>): Map<Point, List<Int>> {
     return leadingSpaces.associateWith { (1..9).toList() } + nonLeadingSpaces.associateWith { (0..9).toList() }
 }
 
-data class Crossnumber(val digitMap: Map<Point, List<Int>>, val solutions: Map<ClueId, ISolution>)
+data class Crossnumber(val digitMap: Map<Point, List<Int>>, val solutions: Map<ClueId, ISolution>) {
+    fun solve(pass: Int = 1): Crossnumber {
+        println("************")
+        println("* PASS $pass *")
+        println("************")
+
+        val newCrossnumber = solutions.entries.fold(this) { crossnumber, solution ->
+            crossnumber.iterateSolution(solution)
+        }
+
+        if (newCrossnumber.isSolved()) {
+            return newCrossnumber
+        }
+
+        if (newCrossnumber == this) {
+            println("Made no progress on latest sweep, exiting.")
+            return newCrossnumber
+        }
+
+        return newCrossnumber.solve(pass + 1)
+    }
+
+    private fun isSolved() = solutions.values.all(ISolution::isSolved)
+
+    private fun iterateSolution(solution: Map.Entry<ClueId, ISolution>): Crossnumber {
+        val (newSolution, newDigitMap) = solution.value.iterate(digitMap)
+        println("${solution.key}: ${solution.value.status()} -> ${newSolution.status()}")
+        return Crossnumber(newDigitMap, solutions + (solution.key to newSolution))
+    }
+}
