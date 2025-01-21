@@ -23,7 +23,9 @@ fun isMultipleOf(divisor: Long): Clue = { value -> value % divisor == 0L }
 
 fun isPalindrome(value: Long): Boolean = value.toString() == value.toString().reversed()
 
-fun containsDigit(digit: Long): Clue = { value -> value.toString().contains(digit.toString()) }
+fun Long.digits() = toString().toCharArray().map(Char::digitToInt)
+
+fun containsDigit(digit: Int): Clue = { value -> value.digits().contains(digit) }
 
 fun isTriangleNumber(value: Long): Boolean = testTriangleNumber(value)
 
@@ -53,6 +55,12 @@ private tailrec fun primeFactorise(n: Long, factorsSoFar: List<Long> = emptyList
     else
         primeFactorise(n, factorsSoFar, nextPrime(p))
 
-private tailrec fun nextPrime(p: Long): Long = if (p == 2L) 3L else if (isPrime(p + 2)) p + 2 else nextPrime(p + 2)
+tailrec fun nextPrime(p: Long): Long = if (p == 2L) 3L else if (isPrime(p + 2)) p + 2 else nextPrime(p + 2)
 
 fun isSquare(value: Long) = value == sqrt(value) * sqrt(value)
+
+fun hasUniqueDigits(n: Int): Clue = { value -> value.toString().toCharArray().distinct().size == n }
+
+fun hasDigitSum(n: Int): Clue = { value -> value.digitSum() == n }
+
+fun Long.digitSum() = digits().sum()

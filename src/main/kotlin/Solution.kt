@@ -52,6 +52,10 @@ data class PartialSolution(
     override fun iterate(digitMap: Map<Point, List<Int>>): Pair<ISolution, Map<Point, List<Int>>> {
         val reduced = applyDigitMap(digitMap).applyClues()
 
+        if (reduced.possibilities.isEmpty()) {
+            throw Error("Reduced to 0 possibilities!")
+        }
+
         return reduced to reduced.restrictDigitMap(digitMap)
     }
 

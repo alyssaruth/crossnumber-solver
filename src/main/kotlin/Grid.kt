@@ -83,4 +83,6 @@ class Grid(private val pointMap: Map<Point, String>) {
     }
 
     private fun lookupPoint(pt: Point) = pointMap.getOrDefault(pt, BLACK)
+
+    fun updateValue(pt: Point, value: String) = Grid(pointMap + (pt to value))
 }
