@@ -17,6 +17,7 @@ import solver.ClueId
 import solver.Orientation
 import solver.factoryCrossnumber
 import kotlinx.datetime.Instant
+import maths.isFibonacci
 
 /**
  * https://chalkdustmagazine.com/regulars/100-prize-crossnumber-issue-01/
@@ -80,7 +81,7 @@ private val clueMap: Map<ClueId, List<Clue>> = mapOf(
 
     ClueId(1, Orientation.DOWN) to emptyList(), // TODO - 700 less than 3D
     ClueId(2, Orientation.DOWN) to listOf(hasDigitSum(16)),
-    ClueId(3, Orientation.DOWN) to emptyList(), // TODO - A Fibonacci number
+    ClueId(3, Orientation.DOWN) to listOf(::isFibonacci),
     ClueId(4, Orientation.DOWN) to emptyList(), // TODO - This is the same as another number in the crossnumber
     ClueId(5, Orientation.DOWN) to listOf(::isSquare, hasUniqueDigits(10)),
     ClueId(
