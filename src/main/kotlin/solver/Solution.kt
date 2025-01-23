@@ -1,10 +1,12 @@
 package solver
 
+import maths.product
+
 sealed interface ISolution {
     val squares: List<Point>
-    val clues: List<Clue>
+    val clues: List<ClueConstructor>
 
-    fun iterate(digitMap: Map<Point, List<Int>>): Pair<ISolution, Map<Point, List<Int>>>
+    fun iterate(crossnumber: Crossnumber): Pair<ISolution, Map<Point, List<Int>>>
 
     fun status(): String
 
@@ -19,16 +21,17 @@ const val BRUTE_FORCE_THRESHOLD = 6_000_000
  */
 data class PendingSolution(
     override val squares: List<Point>,
-    override val clues: List<Clue>,
+    override val clues: List<ClueConstructor>,
     private val possibilities: Long
 ) : ISolution {
-    constructor(squares: List<Point>, clues: List<Clue>, digitMap: Map<Point, List<Int>>) : this(
+    constructor(squares: List<Point>, clues: List<ClueConstructor>, digitMap: Map<Point, List<Int>>) : this(
         squares,
         clues,
         computePossibilities(squares, digitMap)
     )
 
-    override fun iterate(digitMap: Map<Point, List<Int>>): Pair<ISolution, Map<Point, List<Int>>> {
+    override fun iterate(crossnumber: Crossnumber): Pair<ISolution, Map<Point, List<Int>>> {
+        val digitMap = crossnumber.digitMap
         val possibilityCount = computePossibilities(squares, digitMap)
         if (possibilityCount > BRUTE_FORCE_THRESHOLD) {
             // Not narrowed down enough yet, do nothing
@@ -44,12 +47,12 @@ data class PendingSolution(
             }
         }
 
-        return PartialSolution(squares, clues, possibilities.map(String::toLong)).iterate(digitMap)
+        return PartialSolution(squares, clues, possibilities.map(String::toLong)).iterate(crossnumber)
     }
 
     companion object {
         private fun computePossibilities(squares: List<Point>, digitMap: Map<Point, List<Int>>): Long {
-            return squares.map { digitMap.getValue(it).size }.fold(1, Long::times)
+            return squares.map { digitMap.getValue(it).size }.product()
         }
     }
 
@@ -62,20 +65,20 @@ data class PendingSolution(
  */
 data class PartialSolution(
     override val squares: List<Point>,
-    override val clues: List<Clue>,
+    override val clues: List<ClueConstructor>,
     val possibilities: List<Long>
 ) : ISolution {
-    override fun iterate(digitMap: Map<Point, List<Int>>): Pair<ISolution, Map<Point, List<Int>>> {
-        val reduced = applyDigitMap(digitMap).applyClues()
+    override fun iterate(crossnumber: Crossnumber): Pair<ISolution, Map<Point, List<Int>>> {
+        val reduced = applyDigitMap(crossnumber.digitMap).applyClues(crossnumber)
 
         if (reduced.possibilities.isEmpty()) {
             throw Exception("Reduced to 0 possibilities!")
         }
 
-        return reduced to reduced.restrictDigitMap(digitMap)
+        return reduced to reduced.restrictDigitMap(crossnumber.digitMap)
     }
 
-    override fun status() = "${possibilities.size} possibilities"
+    override fun status() = if (isSolved()) "solved!" else "${possibilities.size} possibilities"
     override fun isSolved() = possibilities.size == 1
 
     /**
@@ -102,9 +105,10 @@ data class PartialSolution(
      *
      * Most of the time this will do nothing after the first run, but not always - e.g. a clue like "Is divisible by 3A"
      */
-    private fun applyClues(): PartialSolution {
-        val filtered = clues.fold(possibilities) { currentPossibilities, clue ->
-            currentPossibilities.filter(clue)
+    private fun applyClues(crossnumber: Crossnumber): PartialSolution {
+        val filtered = clues.fold(possibilities) { currentPossibilities, clueConstructor ->
+            val clue = clueConstructor(crossnumber)
+            currentPossibilities.filter(clue::check)
         }
 
         return PartialSolution(squares, clues, filtered)

@@ -4,7 +4,9 @@ import kotlin.math.roundToLong
 
 typealias Clue = (candidate: Long) -> Boolean
 
-fun factoryCrossnumber(gridString: String, clues: Map<ClueId, List<Clue>>): Crossnumber {
+typealias ClueConstructor = (crossnumber: Crossnumber) -> BaseClue
+
+fun factoryCrossnumber(gridString: String, clues: Map<ClueId, List<ClueConstructor>>): Crossnumber {
     val grid = parseGrid(gridString)
     grid.validate()
 
@@ -88,7 +90,7 @@ data class Crossnumber(
         }
 
         try {
-            val (newSolution, newDigitMap) = solution.value.iterate(digitMap)
+            val (newSolution, newDigitMap) = solution.value.iterate(this)
             if (solution.value != newSolution) {
                 println("${solution.key}: ${solution.value.status()} -> ${newSolution.status()}")
             }

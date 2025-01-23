@@ -1,6 +1,6 @@
 package solver
 
-import identity
+import VALID_GRID
 import maths.isPrime
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
@@ -16,9 +16,9 @@ class SolutionTest {
             Point(0, 1) to listOf(7)
         )
 
-        val solution = PendingSolution(squares, listOf(::isPrime), digitMap)
+        val solution = PendingSolution(squares, listOf(wrapSimpleClue(::isPrime)), digitMap)
 
-        val (newSolution, newDigitMap) = solution.iterate(digitMap)
+        val (newSolution, newDigitMap) = solution.iterate(dummyCrossnumber(digitMap))
         newSolution.shouldBeInstanceOf<PartialSolution>()
         newSolution.possibilities.shouldContainExactlyInAnyOrder(17, 37, 47, 67, 97)
 
@@ -33,8 +33,8 @@ class SolutionTest {
         val pts = (0..8).map { Point(it, 0) }
         val digitMap = pts.associateWith { (0..9).toList() } + (Point(0, 0) to (1..9).toList())
 
-        val solution = PendingSolution(pts, listOf(::identity), digitMap)
-        val (newSolution, newMap) = solution.iterate(digitMap)
+        val solution = PendingSolution(pts, emptyList(), digitMap)
+        val (newSolution, newMap) = solution.iterate(dummyCrossnumber(digitMap))
 
         newSolution shouldBe solution
         newMap shouldBe digitMap
@@ -45,8 +45,8 @@ class SolutionTest {
         val pts = (0..5).map { Point(it, 0) }
         val digitMap = pts.associateWith { (0..9).toList() } + (Point(0, 0) to (1..9).toList())
 
-        val solution = PendingSolution(pts, listOf(::identity), digitMap)
-        val (newSolution, newMap) = solution.iterate(digitMap)
+        val solution = PendingSolution(pts, emptyList(), digitMap)
+        val (newSolution, newMap) = solution.iterate(dummyCrossnumber(digitMap))
 
         newSolution.shouldBeInstanceOf<PartialSolution>()
         newSolution.possibilities.size shouldBe 900000
@@ -71,9 +71,12 @@ class SolutionTest {
             Point(10, 0) to listOf(0, 1),        // 864,000
         )
 
-        val solution = PendingSolution(pts, listOf(::identity), digitMap)
-        val (newSolution) = solution.iterate(digitMap)
+        val solution = PendingSolution(pts, emptyList(), digitMap)
+        val (newSolution) = solution.iterate(dummyCrossnumber(digitMap))
         newSolution.shouldBeInstanceOf<PartialSolution>()
         newSolution.possibilities.size shouldBe 864000
     }
+
+    private fun dummyCrossnumber(digitMap: Map<Point, List<Int>>): Crossnumber =
+        Crossnumber(parseGrid(VALID_GRID), digitMap, emptyMap())
 }

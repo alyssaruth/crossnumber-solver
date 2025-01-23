@@ -14,5 +14,3 @@ val VALID_GRID = """
             #.##........#.
             #.....###.....
         """.trimIndent()
-
-fun identity(unused: Long): Boolean = true

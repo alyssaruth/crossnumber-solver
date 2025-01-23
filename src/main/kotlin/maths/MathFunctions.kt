@@ -20,6 +20,10 @@ private fun sqrt(value: Long) = sqrt(value.toDouble()).roundToLong()
 
 fun isMultipleOf(divisor: Long): Clue = { value -> value % divisor == 0L }
 
+fun List<Int>.product() = fold(1, Long::times)
+
+fun Long.reversed(): Long = toString().reversed().toLong()
+
 fun isPalindrome(value: Long): Boolean = value.toString() == value.toString().reversed()
 
 fun Long.digits() = toString().toCharArray().map(Char::digitToInt)
@@ -54,7 +58,12 @@ private tailrec fun primeFactorise(n: Long, factorsSoFar: List<Long> = emptyList
     else
         primeFactorise(n, factorsSoFar, nextPrime(p))
 
-tailrec fun nextPrime(p: Long): Long = if (p == 2L) 3L else if (isPrime(p + 2)) p + 2 else nextPrime(p + 2)
+tailrec fun nextPrime(n: Long): Long {
+    if (n == 2L) return 3L
+
+    val nextCandidate = n + if (n % 2 == 0L) 1 else 2
+    return if (isPrime(nextCandidate)) nextCandidate else nextPrime(nextCandidate)
+}
 
 fun isSquare(value: Long) = value == sqrt(value) * sqrt(value)
 
@@ -63,3 +72,7 @@ fun hasUniqueDigits(n: Int): Clue = { value -> value.toString().toCharArray().di
 fun hasDigitSum(n: Int): Clue = { value -> value.digitSum() == n }
 
 fun Long.digitSum() = digits().sum()
+
+fun distinctDivisors(n: Long): Set<Long> = (1..sqrt(n)).filter { n % it == 0L }.flatMap { listOf(it, n / it) }.toSet()
+
+fun isPerfect(n: Long) = distinctDivisors(n).minus(n).sum() == n

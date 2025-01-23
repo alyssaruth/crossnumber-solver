@@ -1,5 +1,6 @@
 package maths
 
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -95,5 +96,68 @@ class MathFunctionsTest {
         isSquare(26) shouldBe false
         isSquare(44304772129488) shouldBe false
         isSquare(44304772129490) shouldBe false
+    }
+
+    @Test
+    fun `Should get all divisors of a number`() {
+        distinctDivisors(6).shouldContainExactlyInAnyOrder(1, 2, 3, 6)
+        distinctDivisors(12).shouldContainExactlyInAnyOrder(1, 2, 3, 4, 6, 12)
+        distinctDivisors(25).shouldContainExactlyInAnyOrder(1, 5, 25)
+        distinctDivisors(137438691328).shouldContainExactlyInAnyOrder(
+            1,
+            2,
+            4,
+            8,
+            16,
+            32,
+            64,
+            128,
+            256,
+            512,
+            1024,
+            2048,
+            4096,
+            8192,
+            16384,
+            32768,
+            65536,
+            131072,
+            262144,
+            524287,
+            1048574,
+            2097148,
+            4194296,
+            8388592,
+            16777184,
+            33554368,
+            67108736,
+            134217472,
+            268434944,
+            536869888,
+            1073739776,
+            2147479552,
+            4294959104,
+            8589918208,
+            17179836416,
+            34359672832,
+            68719345664,
+            137438691328
+        )
+    }
+
+    @Test
+    fun `Should test for perfect numbers`() {
+        isPerfect(6) shouldBe true
+        isPerfect(28) shouldBe true
+        isPerfect(496) shouldBe true
+        isPerfect(8128) shouldBe true
+        isPerfect(137438691328) shouldBe true
+        isPerfect(2305843008139952128) shouldBe true
+
+        isPerfect(5) shouldBe false
+        isPerfect(7) shouldBe false
+        isPerfect(128) shouldBe false // "Almost-perfect"
+        isPerfect(2305843008139952127) shouldBe false
+        isPerfect(2305843008139952129) shouldBe false
     }
 }
