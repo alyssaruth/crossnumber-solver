@@ -1,10 +1,9 @@
-package com.github.alyssaruth
+package maths
 
+import solver.Clue
 import java.math.BigInteger
 import kotlin.math.roundToLong
 import kotlin.math.sqrt
-
-fun identity(unused: Long): Boolean = true
 
 fun isEqualTo(result: Long): Clue = { value -> value == result }
 

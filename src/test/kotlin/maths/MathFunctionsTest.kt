@@ -1,10 +1,5 @@
-import com.github.alyssaruth.containsDigit
-import com.github.alyssaruth.isMultipleOf
-import com.github.alyssaruth.isPalindrome
-import com.github.alyssaruth.isPrime
-import com.github.alyssaruth.isSquare
-import com.github.alyssaruth.isTriangleNumber
-import com.github.alyssaruth.primeFactors
+package maths
+
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 

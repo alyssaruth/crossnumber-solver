@@ -1,4 +1,4 @@
-package com.github.alyssaruth
+package solver
 
 enum class Orientation {
     ACROSS,

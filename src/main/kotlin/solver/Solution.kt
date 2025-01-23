@@ -1,4 +1,4 @@
-package com.github.alyssaruth
+package solver
 
 sealed interface ISolution {
     val squares: List<Point>

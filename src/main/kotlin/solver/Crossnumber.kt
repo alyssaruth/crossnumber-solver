@@ -1,4 +1,4 @@
-package com.github.alyssaruth
+package solver
 
 import kotlin.math.roundToLong
 

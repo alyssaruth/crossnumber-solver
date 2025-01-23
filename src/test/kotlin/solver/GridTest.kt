@@ -1,6 +1,6 @@
-import com.github.alyssaruth.ClueId
-import com.github.alyssaruth.Orientation
-import com.github.alyssaruth.parseGrid
+package solver
+
+import VALID_GRID
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.maps.shouldContainExactly

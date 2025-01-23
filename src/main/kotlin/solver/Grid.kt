@@ -1,4 +1,4 @@
-package com.github.alyssaruth
+package solver
 
 data class Point(val x: Int, val y: Int)
 

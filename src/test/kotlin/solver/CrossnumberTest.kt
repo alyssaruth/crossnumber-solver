@@ -1,7 +1,7 @@
-import com.github.alyssaruth.ClueId
-import com.github.alyssaruth.Orientation
-import com.github.alyssaruth.factoryCrossnumber
-import com.github.alyssaruth.identity
+package solver
+
+import VALID_GRID
+import identity
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test

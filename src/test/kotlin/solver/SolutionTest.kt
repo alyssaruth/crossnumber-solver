@@ -1,8 +1,7 @@
-import com.github.alyssaruth.PartialSolution
-import com.github.alyssaruth.PendingSolution
-import com.github.alyssaruth.Point
-import com.github.alyssaruth.identity
-import com.github.alyssaruth.isPrime
+package solver
+
+import identity
+import maths.isPrime
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
