@@ -98,10 +98,7 @@ private val clueMap: Map<ClueId, List<Clue>> = mapOf(
     ClueId(17, Orientation.DOWN) to listOf(isEqualTo(42)),
     ClueId(18, Orientation.DOWN) to listOf(isMultipleOf(5)),
     ClueId(21, Orientation.DOWN) to emptyList(), // TODO - The number of the D clue which has the answer 91199
-    ClueId(
-        26,
-        Orientation.DOWN
-    ) to emptyList(), // TODO - The total number of vertices in all the Platonic Solids (in 3D)
+    ClueId(26, Orientation.DOWN) to listOf(isEqualTo(4 + 8 + 6 + 20 + 12)),
     ClueId(27, Orientation.DOWN) to emptyList(), // TODO - Two more than 29D
     ClueId(29, Orientation.DOWN) to listOf { it.toString().first() == it.toString().last() },
     ClueId(31, Orientation.DOWN) to emptyList(), // TODO - A multiple of 24A
