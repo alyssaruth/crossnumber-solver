@@ -18,6 +18,7 @@ import solver.Orientation
 import solver.factoryCrossnumber
 import kotlinx.datetime.Instant
 import maths.isFibonacci
+import maths.toRomanNumerals
 
 /**
  * https://chalkdustmagazine.com/regulars/100-prize-crossnumber-issue-01/
@@ -63,7 +64,7 @@ private val clueMap: Map<ClueId, List<Clue>> = mapOf(
     ClueId(
         23,
         Orientation.ACROSS
-    ) to emptyList(), // TODO - "When written in roman numerals, this number is an anagram of XILXX"
+    ) to listOf { toRomanNumerals(it).toCharArray().sorted().joinToString("") == "ILXXX" },
     ClueId(24, Orientation.ACROSS) to listOf(isEqualTo(733626510400L.primeFactors().max())),
     ClueId(25, Orientation.ACROSS) to listOf(::isSquare),
     ClueId(27, Orientation.ACROSS) to emptyList(), // TODO - "The product of all the digits of 7A"

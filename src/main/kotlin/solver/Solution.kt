@@ -12,17 +12,27 @@ sealed interface ISolution {
 }
 
 // Pretty conservative, I think - could crank higher with a larger heap
-const val BRUTE_FORCE_THRESHOLD = 1_000_000
+const val BRUTE_FORCE_THRESHOLD = 6_000_000
 
 /**
  * A solution that hasn't yet been exploded out into remaining possibilities (because there are too many)
  */
-data class PendingSolution(override val squares: List<Point>, override val clues: List<Clue>) : ISolution {
+data class PendingSolution(
+    override val squares: List<Point>,
+    override val clues: List<Clue>,
+    private val possibilities: Long
+) : ISolution {
+    constructor(squares: List<Point>, clues: List<Clue>, digitMap: Map<Point, List<Int>>) : this(
+        squares,
+        clues,
+        computePossibilities(squares, digitMap)
+    )
+
     override fun iterate(digitMap: Map<Point, List<Int>>): Pair<ISolution, Map<Point, List<Int>>> {
-        val possibilityCount = squares.map { digitMap.getValue(it).size }.fold(1, Long::times)
+        val possibilityCount = computePossibilities(squares, digitMap)
         if (possibilityCount > BRUTE_FORCE_THRESHOLD) {
             // Not narrowed down enough yet, do nothing
-            return this to digitMap
+            return PendingSolution(squares, clues, possibilityCount) to digitMap
         }
 
         // Explode out
@@ -37,7 +47,13 @@ data class PendingSolution(override val squares: List<Point>, override val clues
         return PartialSolution(squares, clues, possibilities.map(String::toLong)).iterate(digitMap)
     }
 
-    override fun status() = "PENDING"
+    companion object {
+        private fun computePossibilities(squares: List<Point>, digitMap: Map<Point, List<Int>>): Long {
+            return squares.map { digitMap.getValue(it).size }.fold(1, Long::times)
+        }
+    }
+
+    override fun status() = "PENDING ($possibilities)"
     override fun isSolved() = false
 }
 
@@ -53,7 +69,7 @@ data class PartialSolution(
         val reduced = applyDigitMap(digitMap).applyClues()
 
         if (reduced.possibilities.isEmpty()) {
-            throw Error("Reduced to 0 possibilities!")
+            throw Exception("Reduced to 0 possibilities!")
         }
 
         return reduced to reduced.restrictDigitMap(digitMap)

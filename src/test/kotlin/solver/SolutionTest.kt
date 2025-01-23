@@ -11,12 +11,12 @@ class SolutionTest {
     @Test
     fun `Iterating a pending solution to a partial one, and updating the digit map`() {
         val squares = listOf(Point(0, 0), Point(0, 1))
-        val solution = PendingSolution(squares, listOf(::isPrime))
-
         val digitMap = mapOf(
             Point(0, 0) to (1..9).toList(),
             Point(0, 1) to listOf(7)
         )
+
+        val solution = PendingSolution(squares, listOf(::isPrime), digitMap)
 
         val (newSolution, newDigitMap) = solution.iterate(digitMap)
         newSolution.shouldBeInstanceOf<PartialSolution>()
@@ -33,7 +33,7 @@ class SolutionTest {
         val pts = (0..8).map { Point(it, 0) }
         val digitMap = pts.associateWith { (0..9).toList() } + (Point(0, 0) to (1..9).toList())
 
-        val solution = PendingSolution(pts, listOf(::identity))
+        val solution = PendingSolution(pts, listOf(::identity), digitMap)
         val (newSolution, newMap) = solution.iterate(digitMap)
 
         newSolution shouldBe solution
@@ -45,7 +45,7 @@ class SolutionTest {
         val pts = (0..5).map { Point(it, 0) }
         val digitMap = pts.associateWith { (0..9).toList() } + (Point(0, 0) to (1..9).toList())
 
-        val solution = PendingSolution(pts, listOf(::identity))
+        val solution = PendingSolution(pts, listOf(::identity), digitMap)
         val (newSolution, newMap) = solution.iterate(digitMap)
 
         newSolution.shouldBeInstanceOf<PartialSolution>()
@@ -71,7 +71,7 @@ class SolutionTest {
             Point(10, 0) to listOf(0, 1),        // 864,000
         )
 
-        val solution = PendingSolution(pts, listOf(::identity))
+        val solution = PendingSolution(pts, listOf(::identity), digitMap)
         val (newSolution) = solution.iterate(digitMap)
         newSolution.shouldBeInstanceOf<PartialSolution>()
         newSolution.possibilities.size shouldBe 864000

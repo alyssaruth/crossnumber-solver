@@ -19,7 +19,7 @@ fun factoryCrossnumber(gridString: String, clues: Map<ClueId, List<Clue>>): Cros
     val digitMap = initialiseDigitMap(detectedWords)
     val pendingSolutions = detectedWords.associate { word ->
         val myClues = clues.getOrDefault(word.clueId, emptyList())
-        word.clueId to PendingSolution(word.squares, myClues)
+        word.clueId to PendingSolution(word.squares, myClues, digitMap)
     }
 
     return Crossnumber(grid, digitMap, pendingSolutions)
@@ -87,12 +87,15 @@ data class Crossnumber(
             return this
         }
 
-        val (newSolution, newDigitMap) = solution.value.iterate(digitMap)
-        if (solution.value != newSolution) {
-            println("${solution.key}: ${solution.value.status()} -> ${newSolution.status()}")
+        try {
+            val (newSolution, newDigitMap) = solution.value.iterate(digitMap)
+            if (solution.value != newSolution) {
+                println("${solution.key}: ${solution.value.status()} -> ${newSolution.status()}")
+            }
+            return Crossnumber(originalGrid, newDigitMap, solutions + (solution.key to newSolution))
+        } catch (ex: Exception) {
+            throw Exception("Caught error iterating ${solution.key}: ${ex.message}", ex)
         }
-
-        return Crossnumber(originalGrid, newDigitMap, solutions + (solution.key to newSolution))
     }
 
     private fun substituteKnownDigits(): Grid {
