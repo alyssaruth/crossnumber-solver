@@ -4,9 +4,9 @@ import maths.product
 
 sealed interface ISolution {
     val squares: List<Point>
-    val clues: List<ClueConstructor>
+    val clue: ClueConstructor
 
-    fun iterate(crossnumber: Crossnumber): Pair<ISolution, Map<Point, List<Int>>>
+    fun iterate(clueId: ClueId, crossnumber: Crossnumber): Crossnumber
 
     fun status(): String
 
@@ -21,21 +21,21 @@ const val BRUTE_FORCE_THRESHOLD = 6_000_000
  */
 data class PendingSolution(
     override val squares: List<Point>,
-    override val clues: List<ClueConstructor>,
+    override val clue: ClueConstructor,
     private val possibilities: Long
 ) : ISolution {
-    constructor(squares: List<Point>, clues: List<ClueConstructor>, digitMap: Map<Point, List<Int>>) : this(
+    constructor(squares: List<Point>, clue: ClueConstructor, digitMap: Map<Point, List<Int>>) : this(
         squares,
-        clues,
+        clue,
         computePossibilities(squares, digitMap)
     )
 
-    override fun iterate(crossnumber: Crossnumber): Pair<ISolution, Map<Point, List<Int>>> {
+    override fun iterate(clueId: ClueId, crossnumber: Crossnumber): Crossnumber {
         val digitMap = crossnumber.digitMap
         val possibilityCount = computePossibilities(squares, digitMap)
         if (possibilityCount > BRUTE_FORCE_THRESHOLD) {
             // Not narrowed down enough yet, do nothing
-            return PendingSolution(squares, clues, possibilityCount) to digitMap
+            return crossnumber.replaceSolution(clueId, PendingSolution(squares, clue, possibilityCount))
         }
 
         // Explode out
@@ -47,7 +47,7 @@ data class PendingSolution(
             }
         }
 
-        return PartialSolution(squares, clues, possibilities.map(String::toLong)).iterate(crossnumber)
+        return PartialSolution(squares, clue, possibilities.map(String::toLong)).iterate(clueId, crossnumber)
     }
 
     companion object {
@@ -65,17 +65,25 @@ data class PendingSolution(
  */
 data class PartialSolution(
     override val squares: List<Point>,
-    override val clues: List<ClueConstructor>,
+    override val clue: ClueConstructor,
     val possibilities: List<Long>
 ) : ISolution {
-    override fun iterate(crossnumber: Crossnumber): Pair<ISolution, Map<Point, List<Int>>> {
+    override fun iterate(clueId: ClueId, crossnumber: Crossnumber): Crossnumber {
         val reduced = applyDigitMap(crossnumber.digitMap).applyClues(crossnumber)
 
         if (reduced.possibilities.isEmpty()) {
             throw Exception("Reduced to 0 possibilities!")
         }
 
-        return reduced to reduced.restrictDigitMap(crossnumber.digitMap)
+        val restrictedDigitMap = reduced.restrictDigitMap(crossnumber.digitMap)
+        val newCrossnumber = crossnumber.copy(digitMap = restrictedDigitMap).replaceSolution(clueId, reduced)
+
+        val finalCrossnumber = if (reduced.isSolved()) {
+            val solution = reduced.possibilities.first()
+            clue(newCrossnumber).onSolve?.invoke(solution) ?: newCrossnumber
+        } else newCrossnumber
+
+        return finalCrossnumber
     }
 
     override fun status() = if (isSolved()) "solved!" else "${possibilities.size} possibilities"
@@ -97,7 +105,7 @@ data class PartialSolution(
             !validated.contains(false)
         }
 
-        return PartialSolution(squares, clues, filtered)
+        return PartialSolution(squares, clue, filtered)
     }
 
     /**
@@ -106,12 +114,12 @@ data class PartialSolution(
      * Most of the time this will do nothing after the first run, but not always - e.g. a clue like "Is divisible by 3A"
      */
     private fun applyClues(crossnumber: Crossnumber): PartialSolution {
-        val filtered = clues.fold(possibilities) { currentPossibilities, clueConstructor ->
-            val clue = clueConstructor(crossnumber)
-            currentPossibilities.filter(clue::check)
+        val filtered = possibilities.filter { possibility ->
+            val clue = clue(crossnumber)
+            clue.check(possibility)
         }
 
-        return PartialSolution(squares, clues, filtered)
+        return PartialSolution(squares, clue, filtered)
     }
 
     /**

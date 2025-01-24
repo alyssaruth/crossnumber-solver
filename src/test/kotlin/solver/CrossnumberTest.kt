@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test
 class CrossnumberTest {
     @Test
     fun `Should validate clue IDs`() {
-        val clues = listOf(ClueId(2, Orientation.ACROSS), ClueId(5, Orientation.ACROSS)).associateWith {
-            listOf(wrapSimpleClue(::isPrime))
+        val clues = listOf("2A", "5A").associateWith {
+            simpleClue(::isPrime)
         }
 
         val ex = shouldThrow<IllegalArgumentException> { factoryCrossnumber(VALID_GRID, clues) }

@@ -6,7 +6,7 @@ typealias Clue = (candidate: Long) -> Boolean
 
 typealias ClueConstructor = (crossnumber: Crossnumber) -> BaseClue
 
-fun factoryCrossnumber(gridString: String, rawClues: Map<String, List<ClueConstructor>>): Crossnumber {
+fun factoryCrossnumber(gridString: String, rawClues: Map<String, ClueConstructor>): Crossnumber {
     val clues = rawClues.mapKeys { (clueStr, _) -> ClueId.fromString(clueStr) }
     val grid = parseGrid(gridString)
     grid.validate()
@@ -21,7 +21,7 @@ fun factoryCrossnumber(gridString: String, rawClues: Map<String, List<ClueConstr
 
     val digitMap = initialiseDigitMap(detectedWords)
     val pendingSolutions = detectedWords.associate { word ->
-        val myClues = clues.getOrDefault(word.clueId, emptyList())
+        val myClues = clues.getOrDefault(word.clueId, emptyClue())
         word.clueId to PendingSolution(word.squares, myClues, digitMap)
     }
 
@@ -46,8 +46,9 @@ data class Crossnumber(
         println("*  PASS $pass  *")
         println("************")
 
-        val newCrossnumber = solutions.entries.fold(this) { crossnumber, solution ->
-            crossnumber.iterateSolution(solution)
+        val newCrossnumber = solutions.keys.fold(this) { crossnumber, clueId ->
+            val solution = crossnumber.solutions.getValue(clueId)
+            crossnumber.iterateSolution(clueId, solution)
         }
 
         if (newCrossnumber.isSolved()) {
@@ -85,19 +86,26 @@ data class Crossnumber(
 
     private fun isSolved() = solutions.values.all(ISolution::isSolved)
 
-    private fun iterateSolution(solution: Map.Entry<ClueId, ISolution>): Crossnumber {
-        if (solution.value.isSolved()) {
+    private fun iterateSolution(id: ClueId, solution: ISolution): Crossnumber {
+        if (solution.isSolved()) {
             return this
         }
 
         try {
-            val (newSolution, newDigitMap) = solution.value.iterate(this)
-            if (solution.value != newSolution) {
-                println("${solution.key}: ${solution.value.status()} -> ${newSolution.status()}")
-            }
-            return Crossnumber(originalGrid, newDigitMap, solutions + (solution.key to newSolution))
+            val newCrossnumber = solution.iterate(id, this)
+            logChanges(this, newCrossnumber)
+            return newCrossnumber
         } catch (ex: Exception) {
-            throw Exception("Caught error iterating ${solution.key}: ${ex.message}", ex)
+            throw Exception("Caught error iterating $id: ${ex.message}", ex)
+        }
+    }
+
+    private fun logChanges(oldCrossnumber: Crossnumber, newCrossnumber: Crossnumber) {
+        oldCrossnumber.solutions.forEach { clueId, oldSolution ->
+            val newSolution = newCrossnumber.solutions.getValue(clueId)
+            if (oldSolution != newSolution) {
+                println("$clueId: ${oldSolution.status()} -> ${newSolution.status()}")
+            }
         }
     }
 
@@ -110,4 +118,7 @@ data class Crossnumber(
             }
         }
     }
+
+    fun replaceSolution(clueId: ClueId, solution: ISolution): Crossnumber =
+        copy(solutions = solutions + (clueId to solution))
 }
