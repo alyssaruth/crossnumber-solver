@@ -6,7 +6,8 @@ typealias Clue = (candidate: Long) -> Boolean
 
 typealias ClueConstructor = (crossnumber: Crossnumber) -> BaseClue
 
-fun factoryCrossnumber(gridString: String, clues: Map<ClueId, List<ClueConstructor>>): Crossnumber {
+fun factoryCrossnumber(gridString: String, rawClues: Map<String, List<ClueConstructor>>): Crossnumber {
+    val clues = rawClues.mapKeys { (clueStr, _) -> ClueId.fromString(clueStr) }
     val grid = parseGrid(gridString)
     grid.validate()
 

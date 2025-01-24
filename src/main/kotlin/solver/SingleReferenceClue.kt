@@ -13,5 +13,5 @@ class SingleReferenceClue(
         }
 }
 
-fun simpleReference(clueId: ClueId, checker: (Long, Long) -> Boolean): List<ClueConstructor> =
-    listOf { crossnumber -> SingleReferenceClue(crossnumber, clueId, checker) }
+fun simpleReference(clueId: String, checker: (Long, Long) -> Boolean): List<ClueConstructor> =
+    listOf { crossnumber -> SingleReferenceClue(crossnumber, ClueId.fromString(clueId), checker) }
