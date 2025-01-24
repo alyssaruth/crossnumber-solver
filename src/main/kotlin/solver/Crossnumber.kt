@@ -87,10 +87,6 @@ data class Crossnumber(
     private fun isSolved() = solutions.values.all(ISolution::isSolved)
 
     private fun iterateSolution(id: ClueId, solution: ISolution): Crossnumber {
-        if (solution.isSolved()) {
-            return this
-        }
-
         try {
             val newCrossnumber = solution.iterate(id, this)
             logChanges(this, newCrossnumber)

@@ -1,24 +1,25 @@
 package puzzles
 
+import kotlinx.datetime.Instant
 import maths.containsDigit
 import maths.digits
 import maths.hasDigitSum
 import maths.hasUniqueDigits
 import maths.isEqualTo
+import maths.isFibonacci
 import maths.isMultipleOf
 import maths.isPalindrome
+import maths.isPerfect
 import maths.isPrime
 import maths.isSquare
 import maths.isTriangleNumber
 import maths.nextPrime
 import maths.primeFactors
-import kotlinx.datetime.Instant
-import maths.isFibonacci
-import maths.isPerfect
 import maths.primesUpTo
 import maths.product
 import maths.reversed
 import maths.toRomanNumerals
+import solver.BRUTE_FORCE_THRESHOLD
 import solver.ClueConstructor
 import solver.ClueId
 import solver.ContextualClue
@@ -64,7 +65,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "7A" to emptyClue(), // TODO - "The difference between 10D and 11D"
     "9A" to simpleClue { value -> isPalindrome(value) && containsDigit(0)(value) },
     "10A" to simpleReference("24A") { value, other -> value == 100000 - (other * other.reversed()) },
-    "13A" to emptyClue(), // TODO - "Subtract 8D from 35A then multiply by 17A"
+    "13A" to ::ThirteenAcross,
     "15A" to simpleReference("13D") { value, other -> isPerfect(value * other) },
     "16A" to simpleClue { n: Long -> n.primeFactors().size == 2 },
     "17A" to simpleClue(::isTriangleNumber),
@@ -84,7 +85,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1D" to simpleReference("3D") { value, other -> value == other - 700 },
     "2D" to simpleClue(hasDigitSum(16)),
     "3D" to simpleClue(::isFibonacci),
-    "4D" to emptyClue(), // TODO - This is the same as another number in the crossnumber
+    "4D" to ::FourDown,
     "5D" to simpleClue { value -> isSquare(value) && hasUniqueDigits(10)(value) },
     "6D" to emptyClue(), // TODO - This number’s first digit tells you how many 0s are in this number, the second digit how many 1s, the third digit how many 2s, and so on
     "8D" to simpleReference("25A") { value, other -> value == nextPrime(other) },
@@ -92,7 +93,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "11D" to simpleClue(isMultipleOf(396533)),
     "12D" to simpleClue { 3 * "1$it".toLong() == "${it}1".toLong() },
     "13D" to simpleReference("15A") { value, other -> isPerfect(value * other) },
-    "14D" to emptyClue(), // TODO - The factorial of 17D divided by the factorial of 16A
+    "14D" to ::FourteenDown,
     "17D" to simpleClue(isEqualTo(42)),
     "18D" to simpleClue(isMultipleOf(5)),
     "21D" to ::TwentyOneDown,
@@ -105,6 +106,100 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
 )
 
 /**
+ * Subtract 8D from 35A then multiply by 17A
+ */
+class ThirteenAcross(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
+    private val d8 = lookupAnswer(ClueId(8, Orientation.DOWN))
+    private val a35 = lookupAnswer(ClueId(35, Orientation.ACROSS))
+    private val a17 = lookupAnswer(ClueId(17, Orientation.ACROSS))
+
+    override fun check(value: Long) =
+        if (d8 != null && a35 != null && a17 != null) {
+            value == (a35 - d8) * a17
+        } else true
+}
+
+/**
+ * This is the same as another number in the crossnumber
+ */
+class FourDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
+    private val id = ClueId(4, Orientation.DOWN)
+    private val myLength = crossnumber.solutions.getValue(id).squares.size
+
+    private val potentialSolutions = computePotentialSolutions()
+
+    override fun check(value: Long) = potentialSolutions?.contains(value) ?: true
+
+    private fun computePotentialSolutions(): Set<Long>? {
+        val potentialSolutions =
+            crossnumber.solutions.filterNot { (clueId, _) -> clueId == id }.values.filter { it.squares.size == myLength }
+
+        val partialSolutions = potentialSolutions.filterIsInstance<PartialSolution>()
+        if (partialSolutions.size < potentialSolutions.size) {
+            // At least one still pending, can't tell anything
+            return null
+        }
+
+        return partialSolutions.flatMap { it.possibilities }.toSet()
+    }
+}
+
+/**
+ * The factorial of 17D divided by the factorial of 16A
+ */
+class FourteenDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
+    private val d17s = lookupAnswers(ClueId(17, Orientation.DOWN))
+    private val a16s = lookupAnswers(ClueId(16, Orientation.ACROSS))
+
+    override val onSolve = { solution: Long ->
+        val d17 = lookupAnswer(ClueId(17, Orientation.DOWN))
+        if (d17 != null) {
+            val a16id = ClueId(16, Orientation.ACROSS)
+            val a16 = findSixteenAcross(solution, d17)
+            val existingSolution = crossnumber.solutions.getValue(a16id)
+            crossnumber.replaceSolution(
+                a16id,
+                PartialSolution(existingSolution.squares, existingSolution.clue, listOf(a16))
+            )
+        } else {
+            crossnumber
+        }
+    }
+
+    private tailrec fun findSixteenAcross(
+        currentValue: Long,
+        currentDivisor: Long
+    ): Long {
+        val divisionResult = currentValue / currentDivisor
+        return if (a16s!!.contains(divisionResult - 1)) {
+            divisionResult - 1
+        } else {
+            findSixteenAcross(divisionResult, currentDivisor - 1)
+        }
+    }
+
+    override fun check(value: Long): Boolean {
+        if (d17s == null || a16s == null) {
+            return true
+        }
+
+        val size = d17s.size * a16s.size
+        if (size > BRUTE_FORCE_THRESHOLD) {
+            return true
+        }
+
+        val possibles =
+            d17s.flatMap { d17 ->
+                a16s.mapNotNull { a16 ->
+                    if (d17 <= a16) null else ((a16 + 1)..d17).fold(1L, Long::times)
+                }
+            }.toSet()
+
+        return possibles.contains(value)
+    }
+}
+
+/**
  * The number of the D clue which has the answer 91199
  */
 class TwentyOneDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
@@ -114,9 +209,8 @@ class TwentyOneDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
         val clueId = ClueId(solution.toInt(), Orientation.DOWN)
         val existingSolution = crossnumber.solutions.getValue(clueId)
         val newSolution = PartialSolution(existingSolution.squares, existingSolution.clue, listOf(91199))
-        val newSolutions = crossnumber.solutions + (clueId to newSolution)
 
-        crossnumber.copy(solutions = newSolutions)
+        crossnumber.replaceSolution(clueId, newSolution)
     }
 
     private fun calculatePossibilities(): List<Long> {
@@ -124,7 +218,6 @@ class TwentyOneDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
             crossnumber.solutions.filter { it.key.orientation == Orientation.DOWN && it.value.squares.size == 5 }
         val viableClues =
             cluesOfRightLength.filter { (_, value) -> (value is PartialSolution && value.possibilities.contains(91199)) || value is PendingSolution }
-        println(viableClues.keys)
         return viableClues.keys.map { it.number.toLong() }
     }
 

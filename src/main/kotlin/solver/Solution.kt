@@ -69,7 +69,7 @@ data class PartialSolution(
     val possibilities: List<Long>
 ) : ISolution {
     override fun iterate(clueId: ClueId, crossnumber: Crossnumber): Crossnumber {
-        val reduced = applyDigitMap(crossnumber.digitMap).applyClues(crossnumber)
+        val reduced = applyDigitMap(crossnumber.digitMap).applyClue(crossnumber)
 
         if (reduced.possibilities.isEmpty()) {
             throw Exception("Reduced to 0 possibilities!")
@@ -113,10 +113,10 @@ data class PartialSolution(
      *
      * Most of the time this will do nothing after the first run, but not always - e.g. a clue like "Is divisible by 3A"
      */
-    private fun applyClues(crossnumber: Crossnumber): PartialSolution {
+    private fun applyClue(crossnumber: Crossnumber): PartialSolution {
+        val constructedClue = clue(crossnumber)
         val filtered = possibilities.filter { possibility ->
-            val clue = clue(crossnumber)
-            clue.check(possibility)
+            constructedClue.check(possibility)
         }
 
         return PartialSolution(squares, clue, filtered)

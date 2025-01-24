@@ -160,4 +160,21 @@ class MathFunctionsTest {
         isPerfect(2305843008139952127) shouldBe false
         isPerfect(2305843008139952129) shouldBe false
     }
+
+    @Test
+    fun `Should compute and reverse factorials`() {
+        factorial(3) shouldBe 6
+        factorial(4) shouldBe 24
+        factorial(5) shouldBe 120
+        factorial(6) shouldBe 720
+        factorial(20) shouldBe 2432902008176640000
+
+        reverseFactorial(2432902008176640000) shouldBe 20
+        reverseFactorial(720) shouldBe 6
+        reverseFactorial(120) shouldBe 5
+        reverseFactorial(24) shouldBe 4
+        reverseFactorial(6) shouldBe 3
+
+        reverseFactorial(7) shouldBe null
+    }
 }
