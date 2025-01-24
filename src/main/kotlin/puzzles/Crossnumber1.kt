@@ -15,6 +15,7 @@ import maths.primeFactors
 import kotlinx.datetime.Instant
 import maths.isFibonacci
 import maths.isPerfect
+import maths.primesUpTo
 import maths.product
 import maths.reversed
 import maths.toRomanNumerals
@@ -48,6 +49,8 @@ private val grid = """
         ####..........#
     """.trimIndent()
 
+private val consecutivePrimeSums = primesUpTo(999).windowed(7).map { it.sum() }
+
 private val clueMap: Map<String, List<ClueConstructor>> = mapOf(
     "1A" to emptyList(), // TODO - "D4 multiplied by D18"
     "5A" to simpleClues(isMultipleOf(101)),
@@ -60,7 +63,7 @@ private val clueMap: Map<String, List<ClueConstructor>> = mapOf(
     "17A" to simpleClues(::isTriangleNumber),
     "19A" to simpleReference("6D") { value, other -> other % value == 0L },
     "20A" to simpleReference("30A") { value, other -> value == other + 5134240 },
-    "22A" to emptyList(), // TODO - "The sum of seven consecutive primes"
+    "22A" to simpleClues({ value -> consecutivePrimeSums.contains(value) }),
     "23A" to simpleClues({ toRomanNumerals(it).toCharArray().sorted().joinToString("") == "ILXXX" }),
     "24A" to simpleClues(isEqualTo(733626510400L.primeFactors().max())),
     "25A" to simpleClues(::isSquare),
@@ -78,7 +81,7 @@ private val clueMap: Map<String, List<ClueConstructor>> = mapOf(
     "5D" to simpleClues(::isSquare, hasUniqueDigits(10)),
     "6D" to emptyList(), // TODO - This number’s first digit tells you how many 0s are in this number, the second digit how many 1s, the third digit how many 2s, and so on
     "8D" to simpleReference("25A") { value, other -> value == nextPrime(other) },
-    "10D" to simpleClues(::isPrime, { n -> nextPrime(n).toString().length > 10 }),
+    "10D" to simpleClues({ n -> n > 9990000000 && isPrime(n) && nextPrime(n).toString().length > 10 }),
     "11D" to simpleClues(isMultipleOf(396533)),
     "12D" to simpleClues({ 3 * "1$it".toLong() == "${it}1".toLong() }),
     "13D" to simpleReference("15A") { value, other -> isPerfect(value * other) },

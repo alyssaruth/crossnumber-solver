@@ -65,6 +65,15 @@ tailrec fun nextPrime(n: Long): Long {
     return if (isPrime(nextCandidate)) nextCandidate else nextPrime(nextCandidate)
 }
 
+fun primesUpTo(n: Long, primesSoFar: List<Long> = listOf(2)): List<Long> {
+    val nextPrime = nextPrime(primesSoFar.last())
+    return if (nextPrime > n) {
+        primesSoFar
+    } else {
+        primesUpTo(n, primesSoFar + nextPrime)
+    }
+}
+
 fun isSquare(value: Long) = value == sqrt(value) * sqrt(value)
 
 fun hasUniqueDigits(n: Int): Clue = { value -> value.toString().toCharArray().distinct().size == n }
