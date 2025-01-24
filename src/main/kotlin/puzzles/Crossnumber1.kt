@@ -53,13 +53,13 @@ private val clueMap: Map<String, List<ClueConstructor>> = mapOf(
     "5A" to simpleClues(isMultipleOf(101)),
     "7A" to emptyList(), // TODO - "The difference between 10D and 11D"
     "9A" to simpleClues(::isPalindrome, containsDigit(0)),
-    "10A" to emptyList(), // TODO - "Subtract 24A multiplied by 24A backwards from 100000"
+    "10A" to simpleReference("24A") { value, other -> value == 100000 - (other * other.reversed()) },
     "13A" to emptyList(), // TODO - "Subtract 8D from 35A then multiply by 17A"
     "15A" to simpleReference("13D") { value, other -> isPerfect(value * other) },
     "16A" to simpleClues({ n: Long -> n.primeFactors().size == 2 }),
     "17A" to simpleClues(::isTriangleNumber),
     "19A" to simpleReference("6D") { value, other -> other % value == 0L },
-    "20A" to emptyList(), // TODO - "30A more than the largest number which cannot be written as the sum of distinct fourth powers"
+    "20A" to simpleReference("30A") { value, other -> value == other + 5134240 },
     "22A" to emptyList(), // TODO - "The sum of seven consecutive primes"
     "23A" to simpleClues({ toRomanNumerals(it).toCharArray().sorted().joinToString("") == "ILXXX" }),
     "24A" to simpleClues(isEqualTo(733626510400L.primeFactors().max())),
