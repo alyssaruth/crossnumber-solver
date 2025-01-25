@@ -177,11 +177,4 @@ class MathFunctionsTest {
 
         reverseFactorial(7) shouldBe null
     }
-
-    @Test
-    fun `Bigness test`() {
-        val list = (1..1000000000L).filter(isMultipleOf(365))
-
-        println(list.size)
-    }
 }

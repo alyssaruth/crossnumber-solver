@@ -1,5 +1,6 @@
 package solver
 
+import CLUE_ID
 import VALID_GRID
 import io.kotest.matchers.collections.shouldContainExactly
 import maths.isPrime
@@ -62,7 +63,7 @@ class PendingSolutionTest {
     fun `A pending solution with a large loop size but restrictive enough clue should compute possibilities`() {
         val clueId = ClueId(1, Orientation.ACROSS)
         val pts = (0..7).map { Point(it, 0) }
-        val digitMap = pts.associateWith { (0..9).toList() } + (Point(0, 0) to (1..9).toList())
+        val digitMap = pts.associateWith { (0..9).toList() } + (Point(0, 0) to (5..9).toList())
 
         val solution = PendingSolution(pts, simpleClue(isMultipleOf(365)), digitMap)
         val crossnumber = solution.iterate(clueId, dummyCrossnumber(digitMap))
@@ -79,11 +80,12 @@ class PendingSolutionTest {
 
         val solution = PendingSolution(squares, simpleClue(::isPrime), digitMap)
 
-        val (newSolution, newDigitMap) = solution.iterate(ClueId(1, Orientation.ACROSS), dummyCrossnumber(digitMap))
+        val crossnumber = solution.iterate(CLUE_ID, dummyCrossnumber(digitMap))
+        val newSolution = crossnumber.solutions.getValue(CLUE_ID)
         newSolution.shouldBeInstanceOf<PartialSolution>()
         newSolution.possibilities.shouldContainExactlyInAnyOrder(17, 37, 47, 67, 97)
 
-        newDigitMap shouldBe mapOf(
+        crossnumber.digitMap shouldBe mapOf(
             Point(0, 0) to listOf(1, 3, 4, 6, 9),
             Point(0, 1) to listOf(7)
         )
@@ -95,11 +97,12 @@ class PendingSolutionTest {
         val digitMap = pts.associateWith { (0..9).toList() } + (Point(0, 0) to (1..9).toList())
 
         val solution = PendingSolution(pts, emptyClue(), digitMap)
-        val (newSolution, newMap) = solution.iterate(ClueId(1, Orientation.ACROSS), dummyCrossnumber(digitMap))
+        val crossnumber = solution.iterate(CLUE_ID, dummyCrossnumber(digitMap))
+        val newSolution = crossnumber.solutions.getValue(CLUE_ID)
 
         newSolution.shouldBeInstanceOf<PartialSolution>()
         newSolution.possibilities.size shouldBe 900000
-        newMap shouldBe digitMap
+        crossnumber.digitMap shouldBe digitMap
     }
 
     @Test
@@ -121,7 +124,8 @@ class PendingSolutionTest {
         )
 
         val solution = PendingSolution(pts, emptyClue(), digitMap)
-        val (newSolution) = solution.iterate(ClueId(1, Orientation.ACROSS), dummyCrossnumber(digitMap))
+        val crossnumber = solution.iterate(CLUE_ID, dummyCrossnumber(digitMap))
+        val newSolution = crossnumber.solutions.getValue(CLUE_ID)
         newSolution.shouldBeInstanceOf<PartialSolution>()
         newSolution.possibilities.size shouldBe 864000
     }
