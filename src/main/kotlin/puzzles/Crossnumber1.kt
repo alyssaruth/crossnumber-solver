@@ -19,7 +19,6 @@ import maths.primesUpTo
 import maths.product
 import maths.reversed
 import maths.toRomanNumerals
-import solver.RAM_THRESHOLD
 import solver.ClueConstructor
 import solver.ClueId
 import solver.ContextualClue
@@ -27,10 +26,12 @@ import solver.Crossnumber
 import solver.Orientation
 import solver.PartialSolution
 import solver.PendingSolution
-import solver.emptyClue
+import solver.RAM_THRESHOLD
+import solver.dualReference
 import solver.factoryCrossnumber
 import solver.simpleClue
 import solver.simpleReference
+import kotlin.math.abs
 
 /**
  * https://chalkdustmagazine.com/regulars/100-prize-crossnumber-issue-01/
@@ -59,10 +60,12 @@ private val grid = """
 
 private val consecutivePrimeSums = primesUpTo(999).windowed(7).map { it.sum() }
 
+private val a32Options = (7..20).map { "5331005655".toLong(it) }.toSet()
+
 private val clueMap: Map<String, ClueConstructor> = mapOf(
-    "1A" to emptyClue(), // TODO - "D4 multiplied by D18"
+    "1A" to dualReference("4D", "18D", Long::times),
     "5A" to simpleClue(isMultipleOf(101)),
-    "7A" to emptyClue(), // TODO - "The difference between 10D and 11D"
+    "7A" to dualReference("10D", "11D") { a, b -> abs(a - b) },
     "9A" to simpleClue { value -> isPalindrome(value) && containsDigit(0)(value) },
     "10A" to simpleReference("24A") { value, other -> value == 100000 - (other * other.reversed()) },
     "13A" to ::ThirteenAcross,
@@ -78,7 +81,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "27A" to simpleReference("7A") { value, other -> value == other.digits().product() },
     "28A" to simpleClue(isMultipleOf(107)),
     "30A" to simpleClue(isEqualTo(Instant.parse("1970-01-02T01:29:41+00:00").epochSeconds)),
-    "32A" to emptyClue(), // TODO - When written in a base other than 10, this number is 5331005655
+    "32A" to simpleClue { a32Options.contains(it) },
     "35A" to simpleClue { value -> value == 1 + (3 * value.reversed()) },
     "36A" to simpleClue(hasUniqueDigits(2)),
 
@@ -87,7 +90,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "3D" to simpleClue(::isFibonacci),
     "4D" to ::FourDown,
     "5D" to simpleClue { value -> isSquare(value) && hasUniqueDigits(10)(value) },
-    "6D" to emptyClue(), // TODO - This number’s first digit tells you how many 0s are in this number, the second digit how many 1s, the third digit how many 2s, and so on
+    "6D" to simpleClue(::sixDown),
     "8D" to simpleReference("25A") { value, other -> value == nextPrime(other) },
     "10D" to simpleClue { n -> n > 9990000000 && isPrime(n) && nextPrime(n).toString().length > 10 },
     "11D" to simpleClue(isMultipleOf(396533)),
@@ -104,6 +107,14 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "33D" to simpleClue { hasUniqueDigits(3)(it) && it.digits().map(Int::toLong).all(::isSquare) },
     "34D" to simpleClue(::isSquare)
 )
+
+/**
+ * This number’s first digit tells you how many 0s are in this number, the second digit how many 1s, the third digit how many 2s, and so on
+ */
+private fun sixDown(value: Long): Boolean {
+    val digits = value.digits()
+    return digits.indices.all { i -> digits.count { it == i } == digits[i] }
+}
 
 /**
  * Subtract 8D from 35A then multiply by 17A

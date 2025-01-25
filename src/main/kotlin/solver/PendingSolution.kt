@@ -3,7 +3,8 @@ package solver
 import maths.product
 
 // Limits to prevent OOMs or slowness due to doomed loops
-const val LOOP_THRESHOLD = 100_000_000
+const val EXTREME_LOOP_THRESHOLD = 5_000_000_000
+const val LOOP_THRESHOLD = 100_000_000L
 const val RAM_THRESHOLD = 6_000_000
 
 /**
@@ -23,7 +24,7 @@ data class PendingSolution(
     override fun iterate(clueId: ClueId, crossnumber: Crossnumber): Crossnumber {
         val digitMap = crossnumber.digitMap
         val possibilityCount = computePossibilities(squares, digitMap)
-        if (possibilityCount > LOOP_THRESHOLD) {
+        if (possibilityCount > crossnumber.loopThreshold) {
             // Not narrowed down enough yet, do nothing
             return crossnumber.replaceSolution(clueId, PendingSolution(squares, clue, possibilityCount))
         }

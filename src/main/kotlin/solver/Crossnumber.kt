@@ -39,7 +39,8 @@ private fun initialiseDigitMap(solutions: List<Word>): Map<Point, List<Int>> {
 data class Crossnumber(
     val originalGrid: Grid,
     val digitMap: Map<Point, List<Int>>,
-    val solutions: Map<ClueId, ISolution>
+    val solutions: Map<ClueId, ISolution>,
+    val loopThreshold: Long = LOOP_THRESHOLD
 ) {
     fun solve(pass: Int = 1): Crossnumber {
         println("************")
@@ -56,6 +57,11 @@ data class Crossnumber(
         }
 
         if (newCrossnumber == this) {
+            if (newCrossnumber.loopThreshold == LOOP_THRESHOLD) {
+                println("Made no progress on latest pass, kicking up loop threshold.")
+                return newCrossnumber.copy(loopThreshold = EXTREME_LOOP_THRESHOLD).solve(pass + 1)
+            }
+
             println("Made no progress on latest pass, exiting.")
             println("------------------------------------------")
             println(newCrossnumber.completionString())
