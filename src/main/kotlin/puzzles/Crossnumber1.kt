@@ -19,7 +19,7 @@ import maths.primesUpTo
 import maths.product
 import maths.reversed
 import maths.toRomanNumerals
-import solver.BRUTE_FORCE_THRESHOLD
+import solver.RAM_THRESHOLD
 import solver.ClueConstructor
 import solver.ClueId
 import solver.ContextualClue
@@ -184,7 +184,7 @@ class FourteenDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
         }
 
         val size = d17s.size * a16s.size
-        if (size > BRUTE_FORCE_THRESHOLD) {
+        if (size > RAM_THRESHOLD) {
             return true
         }
 

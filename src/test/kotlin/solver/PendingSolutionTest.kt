@@ -1,13 +1,74 @@
 package solver
 
 import VALID_GRID
+import io.kotest.matchers.collections.shouldContainExactly
 import maths.isPrime
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
+import maths.isMultipleOf
 import kotlin.test.Test
 
-class SolutionTest {
+class PendingSolutionTest {
+    @Test
+    fun `Should correctly compute starting and next values based on digit restrictions`() {
+        val squares = listOf(Point(0, 0), Point(1, 0), Point(2, 0))
+        val digitMap = mapOf(
+            Point(0, 0) to listOf(1, 3, 7),
+            Point(1, 0) to listOf(2),
+            Point(2, 0) to listOf(0, 3, 9)
+        )
+
+        val startingValue = PendingSolution.startingValue(squares, digitMap)
+        startingValue shouldBe 120
+
+        val allValues = mutableListOf<Long>()
+        var currentValue: Long? = startingValue
+        while (currentValue != null) {
+            allValues.add(currentValue)
+            currentValue = PendingSolution.nextValue(squares, digitMap, currentValue)
+        }
+
+        allValues.shouldContainExactly(120, 123, 129, 320, 323, 329, 720, 723, 729)
+    }
+
+    @Test
+    fun `A pending solution with too large to even begin looping should remain pending`() {
+        val clueId = ClueId(1, Orientation.ACROSS)
+        val pts = (0..10).map { Point(it, 0) }
+        val digitMap = pts.associateWith { (0..9).toList() } + (Point(0, 0) to (1..9).toList())
+
+        val solution = PendingSolution(pts, emptyClue(), digitMap)
+        val crossnumber = solution.iterate(clueId, dummyCrossnumber(digitMap))
+
+        crossnumber.solutions.getValue(clueId) shouldBe solution
+        crossnumber.digitMap shouldBe digitMap
+    }
+
+    @Test
+    fun `A pending solution that would generate too many possibilities for the heap should remain pending`() {
+        val clueId = ClueId(1, Orientation.ACROSS)
+        val pts = (0..7).map { Point(it, 0) }
+        val digitMap = pts.associateWith { (0..9).toList() } + (Point(0, 0) to (1..9).toList())
+
+        val solution = PendingSolution(pts, emptyClue(), digitMap)
+        val crossnumber = solution.iterate(clueId, dummyCrossnumber(digitMap))
+
+        crossnumber.solutions.getValue(clueId) shouldBe solution
+        crossnumber.digitMap shouldBe digitMap
+    }
+
+    @Test
+    fun `A pending solution with a large loop size but restrictive enough clue should compute possibilities`() {
+        val clueId = ClueId(1, Orientation.ACROSS)
+        val pts = (0..7).map { Point(it, 0) }
+        val digitMap = pts.associateWith { (0..9).toList() } + (Point(0, 0) to (1..9).toList())
+
+        val solution = PendingSolution(pts, simpleClue(isMultipleOf(365)), digitMap)
+        val crossnumber = solution.iterate(clueId, dummyCrossnumber(digitMap))
+        crossnumber.solutions.getValue(clueId).shouldBeInstanceOf<PartialSolution>()
+    }
+
     @Test
     fun `Iterating a pending solution to a partial one, and updating the digit map`() {
         val squares = listOf(Point(0, 0), Point(0, 1))
@@ -26,18 +87,6 @@ class SolutionTest {
             Point(0, 0) to listOf(1, 3, 4, 6, 9),
             Point(0, 1) to listOf(7)
         )
-    }
-
-    @Test
-    fun `A pending solution with too large a search space should remain pending`() {
-        val pts = (0..8).map { Point(it, 0) }
-        val digitMap = pts.associateWith { (0..9).toList() } + (Point(0, 0) to (1..9).toList())
-
-        val solution = PendingSolution(pts, emptyClue(), digitMap)
-        val (newSolution, newMap) = solution.iterate(ClueId(1, Orientation.ACROSS), dummyCrossnumber(digitMap))
-
-        newSolution shouldBe solution
-        newMap shouldBe digitMap
     }
 
     @Test

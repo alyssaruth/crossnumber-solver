@@ -1,65 +1,5 @@
 package solver
 
-import maths.product
-
-sealed interface ISolution {
-    val squares: List<Point>
-    val clue: ClueConstructor
-
-    fun iterate(clueId: ClueId, crossnumber: Crossnumber): Crossnumber
-
-    fun status(): String
-
-    fun isSolved(): Boolean
-}
-
-// Pretty conservative, I think - could crank higher with a larger heap
-const val BRUTE_FORCE_THRESHOLD = 6_000_000
-
-/**
- * A solution that hasn't yet been exploded out into remaining possibilities (because there are too many)
- */
-data class PendingSolution(
-    override val squares: List<Point>,
-    override val clue: ClueConstructor,
-    private val possibilities: Long
-) : ISolution {
-    constructor(squares: List<Point>, clue: ClueConstructor, digitMap: Map<Point, List<Int>>) : this(
-        squares,
-        clue,
-        computePossibilities(squares, digitMap)
-    )
-
-    override fun iterate(clueId: ClueId, crossnumber: Crossnumber): Crossnumber {
-        val digitMap = crossnumber.digitMap
-        val possibilityCount = computePossibilities(squares, digitMap)
-        if (possibilityCount > BRUTE_FORCE_THRESHOLD) {
-            // Not narrowed down enough yet, do nothing
-            return crossnumber.replaceSolution(clueId, PendingSolution(squares, clue, possibilityCount))
-        }
-
-        // Explode out
-        val possibilities = squares.fold(listOf("")) { possibilities, square ->
-            val digitOptions = digitMap.getValue(square)
-
-            possibilities.flatMap { possibility ->
-                digitOptions.map { nextDigit -> possibility + nextDigit }
-            }
-        }
-
-        return PartialSolution(squares, clue, possibilities.map(String::toLong)).iterate(clueId, crossnumber)
-    }
-
-    companion object {
-        private fun computePossibilities(squares: List<Point>, digitMap: Map<Point, List<Int>>): Long {
-            return squares.map { digitMap.getValue(it).size }.product()
-        }
-    }
-
-    override fun status() = "PENDING ($possibilities)"
-    override fun isSolved() = false
-}
-
 /**
  * An "in-progress" solution with a list of the current possibilities we've narrowed down to
  */
@@ -135,5 +75,4 @@ data class PartialSolution(
 
         return digitMap + updates
     }
-
 }
