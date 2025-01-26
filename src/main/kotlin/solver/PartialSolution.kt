@@ -8,6 +8,9 @@ data class PartialSolution(
     override val clue: ClueConstructor,
     val possibilities: List<Long>
 ) : ISolution {
+    
+    override fun possibilityCount(digitMap: Map<Point, List<Int>>) = possibilities.size.toLong()
+
     override fun iterate(clueId: ClueId, crossnumber: Crossnumber): Crossnumber {
         val reduced = applyDigitMap(crossnumber.digitMap).applyClue(crossnumber)
 

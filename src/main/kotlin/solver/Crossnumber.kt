@@ -49,7 +49,9 @@ data class Crossnumber(
         println("* PASS $pass ($solvedStr / ${solutions.size}) *")
         println("********************")
 
-        val newCrossnumber = solutions.keys.fold(this) { crossnumber, clueId ->
+        // Always try smallest stuff first, because narrowing those down may reduce the search space for bigger stuff
+        val prioritisedKeys = solutions.entries.sortedBy { it.value.possibilityCount(digitMap) }.map { it.key }
+        val newCrossnumber = prioritisedKeys.fold(this) { crossnumber, clueId ->
             val solution = crossnumber.solutions.getValue(clueId)
             crossnumber.iterateSolution(clueId, solution)
         }

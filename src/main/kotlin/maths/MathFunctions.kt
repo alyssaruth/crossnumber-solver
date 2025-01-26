@@ -86,7 +86,11 @@ fun Long.digitSum() = digits().sum()
 
 fun distinctDivisors(n: Long): Set<Long> = (1..sqrt(n)).filter { n % it == 0L }.flatMap { listOf(it, n / it) }.toSet()
 
-fun isPerfect(n: Long) = distinctDivisors(n).minus(n).sum() == n
+fun properFactors(n: Long): Set<Long> = distinctDivisors(n) - n
+
+fun isPerfect(n: Long) = properFactors(n).sum() == n
+
+fun isAbundant(n: Long) = properFactors(n).sum() > n
 
 fun factorial(n: Long) = (1..n).toList().fold(1L, Long::times)
 

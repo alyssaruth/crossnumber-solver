@@ -21,9 +21,11 @@ data class PendingSolution(
         computePossibilities(squares, digitMap)
     )
 
+    override fun possibilityCount(digitMap: Map<Point, List<Int>>) = computePossibilities(squares, digitMap)
+
     override fun iterate(clueId: ClueId, crossnumber: Crossnumber): Crossnumber {
         val digitMap = crossnumber.digitMap
-        val possibilityCount = computePossibilities(squares, digitMap)
+        val possibilityCount = possibilityCount(digitMap)
         if (possibilityCount > crossnumber.loopThreshold) {
             // Not narrowed down enough yet, do nothing
             return crossnumber.replaceSolution(clueId, PendingSolution(squares, clue, possibilityCount))
