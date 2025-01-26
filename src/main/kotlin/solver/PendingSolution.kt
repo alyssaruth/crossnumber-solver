@@ -29,7 +29,8 @@ data class PendingSolution(
             return crossnumber.replaceSolution(clueId, PendingSolution(squares, clue, possibilityCount))
         }
 
-        val possibilities = attemptToComputePossibilities(clue(crossnumber), digitMap.filterKeys(squares::contains))
+        val digitList = squares.map(digitMap::getValue)
+        val possibilities = attemptToComputePossibilities(clue(crossnumber), digitList)
             ?: return crossnumber.replaceSolution(clueId, PendingSolution(squares, clue, possibilityCount))
 
         return PartialSolution(squares, clue, possibilities).iterate(clueId, crossnumber)
@@ -37,26 +38,27 @@ data class PendingSolution(
 
     private tailrec fun attemptToComputePossibilities(
         clue: BaseClue,
-        digitMap: Map<Point, List<Int>>,
-        currentValue: Long? = startingValue(squares, digitMap),
+        digitList: List<List<Int>>,
+        currentValueStr: String? = startingValue(digitList),
         possibleSoFar: MutableList<Long> = mutableListOf()
     ): List<Long>? {
-        if (currentValue == null) {
-            return possibleSoFar.toList()
+        if (currentValueStr == null) {
+            return possibleSoFar
         }
 
         if (possibleSoFar.size > RAM_THRESHOLD) {
             return null
         }
 
+        val currentValue = currentValueStr.toLong()
         if (clue.check(currentValue)) {
             possibleSoFar.add(currentValue)
         }
 
         return attemptToComputePossibilities(
             clue,
-            digitMap,
-            nextValue(squares, digitMap, currentValue),
+            digitList,
+            nextValue(digitList, currentValueStr),
             possibleSoFar
         )
     }
@@ -67,33 +69,33 @@ data class PendingSolution(
             return squares.map { digitMap.getValue(it).size }.product()
         }
 
-        fun nextValue(squares: List<Point>, digitMap: Map<Point, List<Int>>, n: Long): Long? {
-            val indices = (squares.size - 1 downTo 0)
-            val nStr = n.toString()
+        fun nextValue(digitList: List<List<Int>>, n: String): String? {
+            val indices = (digitList.size - 1 downTo 0)
 
+            var newStr = ""
             var doneIncrement = false
-            val newDigits = indices.map { ix ->
-                val current = nStr[ix].digitToInt()
+            indices.forEach { ix ->
+                val current = n[ix].digitToInt()
                 if (doneIncrement) {
-                    current
+                    newStr = "$current$newStr"
                 } else {
-                    val possibles = digitMap.getValue(squares[ix])
-                    val next = possibles.filter { it > current }.minOrNull()
-                    if (next != null) {
-                        doneIncrement = true
-                        next
+                    val possibles = digitList[ix]
+                    val next = if (current == possibles.last()) {
+                        possibles.first()
                     } else {
-                        possibles.min()
+                        doneIncrement = true
+                        possibles[possibles.indexOf(current) + 1]
                     }
+
+                    newStr = "$next$newStr"
                 }
             }
 
-            val result = newDigits.joinToString("").reversed().toLong()
-            return if (!doneIncrement) null else result
+            return if (!doneIncrement) null else newStr
         }
 
-        fun startingValue(squares: List<Point>, digitMap: Map<Point, List<Int>>): Long =
-            squares.map { digitMap.getValue(it).min() }.joinToString("").toLong()
+        fun startingValue(digitList: List<List<Int>>): String =
+            digitList.map { it.first() }.joinToString("")
     }
 
     override fun status() = "PENDING ($possibilities)"

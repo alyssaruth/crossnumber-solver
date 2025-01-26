@@ -28,6 +28,8 @@ fun isPalindrome(value: Long): Boolean = value.toString() == value.toString().re
 
 fun Long.digits() = toString().toCharArray().map(Char::digitToInt)
 
+fun Long.digitCounts() = digits().groupBy { it }.mapValues { it.value.size }
+
 fun containsDigit(digit: Int): Clue = { value -> value.digits().contains(digit) }
 
 fun isTriangleNumber(value: Long): Boolean = testTriangleNumber(value)

@@ -3,34 +3,29 @@ package solver
 import CLUE_ID
 import VALID_GRID
 import io.kotest.matchers.collections.shouldContainExactly
-import maths.isPrime
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import maths.isMultipleOf
+import maths.isPrime
 import kotlin.test.Test
 
 class PendingSolutionTest {
     @Test
     fun `Should correctly compute starting and next values based on digit restrictions`() {
-        val squares = listOf(Point(0, 0), Point(1, 0), Point(2, 0))
-        val digitMap = mapOf(
-            Point(0, 0) to listOf(1, 3, 7),
-            Point(1, 0) to listOf(2),
-            Point(2, 0) to listOf(0, 3, 9)
-        )
+        val list = listOf(listOf(1, 3, 7), listOf(2), listOf(0, 3, 9))
 
-        val startingValue = PendingSolution.startingValue(squares, digitMap)
-        startingValue shouldBe 120
+        val startingValue = PendingSolution.startingValue(list)
+        startingValue shouldBe "120"
 
-        val allValues = mutableListOf<Long>()
-        var currentValue: Long? = startingValue
+        val allValues = mutableListOf<String>()
+        var currentValue: String? = startingValue
         while (currentValue != null) {
             allValues.add(currentValue)
-            currentValue = PendingSolution.nextValue(squares, digitMap, currentValue)
+            currentValue = PendingSolution.nextValue(list, currentValue)
         }
 
-        allValues.shouldContainExactly(120, 123, 129, 320, 323, 329, 720, 723, 729)
+        allValues.map(String::toInt).shouldContainExactly(120, 123, 129, 320, 323, 329, 720, 723, 729)
     }
 
     @Test
@@ -67,7 +62,9 @@ class PendingSolutionTest {
 
         val solution = PendingSolution(pts, simpleClue(isMultipleOf(365)), digitMap)
         val crossnumber = solution.iterate(clueId, dummyCrossnumber(digitMap))
-        crossnumber.solutions.getValue(clueId).shouldBeInstanceOf<PartialSolution>()
+        val updatedSolution = crossnumber.solutions.getValue(clueId)
+        updatedSolution.shouldBeInstanceOf<PartialSolution>()
+        updatedSolution.possibilities.size shouldBe 136986
     }
 
     @Test

@@ -2,6 +2,7 @@ package puzzles
 
 import kotlinx.datetime.Instant
 import maths.containsDigit
+import maths.digitCounts
 import maths.digits
 import maths.hasDigitSum
 import maths.hasUniqueDigits
@@ -29,6 +30,7 @@ import solver.PendingSolution
 import solver.RAM_THRESHOLD
 import solver.dualReference
 import solver.factoryCrossnumber
+import solver.plus
 import solver.simpleClue
 import solver.simpleReference
 import kotlin.math.abs
@@ -37,7 +39,9 @@ import kotlin.math.abs
  * https://chalkdustmagazine.com/regulars/100-prize-crossnumber-issue-01/
  */
 fun main() {
+    val startTime = System.currentTimeMillis()
     factoryCrossnumber(grid, clueMap).solve()
+    println("Time elapsed: ${(System.currentTimeMillis() - startTime) / 1000}s")
 }
 
 private val grid = """
@@ -83,11 +87,11 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "30A" to simpleClue(isEqualTo(Instant.parse("1970-01-02T01:29:41+00:00").epochSeconds)),
     "32A" to simpleClue { a32Options.contains(it) },
     "35A" to simpleClue { value -> value == 1 + (3 * value.reversed()) },
-    "36A" to simpleClue(hasUniqueDigits(2)),
+    "36A" to simpleClue { value -> value.digitCounts().let { it.size == 2 && it.values.contains(1) } },
 
     "1D" to simpleReference("3D") { value, other -> value == other - 700 },
     "2D" to simpleClue(hasDigitSum(16)),
-    "3D" to simpleClue(::isFibonacci),
+    "3D" to simpleClue(::isFibonacci) + simpleReference("1D") { value, other -> other == value - 700 },
     "4D" to ::FourDown,
     "5D" to simpleClue { value -> isSquare(value) && hasUniqueDigits(10)(value) },
     "6D" to simpleClue(::sixDown),
@@ -98,13 +102,13 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "13D" to simpleReference("15A") { value, other -> isPerfect(value * other) },
     "14D" to ::FourteenDown,
     "17D" to simpleClue(isEqualTo(42)),
-    "18D" to simpleClue(isMultipleOf(5)),
+    "18D" to simpleClue(isMultipleOf(5)) + dualReference("1A", "4D", Long::div),
     "21D" to ::TwentyOneDown,
     "26D" to simpleClue(isEqualTo(4 + 8 + 6 + 20 + 12)),
     "27D" to simpleReference("29D") { value, other -> value == other + 2 },
     "29D" to simpleClue { it.toString().first() == it.toString().last() },
     "31D" to simpleReference("24A") { value, other -> value % other == 0L },
-    "33D" to simpleClue { hasUniqueDigits(3)(it) && it.digits().map(Int::toLong).all(::isSquare) },
+    "33D" to simpleClue { hasUniqueDigits(3)(it) && it.digits().map(Int::toLong).all { it > 0 && isSquare(it) } },
     "34D" to simpleClue(::isSquare)
 )
 

@@ -66,7 +66,13 @@ data class Crossnumber(
             println("------------------------------------------")
             println(newCrossnumber.completionString())
             println("------------------------------------------")
+            newCrossnumber.solutions.filterValues { !it.isSolved() }.forEach { id, soln ->
+                val options = if (soln is PartialSolution) soln.possibilities.toString() else ""
+                println("$id: ${soln.status()} - $options")
+            }
+            println("------------------------------------------")
             println(newCrossnumber.substituteKnownDigits().prettyString())
+            println("------------------------------------------")
             return newCrossnumber
         }
 
