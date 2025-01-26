@@ -145,6 +145,20 @@ class FourDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
 
     override fun check(value: Long) = potentialSolutions?.contains(value) ?: true
 
+    override val onSolve: ((Long) -> Crossnumber) = { solution ->
+        val clues =
+            (crossnumber.solutions - id).filterValues { it is PartialSolution && it.possibilities.contains(solution) }
+        if (clues.size == 1) {
+            val (clueId, currentSolution) = clues.toList().first()
+            crossnumber.replaceSolution(
+                clueId,
+                PartialSolution(currentSolution.squares, currentSolution.clue, listOf(solution))
+            )
+        } else {
+            crossnumber
+        }
+    }
+
     private fun computePotentialSolutions(): Set<Long>? {
         val potentialSolutions =
             crossnumber.solutions.filterNot { (clueId, _) -> clueId == id }.values.filter { it.squares.size == myLength }
