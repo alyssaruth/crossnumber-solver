@@ -39,9 +39,7 @@ import kotlin.math.abs
  * https://chalkdustmagazine.com/regulars/100-prize-crossnumber-issue-01/
  */
 fun main() {
-    val startTime = System.currentTimeMillis()
     factoryCrossnumber(grid, clueMap).solve()
-    println("Time elapsed: ${(System.currentTimeMillis() - startTime) / 1000}s")
 }
 
 private val grid = """
@@ -238,7 +236,6 @@ class TwentyOneDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
         val clueId = ClueId(solution.toInt(), Orientation.DOWN)
         val existingSolution = crossnumber.solutions.getValue(clueId)
         val newSolution = PartialSolution(existingSolution.squares, existingSolution.clue, listOf(91199))
-
         crossnumber.replaceSolution(clueId, newSolution)
     }
 

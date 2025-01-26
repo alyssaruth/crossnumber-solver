@@ -42,10 +42,12 @@ data class Crossnumber(
     val solutions: Map<ClueId, ISolution>,
     val loopThreshold: Long = LOOP_THRESHOLD
 ) {
-    fun solve(pass: Int = 1): Crossnumber {
-        println("************")
-        println("*  PASS $pass  *")
-        println("************")
+    fun solve(pass: Int = 1, startTime: Long = System.currentTimeMillis()): Crossnumber {
+        val solved = solutions.values.count(ISolution::isSolved)
+        val solvedStr = if (solved < 10) " $solved" else solved.toString()
+        println("********************")
+        println("* PASS $pass ($solvedStr / ${solutions.size}) *")
+        println("********************")
 
         val newCrossnumber = solutions.keys.fold(this) { crossnumber, clueId ->
             val solution = crossnumber.solutions.getValue(clueId)
@@ -53,13 +55,17 @@ data class Crossnumber(
         }
 
         if (newCrossnumber.isSolved()) {
+            println("------------------------------------------")
+            println(newCrossnumber.substituteKnownDigits().prettyString())
+            println("------------------------------------------")
+            println("Time elapsed: ${(System.currentTimeMillis() - startTime) / 1000}s")
             return newCrossnumber
         }
 
         if (newCrossnumber == this) {
             if (newCrossnumber.loopThreshold == LOOP_THRESHOLD) {
                 println("Made no progress on latest pass, kicking up loop threshold.")
-                return newCrossnumber.copy(loopThreshold = EXTREME_LOOP_THRESHOLD).solve(pass + 1)
+                return newCrossnumber.copy(loopThreshold = EXTREME_LOOP_THRESHOLD).solve(pass + 1, startTime)
             }
 
             println("Made no progress on latest pass, exiting.")
@@ -67,16 +73,18 @@ data class Crossnumber(
             println(newCrossnumber.completionString())
             println("------------------------------------------")
             newCrossnumber.solutions.filterValues { !it.isSolved() }.forEach { id, soln ->
-                val options = if (soln is PartialSolution) soln.possibilities.toString() else ""
-                println("$id: ${soln.status()} - $options")
+                val options =
+                    if (soln is PartialSolution && soln.possibilities.size < 100) " - ${soln.possibilities}" else ""
+                println("$id: ${soln.status()}$options")
             }
             println("------------------------------------------")
             println(newCrossnumber.substituteKnownDigits().prettyString())
             println("------------------------------------------")
+            println("Time elapsed: ${(System.currentTimeMillis() - startTime) / 1000}s")
             return newCrossnumber
         }
 
-        return newCrossnumber.solve(pass + 1)
+        return newCrossnumber.solve(pass + 1, startTime)
     }
 
     private fun completionString(): String {
