@@ -33,6 +33,8 @@ import solver.factoryCrossnumber
 import solver.plus
 import solver.simpleClue
 import solver.simpleReference
+import solver.singleReferenceEquals
+import solver.tripleReference
 import kotlin.math.abs
 
 /**
@@ -69,31 +71,31 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "5A" to simpleClue(isMultipleOf(101)),
     "7A" to dualReference("10D", "11D") { a, b -> abs(a - b) },
     "9A" to simpleClue { value -> isPalindrome(value) && containsDigit(0)(value) },
-    "10A" to simpleReference("24A") { value, other -> value == 100000 - (other * other.reversed()) },
-    "13A" to ::ThirteenAcross,
+    "10A" to singleReferenceEquals("24A") { other -> 100000 - (other * other.reversed()) },
+    "13A" to tripleReference("35A", "8D", "17A") { a35, d8, a17 -> (a35 - d8) * a17 },
     "15A" to simpleReference("13D") { value, other -> isPerfect(value * other) },
     "16A" to simpleClue { n: Long -> n.primeFactors().size == 2 },
     "17A" to simpleClue(::isTriangleNumber),
     "19A" to simpleReference("6D") { value, other -> other % value == 0L },
-    "20A" to simpleReference("30A") { value, other -> value == other + 5134240 },
+    "20A" to singleReferenceEquals("30A") { it + 5134240 },
     "22A" to simpleClue { value -> consecutivePrimeSums.contains(value) },
     "23A" to simpleClue { toRomanNumerals(it).toCharArray().sorted().joinToString("") == "ILXXX" },
     "24A" to simpleClue(isEqualTo(733626510400L.primeFactors().max())),
     "25A" to simpleClue(::isSquare),
-    "27A" to simpleReference("7A") { value, other -> value == other.digits().product() },
+    "27A" to singleReferenceEquals("7A") { it.digits().product() },
     "28A" to simpleClue(isMultipleOf(107)),
     "30A" to simpleClue(isEqualTo(Instant.parse("1970-01-02T01:29:41+00:00").epochSeconds)),
     "32A" to simpleClue { a32Options.contains(it) },
     "35A" to simpleClue { value -> value == 1 + (3 * value.reversed()) },
     "36A" to simpleClue { value -> value.digitCounts().let { it.size == 2 && it.values.contains(1) } },
 
-    "1D" to simpleReference("3D") { value, other -> value == other - 700 },
+    "1D" to singleReferenceEquals("3D") { it - 700 },
     "2D" to simpleClue(hasDigitSum(16)),
-    "3D" to simpleClue(::isFibonacci) + simpleReference("1D") { value, other -> other == value - 700 },
+    "3D" to simpleClue(::isFibonacci) + singleReferenceEquals("1D") { it + 700 },
     "4D" to ::FourDown,
     "5D" to simpleClue { value -> isSquare(value) && hasUniqueDigits(10)(value) },
     "6D" to simpleClue(::sixDown),
-    "8D" to simpleReference("25A") { value, other -> value == nextPrime(other) },
+    "8D" to singleReferenceEquals("25A") { nextPrime(it) },
     "10D" to simpleClue { n -> n > 9990000000 && isPrime(n) && nextPrime(n).toString().length > 10 },
     "11D" to simpleClue(isMultipleOf(396533)),
     "12D" to simpleClue { 3 * "1$it".toLong() == "${it}1".toLong() },
@@ -103,7 +105,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "18D" to simpleClue(isMultipleOf(5)) + dualReference("1A", "4D", Long::div),
     "21D" to ::TwentyOneDown,
     "26D" to simpleClue(isEqualTo(4 + 8 + 6 + 20 + 12)),
-    "27D" to simpleReference("29D") { value, other -> value == other + 2 },
+    "27D" to singleReferenceEquals("29D") { it + 2 },
     "29D" to simpleClue { it.toString().first() == it.toString().last() },
     "31D" to simpleReference("24A") { value, other -> value % other == 0L },
     "33D" to simpleClue { hasUniqueDigits(3)(it) && it.digits().map(Int::toLong).all { it > 0 && isSquare(it) } },
@@ -116,22 +118,6 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
 private fun sixDown(value: Long): Boolean {
     val digits = value.digits()
     return digits.indices.all { i -> digits.count { it == i } == digits[i] }
-}
-
-/**
- * Subtract 8D from 35A then multiply by 17A
- */
-class ThirteenAcross(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
-    private val d8 = lookupAnswer(ClueId(8, Orientation.DOWN))
-    private val a35 = lookupAnswer(ClueId(35, Orientation.ACROSS))
-    private val a17 = lookupAnswer(ClueId(17, Orientation.ACROSS))
-
-    override fun totalCombinations(solutionCombos: Long) = solutionCombos
-
-    override fun check(value: Long) =
-        if (d8 != null && a35 != null && a17 != null) {
-            value == (a35 - d8) * a17
-        } else true
 }
 
 /**

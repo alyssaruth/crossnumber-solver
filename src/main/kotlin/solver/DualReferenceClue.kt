@@ -17,7 +17,8 @@ class DualReferenceClue(
         val aValues = lookupAnswers(clueA) ?: return null
         val bValues = lookupAnswers(clueB) ?: return null
 
-        if (aValues.size * bValues.size > RAM_THRESHOLD) {
+        val totalSize = aValues.size.toBigInteger().times(bValues.size.toBigInteger())
+        if (totalSize > RAM_THRESHOLD.toBigInteger()) {
             return null
         }
 

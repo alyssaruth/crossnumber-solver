@@ -14,7 +14,6 @@ import maths.isPrime
 import maths.isSquare
 import maths.isTriangleNumber
 import maths.nextPrime
-import maths.primeFactors
 import maths.properFactors
 import maths.reversed
 import maths.toRomanNumerals
@@ -24,6 +23,8 @@ import solver.emptyClue
 import solver.factoryCrossnumber
 import solver.simpleClue
 import solver.simpleReference
+import solver.singleReferenceEquals
+import solver.tripleReference
 import kotlin.math.pow
 
 /**
@@ -80,12 +81,12 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "39A" to simpleClue(::isSquare), // TODO - Also tetrahedral
     "40A" to emptyClue(), // TODO - The smallest even number, n, such that 2^n − 2 is properly divisible by n
 
-    "1D" to simpleReference("32D") { value, other -> value == properFactors(other).sum() },
+    "1D" to singleReferenceEquals("32D") { other -> properFactors(other).sum() },
     "2D" to simpleClue(hasDigitSum(8)),
     "3D" to dualReference("34D", "12A", Long::plus),
     "4D" to simpleClue(::fourDown),
     "5D" to simpleReference("2D") { value, other -> value.digitSum().toLong() == other },
-    "6D" to emptyClue(), // TODO - The sum of 32D, 35A and 1A
+    "6D" to tripleReference("32D", "35A", "1A") { d32, a35, a1 -> d32 + a35 + a1 },
     "8D" to simpleClue(::isPrime),
     "10D" to emptyClue(), // TODO - The number of sequences of 16 (strictly) positive numbers such that each number is one more, one less or the same as the previous number and the first and last numbers are either 1 or 2
     "11D" to simpleClue(::isPalindrome),
@@ -95,11 +96,11 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "19D" to simpleClue(::isAbundant),
     "20D" to emptyClue(), // TODO - The number of degrees Fahrenheit between the boiling and freezing points of water
     "21D" to simpleClue { value -> value.digitCounts().let { it.size == 2 && it.values.contains(1) } },
-    "23D" to emptyClue(), // TODO - 15D plus 17A subtract 34D
+    "23D" to tripleReference("15D", "17A", "34D") { d15, a17, d34 -> d15 + a17 - d34 },
     "26D" to simpleClue(hasDigitSum(3)),
     "27D" to simpleReference("25A") { value, other -> isMultipleOf(value)(other) },
     "30D" to simpleClue { !isPalindrome(it) },
-    "32D" to simpleReference("1D") { value, other -> value == properFactors(other).sum() },
+    "32D" to singleReferenceEquals("1D") { other -> properFactors(other).sum() },
     "34D" to simpleClue(::isSquare),
     "37D" to dualReference("27D", "38D", Long::times),
     "38D" to simpleClue(isMultipleOf(10))
