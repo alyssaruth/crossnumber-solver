@@ -6,21 +6,6 @@ import org.junit.jupiter.api.Test
 
 class MathFunctionsTest {
     @Test
-    fun `Should correctly (and performantly) check prime numbers`() {
-        isPrime(2) shouldBe true
-        isPrime(3) shouldBe true
-        isPrime(5) shouldBe true
-        isPrime(7) shouldBe true
-        isPrime(11) shouldBe true
-        isPrime(2772403811878331) shouldBe true
-
-        isPrime(1) shouldBe false
-        isPrime(4) shouldBe false
-        isPrime(9) shouldBe false
-        isPrime(2772403811878333) shouldBe false
-    }
-
-    @Test
     fun `Should correctly (and performantly) identify triangle numbers`() {
         isTriangleNumber(1) shouldBe true
         isTriangleNumber(3) shouldBe true
@@ -73,16 +58,7 @@ class MathFunctionsTest {
         containsDigit(3)(1044) shouldBe false
         containsDigit(5)(1044) shouldBe false
     }
-
-    @Test
-    fun `Should correctly prime factorise`() {
-        19L.primeFactors() shouldBe listOf(19)
-        1024L.primeFactors() shouldBe listOf(2, 2, 2, 2, 2, 2, 2, 2, 2, 2)
-        78204L.primeFactors() shouldBe listOf(2, 2, 3, 7, 7, 7, 19)
-
-        42125857312073.primeFactors() shouldBe listOf(6328831, 6656183)
-    }
-
+    
     @Test
     fun `Should test for square numbers`() {
         isSquare(1) shouldBe true

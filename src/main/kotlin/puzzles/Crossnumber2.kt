@@ -50,6 +50,8 @@ private val grid = """
     .....##.#......
 """.trimIndent()
 
+private val a19Prime = nextPrime(370262)
+
 private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1A" to simpleReference("24A") { value, other -> isMultipleOf(other)(value) },
     "5A" to emptyClue(), // TODO - It is possible to construct a regular polygon with this number of sides using only a ruler and compass.
@@ -60,7 +62,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "13A" to dualReference("30D", "12A", Long::times),
     "16A" to emptyClue(), // TODO - The least number of pence which cannot be made using less than 5 coins
     "17A" to simpleClue { isTriangleNumber(it - 2) },
-    "19A" to simpleClue(isEqualTo(nextPrime(370262) - 370262)),
+    "19A" to simpleClue(isEqualTo(a19Prime - 370262)),
     "21A" to simpleClue(::isPrime),
     "22A" to emptyClue(), // TODO - The smallest number with a (multiplicative) persistence of 11
     "24A" to emptyClue(), // TODO - The lowest number k such that when 3^k is divided by k the remainder is 24

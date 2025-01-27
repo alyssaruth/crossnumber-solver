@@ -7,16 +7,7 @@ import kotlin.math.sqrt
 
 fun isEqualTo(result: Long): Clue = { value -> value == result }
 
-fun isPrime(value: Long): Boolean {
-    if (value == 1L) return false
-    if (value == 2L) return true
-    if (value % 2 == 0L) return false
-
-    val range = 3..(sqrt(value)) step 2
-    return range.all { value % it != 0L }
-}
-
-private fun sqrt(value: Long) = sqrt(value.toDouble()).roundToLong()
+fun sqrtWhole(value: Long) = sqrt(value.toDouble()).roundToLong()
 
 fun isMultipleOf(divisor: Long): Clue = { value -> value % divisor == 0L }
 
@@ -50,33 +41,7 @@ private tailrec fun testTriangleNumber(value: Long, minimum: Long = 1, maximum: 
     }
 }
 
-fun Long.primeFactors(): List<Long> = primeFactorise(this)
-
-private tailrec fun primeFactorise(n: Long, factorsSoFar: List<Long> = emptyList(), p: Long = 2): List<Long> =
-    if (n == 1L)
-        factorsSoFar
-    else if (isMultipleOf(p)(n))
-        primeFactorise(n / p, factorsSoFar + p, p)
-    else
-        primeFactorise(n, factorsSoFar, nextPrime(p))
-
-tailrec fun nextPrime(n: Long): Long {
-    if (n == 2L) return 3L
-
-    val nextCandidate = n + if (n % 2 == 0L) 1 else 2
-    return if (isPrime(nextCandidate)) nextCandidate else nextPrime(nextCandidate)
-}
-
-fun primesUpTo(n: Long, primesSoFar: List<Long> = listOf(2)): List<Long> {
-    val nextPrime = nextPrime(primesSoFar.last())
-    return if (nextPrime > n) {
-        primesSoFar
-    } else {
-        primesUpTo(n, primesSoFar + nextPrime)
-    }
-}
-
-fun isSquare(value: Long) = value == sqrt(value) * sqrt(value)
+fun isSquare(value: Long) = value == sqrtWhole(value) * sqrtWhole(value)
 
 fun hasUniqueDigits(n: Int): Clue = { value -> value.toString().toCharArray().distinct().size == n }
 
@@ -84,7 +49,8 @@ fun hasDigitSum(n: Int): Clue = { value -> value.digitSum() == n }
 
 fun Long.digitSum() = digits().sum()
 
-fun distinctDivisors(n: Long): Set<Long> = (1..sqrt(n)).filter { n % it == 0L }.flatMap { listOf(it, n / it) }.toSet()
+fun distinctDivisors(n: Long): Set<Long> =
+    (1..sqrtWhole(n)).filter { n % it == 0L }.flatMap { listOf(it, n / it) }.toSet()
 
 fun properFactors(n: Long): Set<Long> = distinctDivisors(n) - n
 
