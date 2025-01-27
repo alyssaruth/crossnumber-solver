@@ -27,7 +27,7 @@ tailrec fun nextPrime(n: Long): Long {
     return if (isPrime(nextCandidate)) nextCandidate else nextPrime(nextCandidate)
 }
 
-fun primesUpTo(n: Long, primesSoFar: List<Long> = listOf(2)): List<Long> {
+tailrec fun primesUpTo(n: Long, primesSoFar: List<Long> = listOf(2)): List<Long> {
     val nextPrime = nextPrime(primesSoFar.last())
     return if (nextPrime > n) {
         primesSoFar
@@ -35,3 +35,5 @@ fun primesUpTo(n: Long, primesSoFar: List<Long> = listOf(2)): List<Long> {
         primesUpTo(n, primesSoFar + nextPrime)
     }
 }
+
+fun countPrimesUpTo(n: Long) = (2..n).filter(::isPrime).size

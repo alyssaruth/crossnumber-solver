@@ -1,10 +1,13 @@
 package puzzles
 
+import maths.countPrimesUpTo
+import maths.degreesToFahrenheit
 import maths.digitCounts
 import maths.digitSum
 import maths.digits
 import maths.distinctDivisors
 import maths.hasDigitSum
+import maths.hasMultiplicativePersistence
 import maths.isAbundant
 import maths.isEqualTo
 import maths.isMultipleOf
@@ -12,6 +15,7 @@ import maths.isPalindrome
 import maths.isPowerOf
 import maths.isPrime
 import maths.isSquare
+import maths.isTetrahedralNumber
 import maths.isTriangleNumber
 import maths.nextPrime
 import maths.properFactors
@@ -21,6 +25,7 @@ import solver.ClueConstructor
 import solver.dualReference
 import solver.emptyClue
 import solver.factoryCrossnumber
+import solver.plus
 import solver.simpleClue
 import solver.simpleReference
 import solver.singleReferenceEquals
@@ -31,7 +36,14 @@ import kotlin.math.pow
  * https://chalkdustmagazine.com/regulars/crossnumber/100-prize-crossnumber-issue-02/
  */
 fun main() {
-    factoryCrossnumber(grid, clueMap).solve()
+    val primeThread = Thread { primesUpToOneHundredMillion = countPrimesUpTo(100_000_000).toLong() }
+    primeThread.start()
+    val attemptOne = factoryCrossnumber(grid, clueMap).solve()
+    if (primesUpToOneHundredMillion == -1L) {
+        println("Waiting for primes calculation...")
+        primeThread.join()
+        attemptOne.solve()
+    }
 }
 
 private val grid = """
@@ -54,6 +66,8 @@ private val grid = """
 
 private val a19Prime = nextPrime(370262)
 
+private var primesUpToOneHundredMillion = -1L
+
 private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1A" to simpleReference("24A") { value, other -> isMultipleOf(other)(value) },
     "5A" to emptyClue(), // TODO - It is possible to construct a regular polygon with this number of sides using only a ruler and compass.
@@ -62,11 +76,11 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "11A" to simpleReference("4D") { value, other -> other.toString().substring(0, 4) == value.toString() },
     "12A" to simpleClue(::isPrime),
     "13A" to dualReference("30D", "12A", Long::times),
-    "16A" to emptyClue(), // TODO - The least number of pence which cannot be made using less than 5 coins
+    "16A" to simpleClue(isEqualTo(38)),
     "17A" to simpleClue { isTriangleNumber(it - 2) },
     "19A" to simpleClue(isEqualTo(a19Prime - 370262)),
     "21A" to simpleClue(::isPrime),
-    "22A" to emptyClue(), // TODO - The smallest number with a (multiplicative) persistence of 11
+    "22A" to simpleClue(hasMultiplicativePersistence(11)), // TODO - The smallest number with a (multiplicative) persistence of 11
     "24A" to emptyClue(), // TODO - The lowest number k such that when 3^k is divided by k the remainder is 24
     "25A" to simpleClue { toRomanNumerals(it).toCharArray().sorted().joinToString("") == "CDL" },
     "26A" to emptyClue(), // TODO - A year which began or will begin on a Wednesday
@@ -77,8 +91,8 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
         other.toString().reversed().substring(0, 4).reversed() == value.toString()
     },
     "35A" to emptyClue(), // TODO - The minimum number of knights needed so that each square on a chessboard is either occupied or attacked by a knight.
-    "36A" to emptyClue(), // TODO - The number of primes less than 100,000,000
-    "39A" to simpleClue(::isSquare), // TODO - Also tetrahedral
+    "36A" to simpleClue { if (primesUpToOneHundredMillion == -1L) true else it == primesUpToOneHundredMillion },
+    "39A" to simpleClue(::isSquare) + simpleClue(::isTetrahedralNumber),
     "40A" to emptyClue(), // TODO - The smallest even number, n, such that 2^n − 2 is properly divisible by n
 
     "1D" to singleReferenceEquals("32D") { other -> properFactors(other).sum() },
@@ -94,7 +108,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "15D" to dualReference("28A", "5D") { a28, d5 -> a28 * d5.reversed() },
     "18D" to simpleClue(isPowerOf(3)),
     "19D" to simpleClue(::isAbundant),
-    "20D" to emptyClue(), // TODO - The number of degrees Fahrenheit between the boiling and freezing points of water
+    "20D" to simpleClue { it == degreesToFahrenheit(100) - degreesToFahrenheit(0) },
     "21D" to simpleClue { value -> value.digitCounts().let { it.size == 2 && it.values.contains(1) } },
     "23D" to tripleReference("15D", "17A", "34D") { d15, a17, d34 -> d15 + a17 - d34 },
     "26D" to simpleClue(hasDigitSum(3)),

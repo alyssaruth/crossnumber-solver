@@ -1,7 +1,6 @@
 package maths
 
 import solver.Clue
-import java.math.BigInteger
 import kotlin.math.roundToLong
 import kotlin.math.sqrt
 
@@ -22,6 +21,17 @@ private tailrec fun isPowerOf(x: Long, value: Long): Boolean =
         isPowerOf(x, value / x)
     }
 
+fun hasMultiplicativePersistence(persistence: Int): Clue = { value -> multiplicativePersistence(value) == persistence }
+
+tailrec fun multiplicativePersistence(n: Long, persistenceSoFar: Int = 0): Int {
+    val digits = n.digits()
+    return if (digits.size == 1) {
+        persistenceSoFar
+    } else {
+        multiplicativePersistence(digits.product(), persistenceSoFar + 1)
+    }
+}
+
 fun List<Int>.product() = fold(1, Long::times)
 
 fun Long.reversed(): Long = toString().reversed().toLong()
@@ -34,23 +44,13 @@ fun Long.digitCounts() = digits().groupBy { it }.mapValues { it.value.size }
 
 fun containsDigit(digit: Int): Clue = { value -> value.digits().contains(digit) }
 
-fun isTriangleNumber(value: Long): Boolean = testTriangleNumber(value)
+fun isTriangleNumber(value: Long): Boolean =
+    binarySearch(value, { it.times(it.plus(1.toBigInteger())).divide(2.toBigInteger()) })
 
-private tailrec fun testTriangleNumber(value: Long, minimum: Long = 1, maximum: Long = value): Boolean {
-    val candidate = ((maximum + minimum) / 2)
-    val triangleNumber = candidate.toBigInteger().times((candidate + 1).toBigInteger()).divide(2.toBigInteger())
-
-    val diff = triangleNumber.subtract(value.toBigInteger())
-    return if (diff == BigInteger.ZERO) {
-        true
-    } else if (candidate == maximum || candidate == minimum) {
-        false
-    } else if (diff.signum() == 1) {
-        testTriangleNumber(value, minimum, candidate)
-    } else {
-        testTriangleNumber(value, candidate, maximum)
-    }
-}
+fun isTetrahedralNumber(value: Long): Boolean =
+    binarySearch(
+        value,
+        { it.times(it.plus(1.toBigInteger())).times(it.plus(2.toBigInteger())).divide(6.toBigInteger()) })
 
 fun isSquare(value: Long) = value == sqrtWhole(value) * sqrtWhole(value)
 

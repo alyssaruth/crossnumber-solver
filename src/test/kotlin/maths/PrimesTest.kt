@@ -49,4 +49,12 @@ class PrimesTest {
         primesUpTo(10) shouldBe listOf(2, 3, 5, 7)
         primesUpTo(50) shouldBe listOf(2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47)
     }
+
+    @Test
+    fun `Should count primes up to a limit`() {
+        countPrimesUpTo(2) shouldBe 1
+        countPrimesUpTo(10) shouldBe 4
+
+        countPrimesUpTo(100_000_000) shouldBe 5761455
+    }
 }

@@ -6,6 +6,22 @@ import org.junit.jupiter.api.Test
 
 class MathFunctionsTest {
     @Test
+    fun `Should correctly compute multiplicative persistence`() {
+        multiplicativePersistence(1) shouldBe 0
+        multiplicativePersistence(10) shouldBe 1
+        multiplicativePersistence(25) shouldBe 2
+        multiplicativePersistence(39) shouldBe 3
+        multiplicativePersistence(77) shouldBe 4
+        multiplicativePersistence(679) shouldBe 5
+        multiplicativePersistence(6788) shouldBe 6
+        multiplicativePersistence(68889) shouldBe 7
+        multiplicativePersistence(2677889) shouldBe 8
+        multiplicativePersistence(26888999) shouldBe 9
+        multiplicativePersistence(3778888999) shouldBe 10
+        multiplicativePersistence(277777788888899) shouldBe 11
+    }
+
+    @Test
     fun `Should correctly (and performantly) identify triangle numbers`() {
         isTriangleNumber(1) shouldBe true
         isTriangleNumber(3) shouldBe true
@@ -19,6 +35,22 @@ class MathFunctionsTest {
         isTriangleNumber(11) shouldBe false
         isTriangleNumber(125000249999) shouldBe false
         isTriangleNumber(125000250001) shouldBe false
+    }
+
+    @Test
+    fun `Should correctly (and performantly) identify tetrahedral numbers`() {
+        isTetrahedralNumber(1) shouldBe true
+        isTetrahedralNumber(4) shouldBe true
+        isTetrahedralNumber(10) shouldBe true
+        isTetrahedralNumber(20) shouldBe true
+        isTetrahedralNumber(35) shouldBe true
+        isTetrahedralNumber(166671666700000) shouldBe true // 100,000th
+
+        isTetrahedralNumber(2) shouldBe false
+        isTetrahedralNumber(9) shouldBe false
+        isTetrahedralNumber(11) shouldBe false
+        isTetrahedralNumber(166671666699999) shouldBe false
+        isTetrahedralNumber(166671666700001) shouldBe false
     }
 
     @Test
