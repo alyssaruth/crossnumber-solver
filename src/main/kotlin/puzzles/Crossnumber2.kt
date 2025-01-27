@@ -10,7 +10,6 @@ import maths.hasDigitSum
 import maths.hasMultiplicativePersistence
 import maths.inPence
 import maths.isAbundant
-import maths.isEqualTo
 import maths.isEven
 import maths.isMultipleOf
 import maths.isPalindrome
@@ -28,6 +27,7 @@ import solver.ClueConstructor
 import solver.LOOP_THRESHOLD
 import solver.clue.dualReference
 import solver.clue.emptyClue
+import solver.clue.isEqualTo
 import solver.clue.minimumOf
 import solver.factoryCrossnumber
 import solver.clue.plus
@@ -85,9 +85,9 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "11A" to simpleReference("4D") { value, other -> other.toString().substring(0, 4) == value.toString() },
     "12A" to simpleClue(::isPrime) + dualReference("3D", "34D", Long::minus),
     "13A" to dualReference("30D", "12A", Long::times),
-    "16A" to simpleClue(isEqualTo(a16.toLong())),
+    "16A" to isEqualTo(a16.toLong()),
     "17A" to simpleClue { isTriangleNumber(it + 2) },
-    "19A" to simpleClue(isEqualTo(a19Prime - 370262)),
+    "19A" to isEqualTo(a19Prime - 370262),
     "21A" to simpleClue(::isPrime),
     "22A" to minimumOf(simpleClue(hasMultiplicativePersistence(11))),
     "24A" to emptyClue(), // TODO - The lowest number k such that when 3^k is divided by k the remainder is 24
@@ -99,7 +99,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "33A" to simpleReference("4D") { value, other ->
         other.toString().reversed().substring(0, 4).reversed() == value.toString()
     },
-    "35A" to simpleClue(isEqualTo(12)), // https://en.wikipedia.org/wiki/Mathematical_chess_problem#Domination_problems
+    "35A" to isEqualTo(12), // https://en.wikipedia.org/wiki/Mathematical_chess_problem#Domination_problems
     "36A" to simpleClue { if (primesUpToOneHundredMillion == -1L) true else it == primesUpToOneHundredMillion },
     "39A" to simpleClue(::isSquare) + simpleClue(::isTetrahedralNumber),
     "40A" to simpleClue(isEven), // TODO - The smallest even number, n, such that 2^n − 2 is properly divisible by n
@@ -111,13 +111,13 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "5D" to simpleReference("2D") { value, other -> value.digitSum().toLong() == other },
     "6D" to tripleReference("32D", "35A", "1A") { d32, a35, a1 -> d32 + a35 + a1 },
     "8D" to simpleClue(::isPrime),
-    "10D" to simpleClue(isEqualTo(d10)),
+    "10D" to isEqualTo(d10),
     "11D" to simpleClue(::isPalindrome),
     "14D" to simpleClue { value -> (2 * value).reversed() == value + 2 },
     "15D" to dualReference("28A", "5D") { a28, d5 -> a28 * d5.reversed() },
     "18D" to simpleClue(isPowerOf(3)),
     "19D" to simpleClue(::isAbundant),
-    "20D" to simpleClue(isEqualTo(degreesToFahrenheit(100) - degreesToFahrenheit(0))),
+    "20D" to isEqualTo(degreesToFahrenheit(100) - degreesToFahrenheit(0)),
     "21D" to simpleClue { value -> value.digitCounts().let { it.size == 2 && it.values.contains(1) } },
     "23D" to tripleReference("15D", "17A", "34D") { d15, a17, d34 -> d15 + a17 - d34 },
     "26D" to simpleClue(hasDigitSum(3)),

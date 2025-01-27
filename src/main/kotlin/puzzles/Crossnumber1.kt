@@ -6,7 +6,6 @@ import maths.digitCounts
 import maths.digits
 import maths.hasDigitSum
 import maths.hasUniqueDigits
-import maths.isEqualTo
 import maths.isFibonacci
 import maths.isMultipleOf
 import maths.isPalindrome
@@ -29,6 +28,7 @@ import solver.PartialSolution
 import solver.PendingSolution
 import solver.RAM_THRESHOLD
 import solver.clue.dualReference
+import solver.clue.isEqualTo
 import solver.factoryCrossnumber
 import solver.clue.plus
 import solver.clue.simpleClue
@@ -80,11 +80,11 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "20A" to singleReferenceEquals("30A") { it + 5134240 },
     "22A" to simpleClue { value -> consecutivePrimeSums.contains(value) },
     "23A" to simpleClue { toRomanNumerals(it).toCharArray().sorted().joinToString("") == "ILXXX" },
-    "24A" to simpleClue(isEqualTo(733626510400L.primeFactors().max())),
+    "24A" to isEqualTo(733626510400L.primeFactors().max()),
     "25A" to simpleClue(::isSquare),
     "27A" to singleReferenceEquals("7A") { it.digits().product() },
     "28A" to simpleClue(isMultipleOf(107)),
-    "30A" to simpleClue(isEqualTo(Instant.parse("1970-01-02T01:29:41+00:00").epochSeconds)),
+    "30A" to isEqualTo(Instant.parse("1970-01-02T01:29:41+00:00").epochSeconds),
     "32A" to simpleClue { a32Options.contains(it) },
     "35A" to simpleClue { value -> value == 1 + (3 * value.reversed()) },
     "36A" to simpleClue { value -> value.digitCounts().let { it.size == 2 && it.values.contains(1) } },
@@ -101,10 +101,10 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "12D" to simpleClue { 3 * "1$it".toLong() == "${it}1".toLong() },
     "13D" to simpleReference("15A") { value, other -> isPerfect(value * other) },
     "14D" to ::FourteenDown,
-    "17D" to simpleClue(isEqualTo(42)),
+    "17D" to isEqualTo(42),
     "18D" to simpleClue(isMultipleOf(5)) + dualReference("1A", "4D", Long::div),
     "21D" to ::TwentyOneDown,
-    "26D" to simpleClue(isEqualTo(4 + 8 + 6 + 20 + 12)),
+    "26D" to isEqualTo(4 + 8 + 6 + 20 + 12),
     "27D" to singleReferenceEquals("29D") { it + 2 },
     "29D" to simpleClue { it.toString().first() == it.toString().last() },
     "31D" to simpleReference("24A") { value, other -> value % other == 0L },

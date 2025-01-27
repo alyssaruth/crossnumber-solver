@@ -4,8 +4,6 @@ import solver.Clue
 import kotlin.math.roundToLong
 import kotlin.math.sqrt
 
-fun isEqualTo(result: Long): Clue = { value -> value == result }
-
 fun sqrtWhole(value: Long) = sqrt(value.toDouble()).roundToLong()
 
 fun isMultipleOf(divisor: Long): Clue = { value -> value % divisor == 0L }

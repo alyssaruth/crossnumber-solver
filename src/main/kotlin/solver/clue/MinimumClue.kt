@@ -12,3 +12,5 @@ class MinimumClue(private val clue: BaseClue) : BaseClue() {
 }
 
 fun minimumOf(other: ClueConstructor): ClueConstructor = { crossnumber -> MinimumClue(other(crossnumber)) }
+
+fun isEqualTo(answer: Long): ClueConstructor = minimumOf(simpleClue { value -> value == answer })
