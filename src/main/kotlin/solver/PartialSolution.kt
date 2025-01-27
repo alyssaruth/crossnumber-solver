@@ -8,7 +8,7 @@ data class PartialSolution(
     override val clue: ClueConstructor,
     val possibilities: List<Long>
 ) : ISolution {
-    
+
     override fun possibilityCount(digitMap: Map<Point, List<Int>>) = possibilities.size.toLong()
 
     override fun iterate(clueId: ClueId, crossnumber: Crossnumber): Crossnumber {
@@ -58,8 +58,9 @@ data class PartialSolution(
      */
     private fun applyClue(crossnumber: Crossnumber): PartialSolution {
         val constructedClue = clue(crossnumber)
+
         val filtered = possibilities.filter { possibility ->
-            constructedClue.check(possibility)
+            constructedClue.attemptCheck(possibilities.size.toLong(), crossnumber, possibility)
         }
 
         return PartialSolution(squares, clue, filtered)

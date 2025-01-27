@@ -11,6 +11,17 @@ fun sqrtWhole(value: Long) = sqrt(value.toDouble()).roundToLong()
 
 fun isMultipleOf(divisor: Long): Clue = { value -> value % divisor == 0L }
 
+fun isPowerOf(x: Long): Clue = { isPowerOf(x, it) }
+
+private tailrec fun isPowerOf(x: Long, value: Long): Boolean =
+    if (value == x) {
+        true
+    } else if (!isMultipleOf(x)(value)) {
+        false
+    } else {
+        isPowerOf(x, value / x)
+    }
+
 fun List<Int>.product() = fold(1, Long::times)
 
 fun Long.reversed(): Long = toString().reversed().toLong()

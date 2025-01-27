@@ -9,6 +9,7 @@ import maths.isAbundant
 import maths.isEqualTo
 import maths.isMultipleOf
 import maths.isPalindrome
+import maths.isPowerOf
 import maths.isPrime
 import maths.isSquare
 import maths.isTriangleNumber
@@ -90,7 +91,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "11D" to simpleClue(::isPalindrome),
     "14D" to simpleClue { value -> (2 * value).reversed() == value + 2 },
     "15D" to dualReference("28A", "5D") { a28, d5 -> a28 * d5.reversed() },
-    "18D" to simpleClue { isMultipleOf(3)(it) && it.primeFactors().distinct() == listOf(3) },
+    "18D" to simpleClue(isPowerOf(3)),
     "19D" to simpleClue(::isAbundant),
     "20D" to emptyClue(), // TODO - The number of degrees Fahrenheit between the boiling and freezing points of water
     "21D" to simpleClue { value -> value.digitCounts().let { it.size == 2 && it.values.contains(1) } },

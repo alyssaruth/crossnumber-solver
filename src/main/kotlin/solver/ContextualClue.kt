@@ -3,7 +3,17 @@ package solver
 abstract class BaseClue {
     open val onSolve: ((Long) -> Crossnumber)? = null
 
+    abstract fun totalCombinations(solutionCombos: Long): Long
+
     abstract fun check(value: Long): Boolean
+
+    fun attemptCheck(solutionCombos: Long, crossnumber: Crossnumber, value: Long): Boolean {
+        if (totalCombinations(solutionCombos) > crossnumber.loopThreshold) {
+            return true
+        }
+
+        return check(value)
+    }
 }
 
 abstract class ContextualClue(protected val crossnumber: Crossnumber) : BaseClue() {

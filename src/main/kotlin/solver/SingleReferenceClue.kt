@@ -2,12 +2,19 @@ package solver
 
 class SingleReferenceClue(
     crossnumber: Crossnumber,
-    private val otherClueId: ClueId,
+    otherClueId: ClueId,
     private val checker: (Long, Long) -> Boolean
 ) : ContextualClue(crossnumber) {
 
+    private val otherSolution = crossnumber.solutions.getValue(otherClueId)
+
+    override fun totalCombinations(solutionCombos: Long) = when (otherSolution) {
+        is PendingSolution -> solutionCombos
+        is PartialSolution -> otherSolution.possibilities.size * solutionCombos
+    }
+
     override fun check(value: Long) =
-        when (val otherSolution = crossnumber.solutions.getValue(otherClueId)) {
+        when (otherSolution) {
             is PendingSolution -> true
             is PartialSolution -> otherSolution.possibilities.any { checker(value, it) }
         }

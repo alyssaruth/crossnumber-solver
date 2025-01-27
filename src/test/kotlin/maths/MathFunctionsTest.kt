@@ -58,7 +58,7 @@ class MathFunctionsTest {
         containsDigit(3)(1044) shouldBe false
         containsDigit(5)(1044) shouldBe false
     }
-    
+
     @Test
     fun `Should test for square numbers`() {
         isSquare(1) shouldBe true
@@ -152,5 +152,14 @@ class MathFunctionsTest {
         reverseFactorial(6) shouldBe 3
 
         reverseFactorial(7) shouldBe null
+    }
+
+    @Test
+    fun `Should test being a power of a number`() {
+        isPowerOf(3)(3) shouldBe true
+        isPowerOf(3)(9) shouldBe true
+        isPowerOf(3)(27) shouldBe true
+        isPowerOf(3)(27) shouldBe true
+        isPowerOf(3)(1594323) shouldBe true
     }
 }

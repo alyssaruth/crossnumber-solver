@@ -32,7 +32,7 @@ data class PendingSolution(
         }
 
         val digitList = squares.map(digitMap::getValue)
-        val possibilities = attemptToComputePossibilities(clue(crossnumber), digitList)
+        val possibilities = attemptToComputePossibilities(clue(crossnumber), digitList, possibilityCount, crossnumber)
             ?: return crossnumber.replaceSolution(clueId, PendingSolution(squares, clue, possibilityCount))
 
         return PartialSolution(squares, clue, possibilities).iterate(clueId, crossnumber)
@@ -41,6 +41,8 @@ data class PendingSolution(
     private tailrec fun attemptToComputePossibilities(
         clue: BaseClue,
         digitList: List<List<Int>>,
+        possibilities: Long,
+        crossnumber: Crossnumber,
         currentValueStr: String? = startingValue(digitList),
         possibleSoFar: MutableList<Long> = mutableListOf()
     ): List<Long>? {
@@ -53,13 +55,15 @@ data class PendingSolution(
         }
 
         val currentValue = currentValueStr.toLong()
-        if (clue.check(currentValue)) {
+        if (clue.attemptCheck(possibilities, crossnumber, currentValue)) {
             possibleSoFar.add(currentValue)
         }
 
         return attemptToComputePossibilities(
             clue,
             digitList,
+            possibilities,
+            crossnumber,
             nextValue(digitList, currentValueStr),
             possibleSoFar
         )

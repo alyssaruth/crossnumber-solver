@@ -126,6 +126,8 @@ class ThirteenAcross(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
     private val a35 = lookupAnswer(ClueId(35, Orientation.ACROSS))
     private val a17 = lookupAnswer(ClueId(17, Orientation.ACROSS))
 
+    override fun totalCombinations(solutionCombos: Long) = solutionCombos
+
     override fun check(value: Long) =
         if (d8 != null && a35 != null && a17 != null) {
             value == (a35 - d8) * a17
@@ -140,6 +142,8 @@ class FourDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
     private val myLength = crossnumber.solutions.getValue(id).squares.size
 
     private val potentialSolutions = computePotentialSolutions()
+
+    override fun totalCombinations(solutionCombos: Long) = solutionCombos
 
     override fun check(value: Long) = potentialSolutions?.contains(value) ?: true
 
@@ -177,6 +181,8 @@ class FourDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
 class FourteenDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
     private val d17s = lookupAnswers(ClueId(17, Orientation.DOWN))
     private val a16s = lookupAnswers(ClueId(16, Orientation.ACROSS))
+
+    override fun totalCombinations(solutionCombos: Long) = solutionCombos
 
     override val onSolve = { solution: Long ->
         val d17 = lookupAnswer(ClueId(17, Orientation.DOWN))
@@ -231,6 +237,8 @@ class FourteenDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
  */
 class TwentyOneDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
     private val candidates = calculatePossibilities()
+
+    override fun totalCombinations(solutionCombos: Long) = solutionCombos
 
     override val onSolve = { solution: Long ->
         val clueId = ClueId(solution.toInt(), Orientation.DOWN)
