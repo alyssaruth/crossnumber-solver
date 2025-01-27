@@ -1,4 +1,6 @@
-package solver
+package solver.clue
+
+import solver.ClueConstructor
 
 class CombinedClue(private val clueOne: BaseClue, private val clueTwo: BaseClue) : BaseClue() {
     override fun check(value: Long) = clueOne.check(value) && clueTwo.check(value)

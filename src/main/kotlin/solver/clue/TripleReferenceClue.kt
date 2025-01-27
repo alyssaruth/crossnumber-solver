@@ -1,4 +1,9 @@
-package solver
+package solver.clue
+
+import solver.ClueConstructor
+import solver.ClueId
+import solver.Crossnumber
+import solver.RAM_THRESHOLD
 
 class TripleReferenceClue(
     crossnumber: Crossnumber,

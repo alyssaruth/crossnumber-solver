@@ -1,4 +1,8 @@
-package solver
+package solver.clue
+
+import solver.ClueConstructor
+import solver.ClueId
+import solver.Crossnumber
 
 class SingleReferenceEqualityClue(
     crossnumber: Crossnumber,

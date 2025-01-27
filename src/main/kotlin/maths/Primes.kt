@@ -1,5 +1,7 @@
 package maths
 
+import kotlin.math.log2
+
 fun isPrime(value: Long): Boolean {
     if (value == 1L) return false
     if (value == 2L) return true
@@ -37,3 +39,10 @@ tailrec fun primesUpTo(n: Long, primesSoFar: List<Long> = listOf(2)): List<Long>
 }
 
 fun countPrimesUpTo(n: Long) = (2..n).filter(::isPrime).size
+
+/**
+ * Of the form 2^(2^k) + 1 for some k
+ * https://oeis.org/A019434
+ */
+fun isFermatPrime(p: Long) =
+    isPowerOf(2)(p - 1) && isPowerOf(2)(log2((p - 1).toDouble()).toLong()) && isPrime(p)

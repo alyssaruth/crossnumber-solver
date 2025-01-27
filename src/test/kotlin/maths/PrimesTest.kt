@@ -1,5 +1,6 @@
 package maths
 
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -56,5 +57,10 @@ class PrimesTest {
         countPrimesUpTo(10) shouldBe 4
 
         countPrimesUpTo(100_000_000) shouldBe 5761455
+    }
+
+    @Test
+    fun `Should identfy Fermat primes`() {
+        primesUpTo(100000).filter(::isFermatPrime) shouldContainExactly listOf(3, 5, 17, 257, 65537)
     }
 }

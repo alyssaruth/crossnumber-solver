@@ -1,5 +1,7 @@
 package solver
 
+import solver.clue.BaseClue
+import solver.clue.emptyClue
 import kotlin.math.roundToLong
 
 typealias Clue = (candidate: Long) -> Boolean
@@ -52,8 +54,14 @@ data class Crossnumber(
         // Always try smallest stuff first, because narrowing those down may reduce the search space for bigger stuff
         val prioritisedKeys = solutions.entries.sortedBy { it.value.possibilityCount(digitMap) }.map { it.key }
         val newCrossnumber = prioritisedKeys.fold(this) { crossnumber, clueId ->
-            val solution = crossnumber.solutions.getValue(clueId)
-            crossnumber.iterateSolution(clueId, solution)
+            try {
+                val solution = crossnumber.solutions.getValue(clueId)
+                crossnumber.iterateSolution(clueId, solution)
+            } catch (e: Exception) {
+                println("Caught an exception, aborting.")
+                crossnumber.dumpFailureInfo(startTime)
+                throw e
+            }
         }
 
         if (newCrossnumber.isSolved()) {
@@ -71,22 +79,26 @@ data class Crossnumber(
             }
 
             println("Made no progress on latest pass, exiting.")
-            println("------------------------------------------")
-            println(newCrossnumber.completionString())
-            println("------------------------------------------")
-            newCrossnumber.solutions.filterValues { !it.isSolved() }.forEach { id, soln ->
-                val options =
-                    if (soln is PartialSolution && soln.possibilities.size < 100) " - ${soln.possibilities}" else ""
-                println("$id: ${soln.status()}$options")
-            }
-            println("------------------------------------------")
-            println(newCrossnumber.substituteKnownDigits().prettyString())
-            println("------------------------------------------")
-            println("Time elapsed: ${(System.currentTimeMillis() - startTime) / 1000}s")
+            newCrossnumber.dumpFailureInfo(startTime)
             return newCrossnumber
         }
 
         return newCrossnumber.solve(pass + 1, startTime)
+    }
+
+    fun dumpFailureInfo(startTime: Long) {
+        println("------------------------------------------")
+        println(completionString())
+        println("------------------------------------------")
+        solutions.filterValues { !it.isSolved() }.forEach { id, soln ->
+            val options =
+                if (soln is PartialSolution && soln.possibilities.size < 100) " - ${soln.possibilities}" else ""
+            println("$id: ${soln.status()}$options")
+        }
+        println("------------------------------------------")
+        println(substituteKnownDigits().prettyString())
+        println("------------------------------------------")
+        println("Time elapsed: ${(System.currentTimeMillis() - startTime) / 1000}s")
     }
 
     private fun completionString(): String {

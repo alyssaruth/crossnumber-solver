@@ -8,6 +8,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import maths.isMultipleOf
 import maths.isPrime
+import solver.clue.emptyClue
+import solver.clue.simpleClue
 import kotlin.test.Test
 
 class PendingSolutionTest {

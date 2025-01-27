@@ -1,20 +1,8 @@
-package solver
+package solver.clue
 
-abstract class BaseClue {
-    open val onSolve: ((Long) -> Crossnumber)? = null
-
-    abstract fun totalCombinations(solutionCombos: Long): Long
-
-    abstract fun check(value: Long): Boolean
-
-    fun attemptCheck(solutionCombos: Long, crossnumber: Crossnumber, value: Long): Boolean {
-        if (totalCombinations(solutionCombos) > crossnumber.loopThreshold) {
-            return true
-        }
-
-        return check(value)
-    }
-}
+import solver.ClueId
+import solver.Crossnumber
+import solver.PartialSolution
 
 abstract class ContextualClue(protected val crossnumber: Crossnumber) : BaseClue() {
     protected fun lookupAnswer(clueId: ClueId): Long? {

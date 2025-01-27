@@ -13,7 +13,9 @@ fun isMultipleOf(divisor: Long): Clue = { value -> value % divisor == 0L }
 fun isPowerOf(x: Long): Clue = { isPowerOf(x, it) }
 
 private tailrec fun isPowerOf(x: Long, value: Long): Boolean =
-    if (value == x) {
+    if (value == 0L) {
+        false
+    } else if (value == x || value == 1L) {
         true
     } else if (!isMultipleOf(x)(value)) {
         false
@@ -31,6 +33,8 @@ tailrec fun multiplicativePersistence(n: Long, persistenceSoFar: Int = 0): Int {
         multiplicativePersistence(digits.product(), persistenceSoFar + 1)
     }
 }
+
+val isEven: Clue = isMultipleOf(2L)
 
 fun List<Int>.product() = fold(1, Long::times)
 

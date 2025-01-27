@@ -5,6 +5,9 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import maths.digits
 import maths.isEqualTo
+import solver.clue.emptyClue
+import solver.clue.simpleClue
+import solver.clue.simpleReference
 import kotlin.test.Test
 
 class SingleReferenceClueTest {

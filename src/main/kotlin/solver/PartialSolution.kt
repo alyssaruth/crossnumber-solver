@@ -29,7 +29,9 @@ data class PartialSolution(
         return finalCrossnumber
     }
 
-    override fun status() = if (isSolved()) "solved!" else "${possibilities.size} possibilities"
+    override fun status() =
+        if (isSolved()) "solved! (${possibilities.first()})" else "${possibilities.size} possibilities"
+
     override fun isSolved() = possibilities.size == 1
 
     /**
@@ -59,7 +61,7 @@ data class PartialSolution(
     private fun applyClue(crossnumber: Crossnumber): PartialSolution {
         val constructedClue = clue(crossnumber)
 
-        val filtered = possibilities.filter { possibility ->
+        val filtered = constructedClue.filterFunction(possibilities) { possibility ->
             constructedClue.attemptCheck(possibilities.size.toLong(), crossnumber, possibility)
         }
 

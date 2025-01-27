@@ -1,4 +1,10 @@
-package solver
+package solver.clue
+
+import solver.ClueConstructor
+import solver.ClueId
+import solver.Crossnumber
+import solver.PartialSolution
+import solver.PendingSolution
 
 class SingleReferenceClue(
     crossnumber: Crossnumber,

@@ -22,19 +22,19 @@ import maths.reversed
 import maths.toRomanNumerals
 import solver.ClueConstructor
 import solver.ClueId
-import solver.ContextualClue
+import solver.clue.ContextualClue
 import solver.Crossnumber
 import solver.Orientation
 import solver.PartialSolution
 import solver.PendingSolution
 import solver.RAM_THRESHOLD
-import solver.dualReference
+import solver.clue.dualReference
 import solver.factoryCrossnumber
-import solver.plus
-import solver.simpleClue
-import solver.simpleReference
-import solver.singleReferenceEquals
-import solver.tripleReference
+import solver.clue.plus
+import solver.clue.simpleClue
+import solver.clue.simpleReference
+import solver.clue.singleReferenceEquals
+import solver.clue.tripleReference
 import kotlin.math.abs
 
 /**

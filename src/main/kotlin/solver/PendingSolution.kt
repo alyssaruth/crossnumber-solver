@@ -1,6 +1,8 @@
 package solver
 
 import maths.product
+import solver.clue.BaseClue
+import solver.clue.MinimumClue
 
 // Limits to prevent OOMs or slowness due to doomed loops
 const val EXTREME_LOOP_THRESHOLD = 5_000_000_000
@@ -45,7 +47,7 @@ data class PendingSolution(
         possibilities: Long,
         crossnumber: Crossnumber,
     ): List<Long>? {
-        if (possibilities < 1_000_000) {
+        if (possibilities < 1_000_000 || clue is MinimumClue) {
             return attemptToComputePossibilities(clue, digitList, possibilities, crossnumber, RAM_THRESHOLD)
         }
 
@@ -99,6 +101,11 @@ data class PendingSolution(
         val currentValue = currentValueStr.toLong()
         if (clue.attemptCheck(possibilities, crossnumber, currentValue)) {
             possibleSoFar.add(currentValue)
+
+            // Early exit for a min clue
+            if (clue is MinimumClue) {
+                return possibleSoFar
+            }
         }
 
         return attemptToComputePossibilities(

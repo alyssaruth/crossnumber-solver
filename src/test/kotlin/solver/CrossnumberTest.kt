@@ -5,6 +5,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import maths.isPrime
 import org.junit.jupiter.api.Test
+import solver.clue.simpleClue
 
 class CrossnumberTest {
     @Test
