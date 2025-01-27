@@ -32,10 +32,51 @@ data class PendingSolution(
         }
 
         val digitList = squares.map(digitMap::getValue)
-        val possibilities = attemptToComputePossibilities(clue(crossnumber), digitList, possibilityCount, crossnumber)
-            ?: return crossnumber.replaceSolution(clueId, PendingSolution(squares, clue, possibilityCount))
+        val possibilities =
+            attemptToComputePossibilitiesMultithreaded(clue(crossnumber), digitList, possibilityCount, crossnumber)
+                ?: return crossnumber.replaceSolution(clueId, PendingSolution(squares, clue, possibilityCount))
 
         return PartialSolution(squares, clue, possibilities).iterate(clueId, crossnumber)
+    }
+
+    private fun attemptToComputePossibilitiesMultithreaded(
+        clue: BaseClue,
+        digitList: List<List<Int>>,
+        possibilities: Long,
+        crossnumber: Crossnumber,
+    ): List<Long>? {
+        if (possibilities < 1_000_000) {
+            return attemptToComputePossibilities(clue, digitList, possibilities, crossnumber, RAM_THRESHOLD)
+        }
+
+        val maxDigits = digitList.maxOf { it.size }
+        val digitIndex = digitList.indexOfFirst { it.size == maxDigits }
+        val digits = digitList[digitIndex]
+
+        val results = mutableMapOf<Int, List<Long>?>()
+        val threads = digits.map { myDigit ->
+            Thread {
+                val myDigitList =
+                    digitList.mapIndexed { index, digits -> if (index == digitIndex) listOf(myDigit) else digits }
+
+                results[myDigit] =
+                    attemptToComputePossibilities(
+                        clue,
+                        myDigitList,
+                        possibilities / digits.size,
+                        crossnumber,
+                        RAM_THRESHOLD / digits.size
+                    )
+            }
+        }
+
+        threads.forEach { it.start() }
+        threads.forEach { it.join() }
+
+        val values = results.values
+        if (values.any { it == null }) return null
+
+        return values.filterNotNull().flatten()
     }
 
     private tailrec fun attemptToComputePossibilities(
@@ -43,6 +84,7 @@ data class PendingSolution(
         digitList: List<List<Int>>,
         possibilities: Long,
         crossnumber: Crossnumber,
+        ramThreshold: Int,
         currentValueStr: String? = startingValue(digitList),
         possibleSoFar: MutableList<Long> = mutableListOf()
     ): List<Long>? {
@@ -50,7 +92,7 @@ data class PendingSolution(
             return possibleSoFar
         }
 
-        if (possibleSoFar.size > RAM_THRESHOLD) {
+        if (possibleSoFar.size > ramThreshold) {
             return null
         }
 
@@ -64,6 +106,7 @@ data class PendingSolution(
             digitList,
             possibilities,
             crossnumber,
+            ramThreshold,
             nextValue(digitList, currentValueStr),
             possibleSoFar
         )
