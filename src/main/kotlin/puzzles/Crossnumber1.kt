@@ -18,6 +18,7 @@ import maths.primeFactors
 import maths.primesUpTo
 import maths.product
 import maths.reversed
+import maths.sorted
 import maths.toRomanNumerals
 import solver.ClueConstructor
 import solver.ClueId
@@ -81,7 +82,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "19A" to isFactorOfRef("6D"),
     "20A" to singleReference("30A") { it + 5134240 },
     "22A" to simpleClue { value -> consecutivePrimeSums.contains(value) },
-    "23A" to simpleClue { toRomanNumerals(it).toCharArray().sorted().joinToString("") == "ILXXX" },
+    "23A" to simpleClue { toRomanNumerals(it).sorted() == "ILXXX" },
     "24A" to isEqualTo(733626510400L.primeFactors().max()),
     "25A" to simpleClue(::isSquare),
     "27A" to singleReference("7A") { it.digits().product() },

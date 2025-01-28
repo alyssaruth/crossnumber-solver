@@ -46,11 +46,7 @@ data class Crossnumber(
     val loopThreshold: Long = LOOP_THRESHOLD
 ) {
     fun solve(pass: Int = 1, startTime: Long = System.currentTimeMillis()): Crossnumber {
-        val solved = solutions.values.count(ISolution::isSolved)
-        val solvedStr = if (solved < 10) " $solved" else solved.toString()
-        println("********************")
-        println("* PASS $pass ($solvedStr / ${solutions.size}) *")
-        println("********************")
+        printLoopBanner(pass)
 
         // Always try smallest stuff first, because narrowing those down may reduce the search space for bigger stuff
         val prioritisedKeys = solutions.entries.sortedBy { it.value.possibilityCount(digitMap) }.map { it.key }
@@ -63,7 +59,7 @@ data class Crossnumber(
                 crossnumber.dumpFailureInfo(startTime)
                 throw e
             }
-        }.copy(loopThreshold = LOOP_THRESHOLD)
+        }
 
         if (newCrossnumber.isSolved()) {
             println("------------------------------------------")
@@ -90,15 +86,17 @@ data class Crossnumber(
                 return newCrossnumber.solve(pass + 1, startTime)
             }
 
-            val nextThreshold =
-                solutions.values.filterIsInstance<PendingSolution>()
-                    .map { it.possibilityCount(digitMap) }
-                    .filter { it > loopThreshold }
-                    .minOrNull()
+            val smallestPending = pendingSolutions()
+                .filter {
+                    it.value.possibilityCount(digitMap)
+                        .let { size -> size in (loopThreshold + 1)..MAX_LOOP_THRESHOLD }
+                }
+                .minByOrNull { it.value.possibilityCount(digitMap) }
 
-            if (newCrossnumber.loopThreshold < MAX_LOOP_THRESHOLD && nextThreshold != null && nextThreshold <= MAX_LOOP_THRESHOLD) {
-                println("Made no progress on latest pass: kicking up threshold to $nextThreshold")
-                return newCrossnumber.copy(loopThreshold = nextThreshold).solve(pass + 1, startTime)
+            if (smallestPending != null) {
+                val newThreshold = smallestPending.value.possibilityCount(digitMap)
+                println("Made no progress on latest pass: kicking up threshold to $newThreshold to crack ${smallestPending.key}")
+                return newCrossnumber.copy(loopThreshold = newThreshold).solve(pass + 1, startTime)
             }
 
             println("Made no progress on latest pass, exiting.")
@@ -106,14 +104,22 @@ data class Crossnumber(
             return newCrossnumber
         }
 
-        return newCrossnumber.solve(pass + 1, startTime)
+        return newCrossnumber.copy(loopThreshold = LOOP_THRESHOLD).solve(pass + 1, startTime)
+    }
+
+    private fun printLoopBanner(pass: Int) {
+        val solved = solutions.values.count(ISolution::isSolved)
+        val solvedStr = if (solved < 10) " $solved" else solved.toString()
+        println("********************")
+        println("* PASS $pass ($solvedStr / ${solutions.size}) *")
+        println("********************")
     }
 
     private fun dumpFailureInfo(startTime: Long) {
         println("------------------------------------------")
         println(completionString())
         println("------------------------------------------")
-        solutions.filterValues { !it.isSolved() }.forEach { id, soln ->
+        solutions.filterValues { !it.isSolved() }.forEach { (id, soln) ->
             val options =
                 if (soln is PartialSolution && soln.possibilities.size < 100) " - ${soln.possibilities}" else ""
             println("$id: ${soln.status()}$options")
@@ -139,6 +145,9 @@ data class Crossnumber(
         val percent = (1000 * solutionCount.toDouble() / solutions.size.toDouble()).roundToLong().toDouble() / 10
         return "$solutionCount / ${solutions.size} ($percent%)"
     }
+
+    private fun pendingSolutions(): Map<ClueId, PendingSolution> =
+        solutions.filterValues { it is PendingSolution }.mapValues { it.value as PendingSolution }
 
 
     private fun isSolved() = solutions.values.all(ISolution::isSolved)

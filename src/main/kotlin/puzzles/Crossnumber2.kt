@@ -25,6 +25,7 @@ import maths.nGonIsConstructible
 import maths.nextPrime
 import maths.properFactors
 import maths.reversed
+import maths.sorted
 import maths.toRomanNumerals
 import solver.ClueConstructor
 import solver.clue.asyncEquals
@@ -71,6 +72,9 @@ private val a19Prime = nextPrime(370262)
 
 private val a16 = (10..99).first { inPence(it).size == 5 }
 
+/**
+ * 24A: The lowest number k such that when 3^k is divided by k the remainder is 24 - but seems sufficient to just say it's not a multiple of 3
+ */
 private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1A" to isMultipleOfRef("24A") +
             tripleReference("6D", "32D", "35A") { d6, d32, a35 -> d6 - d32 - a35 },
@@ -85,8 +89,8 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "19A" to isEqualTo(a19Prime - 370262),
     "21A" to simpleClue(::isPrime),
     "22A" to minimumOf(simpleClue(hasMultiplicativePersistence(11))),
-    "24A" to isFactorOfRef("1A"), // TODO - The lowest number k such that when 3^k is divided by k the remainder is 24
-    "25A" to simpleClue { toRomanNumerals(it).toCharArray().sorted().joinToString("") == "CDL" },
+    "24A" to simpleClue { !isMultipleOf(3)(it) } + isFactorOfRef("1A"),
+    "25A" to simpleClue { toRomanNumerals(it).sorted() == "CDL" } + isMultipleOfRef("27D"),
     "26A" to simpleClue { dayOfWeek("$it-01-01") == Calendar.WEDNESDAY },
     "28A" to simpleClue(isMultipleOf(9)),
     "29A" to simpleClue { it.digitCounts().size == 1 },

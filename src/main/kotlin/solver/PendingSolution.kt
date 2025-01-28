@@ -33,16 +33,16 @@ data class PendingSolution(
         }
 
         val digitMap = crossnumber.digitMap
-        val possibilityCount = possibilityCount(digitMap)
-        if (possibilityCount > crossnumber.loopThreshold) {
+        val newPossibilityCount = possibilityCount(digitMap)
+        if (possibilities > crossnumber.loopThreshold) {
             // Not narrowed down enough yet, do nothing
-            return crossnumber.replaceSolution(clueId, PendingSolution(squares, clue, possibilityCount))
+            return crossnumber.replaceSolution(clueId, PendingSolution(squares, clue, newPossibilityCount))
         }
 
         val digitList = squares.map(digitMap::getValue)
         val possibilities =
-            attemptToComputePossibilitiesMultithreaded(clue(crossnumber), digitList, possibilityCount, crossnumber)
-                ?: return crossnumber.replaceSolution(clueId, PendingSolution(squares, clue, possibilityCount))
+            attemptToComputePossibilitiesMultithreaded(clue(crossnumber), digitList, newPossibilityCount, crossnumber)
+                ?: return crossnumber.replaceSolution(clueId, PendingSolution(squares, clue, newPossibilityCount))
 
         return PartialSolution(squares, clue, possibilities).iterate(clueId, crossnumber)
     }
