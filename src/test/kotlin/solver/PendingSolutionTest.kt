@@ -129,6 +129,6 @@ class PendingSolutionTest {
         newSolution.possibilities.size shouldBe 864000
     }
 
-    private fun dummyCrossnumber(digitMap: Map<Point, List<Int>>): Crossnumber =
+    private fun dummyCrossnumber(digitMap: DigitMap): Crossnumber =
         Crossnumber(parseGrid(VALID_GRID), digitMap, emptyMap())
 }

@@ -18,13 +18,13 @@ data class PendingSolution(
     override val clue: ClueConstructor,
     private val possibilities: Long
 ) : ISolution {
-    constructor(squares: List<Point>, clue: ClueConstructor, digitMap: Map<Point, List<Int>>) : this(
+    constructor(squares: List<Point>, clue: ClueConstructor, digitMap: DigitMap) : this(
         squares,
         clue,
         computePossibilities(squares, digitMap)
     )
 
-    override fun possibilityCount(digitMap: Map<Point, List<Int>>) = computePossibilities(squares, digitMap)
+    override fun possibilityCount(digitMap: DigitMap) = computePossibilities(squares, digitMap)
 
     override fun iterate(clueId: ClueId, crossnumber: Crossnumber): Crossnumber {
         val actualClue = clue(crossnumber)
@@ -127,7 +127,7 @@ data class PendingSolution(
 
 
     companion object {
-        private fun computePossibilities(squares: List<Point>, digitMap: Map<Point, List<Int>>): Long {
+        private fun computePossibilities(squares: List<Point>, digitMap: DigitMap): Long {
             return squares.map { digitMap.getValue(it).size }.product()
         }
 

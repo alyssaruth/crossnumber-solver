@@ -9,6 +9,8 @@ typealias Clue = (candidate: Long) -> Boolean
 
 typealias ClueConstructor = (crossnumber: Crossnumber) -> BaseClue
 
+typealias DigitMap = Map<Point, List<Int>>
+
 fun factoryCrossnumber(gridString: String, rawClues: Map<String, ClueConstructor>): Crossnumber {
     val clues = rawClues.mapKeys { (clueStr, _) -> ClueId.fromString(clueStr) }
     val grid = parseGrid(gridString)
@@ -31,7 +33,7 @@ fun factoryCrossnumber(gridString: String, rawClues: Map<String, ClueConstructor
     return Crossnumber(grid, digitMap, pendingSolutions)
 }
 
-private fun initialiseDigitMap(solutions: List<Word>): Map<Point, List<Int>> {
+private fun initialiseDigitMap(solutions: List<Word>): DigitMap {
     val allPoints = solutions.flatMap { it.squares }.toSet()
     val leadingSpaces = solutions.map { it.squares.first() }.toSet()
     val nonLeadingSpaces = allPoints - leadingSpaces
@@ -41,7 +43,7 @@ private fun initialiseDigitMap(solutions: List<Word>): Map<Point, List<Int>> {
 
 data class Crossnumber(
     val originalGrid: Grid,
-    val digitMap: Map<Point, List<Int>>,
+    val digitMap: DigitMap,
     val solutions: Map<ClueId, ISolution>,
     val loopThreshold: Long = LOOP_THRESHOLD
 ) {

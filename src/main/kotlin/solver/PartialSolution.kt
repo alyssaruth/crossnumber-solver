@@ -9,7 +9,7 @@ data class PartialSolution(
     val possibilities: List<Long>
 ) : ISolution {
 
-    override fun possibilityCount(digitMap: Map<Point, List<Int>>) = possibilities.size.toLong()
+    override fun possibilityCount(digitMap: DigitMap) = possibilities.size.toLong()
 
     override fun iterate(clueId: ClueId, crossnumber: Crossnumber): Crossnumber {
         val reduced = applyDigitMap(crossnumber.digitMap).applyClue(crossnumber)
@@ -39,7 +39,7 @@ data class PartialSolution(
      *
      * (e.g. perhaps another clue has restricted some digits)
      */
-    private fun applyDigitMap(digitMap: Map<Point, List<Int>>): PartialSolution {
+    private fun applyDigitMap(digitMap: DigitMap): PartialSolution {
         val digitValidator = squares.map(digitMap::getValue)
 
         val filtered = possibilities.filter { possibility ->
@@ -71,7 +71,7 @@ data class PartialSolution(
     /**
      * Step 3: Use our reduced solution space to narrow down the global digit map for other clues
      */
-    private fun restrictDigitMap(digitMap: Map<Point, List<Int>>): Map<Point, List<Int>> {
+    private fun restrictDigitMap(digitMap: DigitMap): DigitMap {
         val possibilityStrings = possibilities.map(Long::toString)
 
         val updates = squares.mapIndexed { ix, square ->

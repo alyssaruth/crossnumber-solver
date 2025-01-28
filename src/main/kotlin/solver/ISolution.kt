@@ -4,7 +4,7 @@ sealed interface ISolution {
     val squares: List<Point>
     val clue: ClueConstructor
 
-    fun possibilityCount(digitMap: Map<Point, List<Int>>): Long
+    fun possibilityCount(digitMap: DigitMap): Long
 
     fun iterate(clueId: ClueId, crossnumber: Crossnumber): Crossnumber
 
