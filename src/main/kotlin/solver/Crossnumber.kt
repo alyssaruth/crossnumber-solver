@@ -1,9 +1,9 @@
 package solver
 
+import logging.red
 import logging.timeTakenString
 import solver.clue.AsyncEqualToClue
 import solver.clue.BaseClue
-import solver.clue.emptyClue
 import kotlin.math.roundToLong
 
 typealias Clue = (candidate: Long) -> Boolean
@@ -11,36 +11,6 @@ typealias Clue = (candidate: Long) -> Boolean
 typealias ClueConstructor = (crossnumber: Crossnumber) -> BaseClue
 
 typealias DigitMap = Map<Point, List<Int>>
-
-fun factoryCrossnumber(gridString: String, rawClues: Map<String, ClueConstructor>): Crossnumber {
-    val clues = rawClues.mapKeys { (clueStr, _) -> ClueId.fromString(clueStr) }
-    val grid = parseGrid(gridString)
-    grid.validate()
-
-    val detectedWords = grid.detectWords()
-    val validIds = detectedWords.map { it.clueId }
-
-    val invalidIds = clues.keys - validIds
-    if (invalidIds.isNotEmpty()) {
-        throw IllegalArgumentException("Invalid clue ID(s): $invalidIds")
-    }
-
-    val digitMap = initialiseDigitMap(detectedWords)
-    val pendingSolutions = detectedWords.associate { word ->
-        val myClues = clues.getOrDefault(word.clueId, emptyClue())
-        word.clueId to PendingSolution(word.squares, myClues, digitMap)
-    }
-
-    return Crossnumber(grid, digitMap, pendingSolutions)
-}
-
-private fun initialiseDigitMap(solutions: List<Word>): DigitMap {
-    val allPoints = solutions.flatMap { it.squares }.toSet()
-    val leadingSpaces = solutions.map { it.squares.first() }.toSet()
-    val nonLeadingSpaces = allPoints - leadingSpaces
-
-    return leadingSpaces.associateWith { (1..9).toList() } + nonLeadingSpaces.associateWith { (0..9).toList() }
-}
 
 data class Crossnumber(
     val originalGrid: Grid,
@@ -58,7 +28,7 @@ data class Crossnumber(
                 val solution = crossnumber.solutions.getValue(clueId)
                 crossnumber.iterateSolution(clueId, solution)
             } catch (e: Exception) {
-                println("Caught an exception, aborting.")
+                println("Caught an exception, aborting.".red())
                 crossnumber.dumpFailureInfo(startTime)
                 throw e
             }
@@ -72,43 +42,11 @@ data class Crossnumber(
             return newCrossnumber
         }
 
-        if (newCrossnumber == this) {
-            val pendingAsyncs = solutions.filterValues {
-                val clue = it.clue(this)
-                clue is AsyncEqualToClue && clue.isPending()
-            }
-
-            if (pendingAsyncs.isNotEmpty()) {
-                println("Made no progress this pass: some async calculations are still outstanding")
-                pendingAsyncs.forEach { (clueId, solution) ->
-                    val asyncWaitStart = System.currentTimeMillis()
-                    print("Awaiting $clueId...")
-                    (solution.clue(this) as AsyncEqualToClue).await()
-                    println(" done!" + timeTakenString(System.currentTimeMillis() - asyncWaitStart))
-                }
-
-                return newCrossnumber.solve(pass + 1, startTime)
-            }
-
-            val smallestPending = pendingSolutions()
-                .filter {
-                    it.value.possibilityCount(digitMap)
-                        .let { size -> size in (loopThreshold + 1)..MAX_LOOP_THRESHOLD }
-                }
-                .minByOrNull { it.value.possibilityCount(digitMap) }
-
-            if (smallestPending != null) {
-                val newThreshold = smallestPending.value.possibilityCount(digitMap)
-                println("Made no progress this pass: kicking up threshold to $newThreshold to crack ${smallestPending.key}")
-                return newCrossnumber.copy(loopThreshold = newThreshold).solve(pass + 1, startTime)
-            }
-
-            println("Made no progress this pass, exiting.")
-            newCrossnumber.dumpFailureInfo(startTime)
-            return newCrossnumber
+        return if (newCrossnumber == this) {
+            newCrossnumber.handleLackOfProgress(pass, startTime)
+        } else {
+            newCrossnumber.copy(loopThreshold = LOOP_THRESHOLD).solve(pass + 1, startTime)
         }
-
-        return newCrossnumber.copy(loopThreshold = LOOP_THRESHOLD).solve(pass + 1, startTime)
     }
 
     private fun printLoopBanner(pass: Int) {
@@ -117,6 +55,52 @@ data class Crossnumber(
         println("********************")
         println("* PASS $pass ($solvedStr / ${solutions.size}) *")
         println("********************")
+    }
+
+    private fun handleLackOfProgress(pass: Int, startTime: Long): Crossnumber {
+        if (awaitAsyncWork()) {
+            return solve(pass + 1, startTime)
+        }
+
+        val newLoopThreshold = escalateLoopThreshold()
+        if (newLoopThreshold != null) {
+            return copy(loopThreshold = newLoopThreshold).solve(pass + 1, startTime)
+        }
+
+        println("Made no progress this pass, exiting.".red())
+        dumpFailureInfo(startTime)
+        return this
+    }
+
+    private fun escalateLoopThreshold(): Long? {
+        val smallestPending = pendingSolutions()
+            .filter { it.value.possibilities in (loopThreshold + 1)..MAX_LOOP_THRESHOLD }
+            .minByOrNull { it.value.possibilities } ?: return null
+
+        val newThreshold = smallestPending.value.possibilities
+        println("Made no progress this pass: kicking up threshold to $newThreshold to crack ${smallestPending.key}")
+        return newThreshold
+    }
+
+    private fun awaitAsyncWork(): Boolean {
+        val pendingAsyncs = solutions.filterValues {
+            val clue = it.clue(this)
+            clue is AsyncEqualToClue && clue.isPending()
+        }
+
+        if (pendingAsyncs.isNotEmpty()) {
+            println("Made no progress this pass: some async calculations are still outstanding")
+            pendingAsyncs.forEach { (clueId, solution) ->
+                val asyncWaitStart = System.currentTimeMillis()
+                print("Awaiting $clueId...")
+                (solution.clue(this) as AsyncEqualToClue).await()
+                println(" done!" + timeTakenString(System.currentTimeMillis() - asyncWaitStart))
+            }
+
+            return true
+        }
+
+        return false
     }
 
     private fun dumpFailureInfo(startTime: Long) {
@@ -196,6 +180,6 @@ data class Crossnumber(
             return null
         }
 
-        return acrossSolutions.map { (it as PartialSolution).possibilities.first() }.sum()
+        return acrossSolutions.sumOf { (it as PartialSolution).possibilities.first() }
     }
 }

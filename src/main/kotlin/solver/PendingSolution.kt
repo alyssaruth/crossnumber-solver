@@ -16,7 +16,7 @@ const val RAM_THRESHOLD = 6_000_000
 data class PendingSolution(
     override val squares: List<Point>,
     override val clue: ClueConstructor,
-    private val possibilities: Long
+    val possibilities: Long
 ) : ISolution {
     constructor(squares: List<Point>, clue: ClueConstructor, digitMap: DigitMap) : this(
         squares,
