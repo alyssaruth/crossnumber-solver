@@ -21,6 +21,7 @@ import maths.isSquare
 import maths.isTetrahedralNumber
 import maths.isTriangleNumber
 import maths.lastNDigits
+import maths.modPow
 import maths.nGonIsConstructible
 import maths.nextPrime
 import maths.properFactors
@@ -72,9 +73,6 @@ private val a19Prime = nextPrime(370262)
 
 private val a16 = (10..99).first { inPence(it).size == 5 }
 
-/**
- * 24A: The lowest number k such that when 3^k is divided by k the remainder is 24 - but seems sufficient to just say it's not a multiple of 3
- */
 private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1A" to isMultipleOfRef("24A") +
             tripleReference("6D", "32D", "35A") { d6, d32, a35 -> d6 - d32 - a35 },
@@ -89,7 +87,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "19A" to isEqualTo(a19Prime - 370262),
     "21A" to simpleClue(::isPrime),
     "22A" to minimumOf(simpleClue(hasMultiplicativePersistence(11))),
-    "24A" to simpleClue { !isMultipleOf(3)(it) } + isFactorOfRef("1A"),
+    "24A" to isFactorOfRef("1A") + simpleClue { 3L.modPow(it, it) == 24L },
     "25A" to simpleClue { toRomanNumerals(it).sorted() == "CDL" } + isMultipleOfRef("27D"),
     "26A" to simpleClue { dayOfWeek("$it-01-01") == Calendar.WEDNESDAY },
     "28A" to simpleClue(isMultipleOf(9)),
@@ -99,7 +97,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "35A" to isEqualTo(12), // https://en.wikipedia.org/wiki/Mathematical_chess_problem#Domination_problems
     "36A" to asyncEquals { countPrimesUpTo(100_000_000).toLong() },
     "39A" to simpleClue(::isSquare) + simpleClue(::isTetrahedralNumber),
-    "40A" to simpleClue(isEven), // TODO - The smallest even number, n, such that 2^n − 2 is properly divisible by n
+    "40A" to simpleClue(isEven) + simpleClue { 2L.modPow(it, it) == 2L },
 
     "1D" to singleReference("32D") { other -> properFactors(other).sum() },
     "2D" to simpleClue(hasDigitSum(8)) + singleReference("5D") { it.digitSum().toLong() },
