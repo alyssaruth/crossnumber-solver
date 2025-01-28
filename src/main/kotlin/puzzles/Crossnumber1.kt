@@ -33,6 +33,8 @@ import solver.factoryCrossnumber
 import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.calculationWithReference
+import solver.clue.isFactorOfRef
+import solver.clue.isMultipleOfRef
 import solver.clue.singleReference
 import solver.clue.tripleReference
 import kotlin.math.abs
@@ -76,7 +78,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "15A" to calculationWithReference("13D") { value, other -> isPerfect(value * other) },
     "16A" to simpleClue { n: Long -> n.primeFactors().size == 2 },
     "17A" to simpleClue(::isTriangleNumber),
-    "19A" to calculationWithReference("6D") { value, other -> other % value == 0L },
+    "19A" to isFactorOfRef("6D"),
     "20A" to singleReference("30A") { it + 5134240 },
     "22A" to simpleClue { value -> consecutivePrimeSums.contains(value) },
     "23A" to simpleClue { toRomanNumerals(it).toCharArray().sorted().joinToString("") == "ILXXX" },
@@ -107,7 +109,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "26D" to isEqualTo(4 + 8 + 6 + 20 + 12),
     "27D" to singleReference("29D") { it + 2 },
     "29D" to simpleClue { it.toString().first() == it.toString().last() },
-    "31D" to calculationWithReference("24A") { value, other -> value % other == 0L },
+    "31D" to isMultipleOfRef("24A"),
     "33D" to simpleClue { hasUniqueDigits(3)(it) && it.digits().map(Int::toLong).all { it > 0 && isSquare(it) } },
     "34D" to simpleClue(::isSquare)
 )

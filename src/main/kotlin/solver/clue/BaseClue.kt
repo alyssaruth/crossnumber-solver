@@ -12,7 +12,7 @@ abstract class BaseClue {
 
     abstract fun check(value: Long): Boolean
 
-    fun attemptCheck(solutionCombos: Long, crossnumber: Crossnumber, value: Long): Boolean {
+    open fun attemptCheck(solutionCombos: Long, crossnumber: Crossnumber, value: Long): Boolean {
         if (totalCombinations(solutionCombos) > crossnumber.loopThreshold) {
             return true
         }

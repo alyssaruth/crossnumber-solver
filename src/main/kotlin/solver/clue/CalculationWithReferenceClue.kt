@@ -1,5 +1,6 @@
 package solver.clue
 
+import maths.isMultipleOf
 import solver.ClueConstructor
 import solver.ClueId
 import solver.Crossnumber
@@ -35,3 +36,6 @@ class CalculationWithReferenceClue(
 
 fun calculationWithReference(clueId: String, checker: (Long, Long) -> Boolean): ClueConstructor =
     { crossnumber -> CalculationWithReferenceClue(crossnumber, ClueId.fromString(clueId), checker) }
+
+fun isMultipleOfRef(clueId: String) = calculationWithReference(clueId) { value, other -> isMultipleOf(other)(value) }
+fun isFactorOfRef(clueId: String) = calculationWithReference(clueId) { value, other -> isMultipleOf(value)(other) }

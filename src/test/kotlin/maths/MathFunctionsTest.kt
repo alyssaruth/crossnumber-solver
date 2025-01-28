@@ -82,16 +82,6 @@ class MathFunctionsTest {
     }
 
     @Test
-    fun `Should report whether a number contains specified digit`() {
-        containsDigit(0)(1044) shouldBe true
-        containsDigit(1)(1044) shouldBe true
-        containsDigit(4)(1044) shouldBe true
-        containsDigit(2)(1044) shouldBe false
-        containsDigit(3)(1044) shouldBe false
-        containsDigit(5)(1044) shouldBe false
-    }
-
-    @Test
     fun `Should test for square numbers`() {
         isSquare(1) shouldBe true
         isSquare(4) shouldBe true

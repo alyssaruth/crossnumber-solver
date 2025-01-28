@@ -91,7 +91,10 @@ data class Crossnumber(
             }
 
             val nextThreshold =
-                solutions.values.filterIsInstance<PendingSolution>().minOfOrNull { it.possibilityCount(digitMap) }
+                solutions.values.filterIsInstance<PendingSolution>()
+                    .map { it.possibilityCount(digitMap) }
+                    .filter { it > loopThreshold }
+                    .minOrNull()
 
             if (newCrossnumber.loopThreshold < MAX_LOOP_THRESHOLD && nextThreshold != null && nextThreshold <= MAX_LOOP_THRESHOLD) {
                 println("Made no progress on latest pass: kicking up threshold to $nextThreshold")

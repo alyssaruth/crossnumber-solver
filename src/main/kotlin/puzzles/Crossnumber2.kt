@@ -1,11 +1,13 @@
 package puzzles
 
 import maths.countPrimesUpTo
+import maths.dayOfWeek
 import maths.degreesToFahrenheit
 import maths.digitCounts
 import maths.digitSum
 import maths.digits
 import maths.distinctDivisors
+import maths.firstNDigits
 import maths.hasDigitSum
 import maths.hasMultiplicativePersistence
 import maths.inPence
@@ -18,6 +20,7 @@ import maths.isPrime
 import maths.isSquare
 import maths.isTetrahedralNumber
 import maths.isTriangleNumber
+import maths.lastNDigits
 import maths.nGonIsConstructible
 import maths.nextPrime
 import maths.properFactors
@@ -27,14 +30,16 @@ import solver.ClueConstructor
 import solver.clue.asyncEquals
 import solver.clue.calculationWithReference
 import solver.clue.dualReference
-import solver.clue.emptyClue
 import solver.clue.isEqualTo
+import solver.clue.isFactorOfRef
+import solver.clue.isMultipleOfRef
 import solver.clue.minimumOf
 import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.singleReference
 import solver.clue.tripleReference
 import solver.factoryCrossnumber
+import java.util.Calendar
 import kotlin.math.pow
 
 /**
@@ -67,11 +72,12 @@ private val a19Prime = nextPrime(370262)
 private val a16 = (10..99).first { inPence(it).size == 5 }
 
 private val clueMap: Map<String, ClueConstructor> = mapOf(
-    "1A" to calculationWithReference("24A") { value, other -> isMultipleOf(other)(value) },
+    "1A" to isMultipleOfRef("24A") +
+            tripleReference("6D", "32D", "35A") { d6, d32, a35 -> d6 - d32 - a35 },
     "5A" to simpleClue(::nGonIsConstructible),
     "7A" to simpleClue { distinctDivisors(it).size.toDouble().pow(4.0).toLong() == it },
     "9A" to simpleClue { properFactors(it).size == 9 },
-    "11A" to calculationWithReference("4D") { value, other -> other.toString().substring(0, 4) == value.toString() },
+    "11A" to singleReference("4D") { it.firstNDigits(4) },
     "12A" to simpleClue(::isPrime) + dualReference("3D", "34D", Long::minus),
     "13A" to dualReference("30D", "12A", Long::times),
     "16A" to isEqualTo(a16.toLong()),
@@ -79,24 +85,24 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "19A" to isEqualTo(a19Prime - 370262),
     "21A" to simpleClue(::isPrime),
     "22A" to minimumOf(simpleClue(hasMultiplicativePersistence(11))),
-    "24A" to emptyClue(), // TODO - The lowest number k such that when 3^k is divided by k the remainder is 24
+    "24A" to isFactorOfRef("1A"), // TODO - The lowest number k such that when 3^k is divided by k the remainder is 24
     "25A" to simpleClue { toRomanNumerals(it).toCharArray().sorted().joinToString("") == "CDL" },
-    "26A" to emptyClue(), // TODO - A year which began or will begin on a Wednesday
+    "26A" to simpleClue { dayOfWeek("$it-01-01") == Calendar.WEDNESDAY },
     "28A" to simpleClue(isMultipleOf(9)),
     "29A" to simpleClue { it.digitCounts().size == 1 },
     "31A" to simpleClue(::isSquare),
-    "33A" to calculationWithReference("4D") { value, other ->
-        other.toString().reversed().substring(0, 4).reversed() == value.toString()
-    },
+    "33A" to singleReference("4D") { it.lastNDigits(4) },
     "35A" to isEqualTo(12), // https://en.wikipedia.org/wiki/Mathematical_chess_problem#Domination_problems
     "36A" to asyncEquals { countPrimesUpTo(100_000_000).toLong() },
     "39A" to simpleClue(::isSquare) + simpleClue(::isTetrahedralNumber),
     "40A" to simpleClue(isEven), // TODO - The smallest even number, n, such that 2^n − 2 is properly divisible by n
 
     "1D" to singleReference("32D") { other -> properFactors(other).sum() },
-    "2D" to simpleClue(hasDigitSum(8)),
+    "2D" to simpleClue(hasDigitSum(8)) + singleReference("5D") { it.digitSum().toLong() },
     "3D" to dualReference("34D", "12A", Long::plus),
-    "4D" to simpleClue(::fourDown),
+    "4D" to simpleClue(::fourDown) +
+            calculationWithReference("11A") { value, other -> value.firstNDigits(4) == other } +
+            calculationWithReference("33A") { value, other -> value.lastNDigits(4) == other },
     "5D" to calculationWithReference("2D") { value, other -> value.digitSum().toLong() == other },
     "6D" to tripleReference("32D", "35A", "1A") { d32, a35, a1 -> d32 + a35 + a1 },
     "8D" to simpleClue(::isPrime),
@@ -110,12 +116,12 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "21D" to simpleClue { value -> value.digitCounts().let { it.size == 2 && it.values.contains(1) } },
     "23D" to tripleReference("15D", "17A", "34D") { d15, a17, d34 -> d15 + a17 - d34 },
     "26D" to simpleClue(hasDigitSum(3)),
-    "27D" to calculationWithReference("25A") { value, other -> isMultipleOf(value)(other) },
+    "27D" to isFactorOfRef("25A"),
     "30D" to simpleClue { !isPalindrome(it) },
     "32D" to singleReference("1D") { other -> properFactors(other).sum() },
     "34D" to simpleClue(::isSquare) + dualReference("3D", "12A", Long::minus),
     "37D" to dualReference("27D", "38D", Long::times),
-    "38D" to simpleClue(isMultipleOf(10))
+    "38D" to simpleClue(isMultipleOf(10)) + dualReference("37D", "27D") { d37, d27 -> d37 / d27 }
 )
 
 /**

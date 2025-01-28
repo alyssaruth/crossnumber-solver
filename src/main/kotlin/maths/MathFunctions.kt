@@ -40,12 +40,6 @@ fun Long.reversed(): Long = toString().reversed().toLong()
 
 fun isPalindrome(value: Long): Boolean = value.toString() == value.toString().reversed()
 
-fun Long.digits() = toString().toCharArray().map(Char::digitToInt)
-
-fun Long.digitCounts() = digits().groupBy { it }.mapValues { it.value.size }
-
-fun containsDigit(digit: Int): Clue = { value -> value.digits().contains(digit) }
-
 fun isTriangleNumber(value: Long): Boolean =
     binarySearch(value, { it.times(it.plus(1.toBigInteger())).divide(2.toBigInteger()) })
 
