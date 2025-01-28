@@ -2,10 +2,11 @@ package solver
 
 import maths.product
 import solver.clue.BaseClue
+import solver.clue.EqualToClue
 import solver.clue.MinimumClue
 
 // Limits to prevent OOMs or slowness due to doomed loops
-const val EXTREME_LOOP_THRESHOLD = 5_000_000_000
+const val MAX_LOOP_THRESHOLD = 5_000_000_000
 const val LOOP_THRESHOLD = 100_000_000L
 const val RAM_THRESHOLD = 6_000_000
 
@@ -26,6 +27,11 @@ data class PendingSolution(
     override fun possibilityCount(digitMap: Map<Point, List<Int>>) = computePossibilities(squares, digitMap)
 
     override fun iterate(clueId: ClueId, crossnumber: Crossnumber): Crossnumber {
+        val actualClue = clue(crossnumber)
+        if (actualClue is EqualToClue) {
+            return PartialSolution(squares, clue, listOf(actualClue.value)).iterate(clueId, crossnumber)
+        }
+
         val digitMap = crossnumber.digitMap
         val possibilityCount = possibilityCount(digitMap)
         if (possibilityCount > crossnumber.loopThreshold) {

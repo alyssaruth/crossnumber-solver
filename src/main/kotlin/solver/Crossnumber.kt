@@ -73,9 +73,12 @@ data class Crossnumber(
         }
 
         if (newCrossnumber == this) {
-            if (newCrossnumber.loopThreshold == LOOP_THRESHOLD) {
-                println("Made no progress on latest pass, kicking up loop threshold.")
-                return newCrossnumber.copy(loopThreshold = EXTREME_LOOP_THRESHOLD).solve(pass + 1, startTime)
+            val nextThreshold =
+                solutions.values.filterIsInstance<PendingSolution>().minOfOrNull { it.possibilityCount(digitMap) }
+
+            if (newCrossnumber.loopThreshold < MAX_LOOP_THRESHOLD && nextThreshold != null && nextThreshold <= MAX_LOOP_THRESHOLD) {
+                println("Made no progress on latest pass: kicking up threshold to $nextThreshold")
+                return newCrossnumber.copy(loopThreshold = nextThreshold).solve(pass + 1, startTime)
             }
 
             println("Made no progress on latest pass, exiting.")
@@ -151,4 +154,13 @@ data class Crossnumber(
 
     fun replaceSolution(clueId: ClueId, solution: ISolution): Crossnumber =
         copy(solutions = solutions + (clueId to solution))
+
+    fun sumAcrossClues(): Long? {
+        val acrossSolutions = solutions.filterKeys { it.orientation == Orientation.ACROSS }.values
+        if (!acrossSolutions.all(ISolution::isSolved)) {
+            return null
+        }
+
+        return acrossSolutions.map { (it as PartialSolution).possibilities.first() }.sum()
+    }
 }

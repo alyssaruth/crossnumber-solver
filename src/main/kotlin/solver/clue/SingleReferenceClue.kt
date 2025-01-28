@@ -3,28 +3,32 @@ package solver.clue
 import solver.ClueConstructor
 import solver.ClueId
 import solver.Crossnumber
-import solver.PartialSolution
-import solver.PendingSolution
 
+/**
+ * For clues like:
+ *
+ *  - The sum of the proper factors of 32D
+ *  - The product of all the digits of 7A
+ *  - 700 less than 3D
+ */
 class SingleReferenceClue(
     crossnumber: Crossnumber,
-    otherClueId: ClueId,
-    private val checker: (Long, Long) -> Boolean
-) : ContextualClue(crossnumber) {
+    private val other: ClueId,
+    private val mapper: (Long) -> Long
+) :
+    ContextualClue(crossnumber) {
+    private val potentialSolutions = computePotentialSolutions()
 
-    private val otherSolution = crossnumber.solutions.getValue(otherClueId)
+    override fun check(value: Long) = potentialSolutions?.contains(value) ?: true
 
-    override fun totalCombinations(solutionCombos: Long) = when (otherSolution) {
-        is PendingSolution -> solutionCombos
-        is PartialSolution -> otherSolution.possibilities.size * solutionCombos
+    override fun totalCombinations(solutionCombos: Long) = solutionCombos
+
+    private fun computePotentialSolutions(): Set<Long>? {
+        val values = lookupAnswers(other) ?: return null
+
+        return values.map(mapper).toSet()
     }
-
-    override fun check(value: Long) =
-        when (otherSolution) {
-            is PendingSolution -> true
-            is PartialSolution -> otherSolution.possibilities.any { checker(value, it) }
-        }
 }
 
-fun simpleReference(clueId: String, checker: (Long, Long) -> Boolean): ClueConstructor =
-    { crossnumber -> SingleReferenceClue(crossnumber, ClueId.fromString(clueId), checker) }
+fun singleReference(clue: String, mapper: (Long) -> Long): ClueConstructor =
+    { crossnumber -> SingleReferenceClue(crossnumber, ClueId.fromString(clue), mapper) }

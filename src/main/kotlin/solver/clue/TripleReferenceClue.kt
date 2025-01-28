@@ -5,6 +5,11 @@ import solver.ClueId
 import solver.Crossnumber
 import solver.RAM_THRESHOLD
 
+/**
+ * For clues like:
+ *
+ *  - The sum of 32D, 35A and 1A
+ */
 class TripleReferenceClue(
     crossnumber: Crossnumber,
     private val clueA: ClueId,

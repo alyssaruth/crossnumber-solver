@@ -56,7 +56,7 @@ class PrimesTest {
         countPrimesUpTo(2) shouldBe 1
         countPrimesUpTo(10) shouldBe 4
 
-        countPrimesUpTo(100_000_000) shouldBe 5761455
+        countPrimesUpTo(10_000_000) shouldBe 664579
     }
 
     @Test

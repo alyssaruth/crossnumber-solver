@@ -1,16 +1,16 @@
-package solver
+package solver.clue
 
 import io.kotest.matchers.ints.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import maths.digits
-import maths.isEqualTo
-import solver.clue.emptyClue
-import solver.clue.simpleClue
-import solver.clue.simpleReference
+import solver.ClueId
+import solver.Orientation
+import solver.PartialSolution
+import solver.factoryCrossnumber
 import kotlin.test.Test
 
-class SingleReferenceClueTest {
+class CalculationWithReferenceClueTest {
     private val grid = """
         #########
         #.......#
@@ -27,10 +27,10 @@ class SingleReferenceClueTest {
     fun `Should do no filtering if referenced clue is pending`() {
         val clueMap = mapOf(
             "1A" to emptyClue(),
-            "5A" to simpleReference("1A") { value, other -> value == other },
+            "5A" to calculationWithReference("1A") { value, other -> value == other },
 
-            "3D" to simpleClue(isEqualTo(111)),
-            "4D" to simpleClue(isEqualTo(111))
+            "3D" to isEqualTo(111),
+            "4D" to isEqualTo(111)
         )
 
         val crossnumber = factoryCrossnumber(grid, clueMap)
@@ -43,12 +43,12 @@ class SingleReferenceClueTest {
     fun `Should check against possible values of referenced clue`() {
         val clueMap = mapOf(
             "1A" to simpleClue { it.digits().distinct().size == 2 },
-            "5A" to simpleReference("1A") { value, other -> value < other },
+            "5A" to calculationWithReference("1A") { value, other -> value < other },
 
-            "1D" to simpleClue(isEqualTo(111)),
-            "2D" to simpleClue(isEqualTo(222)),
-            "3D" to simpleClue(isEqualTo(111)),
-            "4D" to simpleClue(isEqualTo(111))
+            "1D" to isEqualTo(111),
+            "2D" to isEqualTo(222),
+            "3D" to isEqualTo(111),
+            "4D" to isEqualTo(111)
         )
 
         val crossnumber = factoryCrossnumber(grid, clueMap)

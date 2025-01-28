@@ -5,6 +5,12 @@ import solver.ClueId
 import solver.Crossnumber
 import solver.RAM_THRESHOLD
 
+/**
+ * For clues like:
+ *
+ *  - D4 multiplied by D18
+ *  - The difference between 10D and 11D
+ */
 class DualReferenceClue(
     crossnumber: Crossnumber,
     private val clueA: ClueId,

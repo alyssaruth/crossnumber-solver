@@ -32,8 +32,8 @@ import solver.clue.minimumOf
 import solver.factoryCrossnumber
 import solver.clue.plus
 import solver.clue.simpleClue
-import solver.clue.simpleReference
-import solver.clue.singleReferenceEquals
+import solver.clue.calculationWithReference
+import solver.clue.singleReference
 import solver.clue.tripleReference
 import kotlin.math.pow
 
@@ -78,11 +78,11 @@ private val a16 = (10..99).first { inPence(it).size == 5 }
 private val d10 = tenDown().size.toLong()
 
 private val clueMap: Map<String, ClueConstructor> = mapOf(
-    "1A" to simpleReference("24A") { value, other -> isMultipleOf(other)(value) },
+    "1A" to calculationWithReference("24A") { value, other -> isMultipleOf(other)(value) },
     "5A" to simpleClue(::nGonIsConstructible),
     "7A" to simpleClue { distinctDivisors(it).size.toDouble().pow(4.0).toLong() == it },
     "9A" to simpleClue { properFactors(it).size == 9 },
-    "11A" to simpleReference("4D") { value, other -> other.toString().substring(0, 4) == value.toString() },
+    "11A" to calculationWithReference("4D") { value, other -> other.toString().substring(0, 4) == value.toString() },
     "12A" to simpleClue(::isPrime) + dualReference("3D", "34D", Long::minus),
     "13A" to dualReference("30D", "12A", Long::times),
     "16A" to isEqualTo(a16.toLong()),
@@ -96,7 +96,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "28A" to simpleClue(isMultipleOf(9)),
     "29A" to simpleClue { it.digitCounts().size == 1 },
     "31A" to simpleClue(::isSquare),
-    "33A" to simpleReference("4D") { value, other ->
+    "33A" to calculationWithReference("4D") { value, other ->
         other.toString().reversed().substring(0, 4).reversed() == value.toString()
     },
     "35A" to isEqualTo(12), // https://en.wikipedia.org/wiki/Mathematical_chess_problem#Domination_problems
@@ -104,11 +104,11 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "39A" to simpleClue(::isSquare) + simpleClue(::isTetrahedralNumber),
     "40A" to simpleClue(isEven), // TODO - The smallest even number, n, such that 2^n − 2 is properly divisible by n
 
-    "1D" to singleReferenceEquals("32D") { other -> properFactors(other).sum() },
+    "1D" to singleReference("32D") { other -> properFactors(other).sum() },
     "2D" to simpleClue(hasDigitSum(8)),
     "3D" to dualReference("34D", "12A", Long::plus),
     "4D" to simpleClue(::fourDown),
-    "5D" to simpleReference("2D") { value, other -> value.digitSum().toLong() == other },
+    "5D" to calculationWithReference("2D") { value, other -> value.digitSum().toLong() == other },
     "6D" to tripleReference("32D", "35A", "1A") { d32, a35, a1 -> d32 + a35 + a1 },
     "8D" to simpleClue(::isPrime),
     "10D" to isEqualTo(d10),
@@ -121,9 +121,9 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "21D" to simpleClue { value -> value.digitCounts().let { it.size == 2 && it.values.contains(1) } },
     "23D" to tripleReference("15D", "17A", "34D") { d15, a17, d34 -> d15 + a17 - d34 },
     "26D" to simpleClue(hasDigitSum(3)),
-    "27D" to simpleReference("25A") { value, other -> isMultipleOf(value)(other) },
+    "27D" to calculationWithReference("25A") { value, other -> isMultipleOf(value)(other) },
     "30D" to simpleClue { !isPalindrome(it) },
-    "32D" to singleReferenceEquals("1D") { other -> properFactors(other).sum() },
+    "32D" to singleReference("1D") { other -> properFactors(other).sum() },
     "34D" to simpleClue(::isSquare) + dualReference("3D", "12A", Long::minus),
     "37D" to dualReference("27D", "38D", Long::times),
     "38D" to simpleClue(isMultipleOf(10))
