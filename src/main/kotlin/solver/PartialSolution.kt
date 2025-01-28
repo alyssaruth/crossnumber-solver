@@ -75,7 +75,7 @@ data class PartialSolution(
         val possibilityStrings = possibilities.map(Long::toString)
 
         val updates = squares.mapIndexed { ix, square ->
-            val possibleDigits = possibilityStrings.map { it[ix].digitToInt() }.distinct()
+            val possibleDigits = possibilityStrings.map { it[ix].digitToInt() }.distinct().sorted()
             square to possibleDigits
         }.toMap()
 

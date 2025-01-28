@@ -63,7 +63,7 @@ data class Crossnumber(
                 crossnumber.dumpFailureInfo(startTime)
                 throw e
             }
-        }
+        }.copy(loopThreshold = LOOP_THRESHOLD)
 
         if (newCrossnumber.isSolved()) {
             println("------------------------------------------")

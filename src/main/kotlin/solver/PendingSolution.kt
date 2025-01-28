@@ -84,7 +84,7 @@ data class PendingSolution(
         val values = results.values
         if (values.any { it == null }) return null
 
-        return values.filterNotNull().flatten()
+        return values.filterNotNull().flatten().sorted()
     }
 
     private tailrec fun attemptToComputePossibilities(
