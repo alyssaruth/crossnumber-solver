@@ -24,32 +24,24 @@ import maths.properFactors
 import maths.reversed
 import maths.toRomanNumerals
 import solver.ClueConstructor
-import solver.LOOP_THRESHOLD
+import solver.clue.asyncEquals
+import solver.clue.calculationWithReference
 import solver.clue.dualReference
 import solver.clue.emptyClue
 import solver.clue.isEqualTo
 import solver.clue.minimumOf
-import solver.factoryCrossnumber
 import solver.clue.plus
 import solver.clue.simpleClue
-import solver.clue.calculationWithReference
 import solver.clue.singleReference
 import solver.clue.tripleReference
+import solver.factoryCrossnumber
 import kotlin.math.pow
 
 /**
  * https://chalkdustmagazine.com/regulars/crossnumber/100-prize-crossnumber-issue-02/
  */
 fun main() {
-    println("12345".substring(0, 4))
-    val primeThread = Thread { primesUpToOneHundredMillion = countPrimesUpTo(100_000_000).toLong() }
-    primeThread.start()
-    val attemptOne = factoryCrossnumber(grid, clueMap).solve()
-    if (primesUpToOneHundredMillion == -1L) {
-        println("Waiting for primes calculation...")
-        primeThread.join()
-        attemptOne.copy(loopThreshold = LOOP_THRESHOLD).solve()
-    }
+    factoryCrossnumber(grid, clueMap).solve()
 }
 
 private val grid = """
@@ -72,10 +64,7 @@ private val grid = """
 
 private val a19Prime = nextPrime(370262)
 
-private var primesUpToOneHundredMillion = -1L
-
 private val a16 = (10..99).first { inPence(it).size == 5 }
-private val d10 = tenDown().size.toLong()
 
 private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1A" to calculationWithReference("24A") { value, other -> isMultipleOf(other)(value) },
@@ -100,7 +89,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
         other.toString().reversed().substring(0, 4).reversed() == value.toString()
     },
     "35A" to isEqualTo(12), // https://en.wikipedia.org/wiki/Mathematical_chess_problem#Domination_problems
-    "36A" to simpleClue { if (primesUpToOneHundredMillion == -1L) true else it == primesUpToOneHundredMillion },
+    "36A" to asyncEquals { countPrimesUpTo(100_000_000).toLong() },
     "39A" to simpleClue(::isSquare) + simpleClue(::isTetrahedralNumber),
     "40A" to simpleClue(isEven), // TODO - The smallest even number, n, such that 2^n − 2 is properly divisible by n
 
@@ -111,7 +100,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "5D" to calculationWithReference("2D") { value, other -> value.digitSum().toLong() == other },
     "6D" to tripleReference("32D", "35A", "1A") { d32, a35, a1 -> d32 + a35 + a1 },
     "8D" to simpleClue(::isPrime),
-    "10D" to isEqualTo(d10),
+    "10D" to asyncEquals { tenDown().size.toLong() },
     "11D" to simpleClue(::isPalindrome),
     "14D" to simpleClue { value -> (2 * value).reversed() == value + 2 },
     "15D" to dualReference("28A", "5D") { a28, d5 -> a28 * d5.reversed() },

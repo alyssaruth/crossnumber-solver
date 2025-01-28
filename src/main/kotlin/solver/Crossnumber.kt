@@ -1,5 +1,6 @@
 package solver
 
+import solver.clue.AsyncEqualToClue
 import solver.clue.BaseClue
 import solver.clue.emptyClue
 import kotlin.math.roundToLong
@@ -73,6 +74,22 @@ data class Crossnumber(
         }
 
         if (newCrossnumber == this) {
+            val pendingAsyncs = solutions.filterValues {
+                val clue = it.clue(this)
+                clue is AsyncEqualToClue && clue.isPending()
+            }
+
+            if (pendingAsyncs.isNotEmpty()) {
+                println("Made no progress on latest pass: some async calculations are still outstanding")
+                pendingAsyncs.forEach { (clueId, solution) ->
+                    print("Awaiting $clueId...")
+                    (solution.clue(this) as AsyncEqualToClue).await()
+                    println(" done!")
+                }
+
+                return newCrossnumber.solve(pass + 1, startTime)
+            }
+
             val nextThreshold =
                 solutions.values.filterIsInstance<PendingSolution>().minOfOrNull { it.possibilityCount(digitMap) }
 
@@ -89,7 +106,7 @@ data class Crossnumber(
         return newCrossnumber.solve(pass + 1, startTime)
     }
 
-    fun dumpFailureInfo(startTime: Long) {
+    private fun dumpFailureInfo(startTime: Long) {
         println("------------------------------------------")
         println(completionString())
         println("------------------------------------------")
