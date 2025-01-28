@@ -1,5 +1,6 @@
 package solver
 
+import logging.timeTakenString
 import solver.clue.AsyncEqualToClue
 import solver.clue.BaseClue
 import solver.clue.emptyClue
@@ -78,11 +79,12 @@ data class Crossnumber(
             }
 
             if (pendingAsyncs.isNotEmpty()) {
-                println("Made no progress on latest pass: some async calculations are still outstanding")
+                println("Made no progress this pass: some async calculations are still outstanding")
                 pendingAsyncs.forEach { (clueId, solution) ->
+                    val asyncWaitStart = System.currentTimeMillis()
                     print("Awaiting $clueId...")
                     (solution.clue(this) as AsyncEqualToClue).await()
-                    println(" done!")
+                    println(" done!" + timeTakenString(System.currentTimeMillis() - asyncWaitStart))
                 }
 
                 return newCrossnumber.solve(pass + 1, startTime)
@@ -97,11 +99,11 @@ data class Crossnumber(
 
             if (smallestPending != null) {
                 val newThreshold = smallestPending.value.possibilityCount(digitMap)
-                println("Made no progress on latest pass: kicking up threshold to $newThreshold to crack ${smallestPending.key}")
+                println("Made no progress this pass: kicking up threshold to $newThreshold to crack ${smallestPending.key}")
                 return newCrossnumber.copy(loopThreshold = newThreshold).solve(pass + 1, startTime)
             }
 
-            println("Made no progress on latest pass, exiting.")
+            println("Made no progress this pass, exiting.")
             newCrossnumber.dumpFailureInfo(startTime)
             return newCrossnumber
         }
@@ -156,19 +158,21 @@ data class Crossnumber(
 
     private fun iterateSolution(id: ClueId, solution: ISolution): Crossnumber {
         try {
+            val startTime = System.currentTimeMillis()
             val newCrossnumber = solution.iterate(id, this)
-            logChanges(this, newCrossnumber)
+            logChanges(this, newCrossnumber, System.currentTimeMillis() - startTime)
             return newCrossnumber
         } catch (ex: Exception) {
             throw Exception("Caught error iterating $id: ${ex.message}", ex)
         }
     }
 
-    private fun logChanges(oldCrossnumber: Crossnumber, newCrossnumber: Crossnumber) {
-        oldCrossnumber.solutions.forEach { clueId, oldSolution ->
+    private fun logChanges(oldCrossnumber: Crossnumber, newCrossnumber: Crossnumber, timeTaken: Long) {
+        oldCrossnumber.solutions.forEach { (clueId, oldSolution) ->
             val newSolution = newCrossnumber.solutions.getValue(clueId)
             if (oldSolution != newSolution) {
-                println("$clueId: ${oldSolution.status()} -> ${newSolution.status()}")
+                val statusString = "$clueId: ${oldSolution.status()} -> ${newSolution.status()}"
+                println(statusString + timeTakenString(timeTaken))
             }
         }
     }

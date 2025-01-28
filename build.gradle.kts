@@ -21,6 +21,9 @@ dependencies {
 }
 
 tasks.test {
+    minHeapSize = "1024m"
+    maxHeapSize = "1024m"
+
     useJUnitPlatform()
 
     testLogging {

@@ -10,6 +10,7 @@ import maths.distinctDivisors
 import maths.firstNDigits
 import maths.hasDigitSum
 import maths.hasMultiplicativePersistence
+import maths.hasWholeNthRoot
 import maths.inPence
 import maths.isAbundant
 import maths.isEven
@@ -24,6 +25,7 @@ import maths.lastNDigits
 import maths.modPow
 import maths.nGonIsConstructible
 import maths.nextPrime
+import maths.pow
 import maths.properFactors
 import maths.reversed
 import maths.sorted
@@ -42,13 +44,12 @@ import solver.clue.singleReference
 import solver.clue.tripleReference
 import solver.factoryCrossnumber
 import java.util.Calendar
-import kotlin.math.pow
 
 /**
  * https://chalkdustmagazine.com/regulars/crossnumber/100-prize-crossnumber-issue-02/
  */
 fun main() {
-    factoryCrossnumber(grid, clueMap).solve()
+    CROSSNUMBER_2.solve()
 }
 
 private val grid = """
@@ -77,7 +78,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1A" to isMultipleOfRef("24A") +
             tripleReference("6D", "32D", "35A") { d6, d32, a35 -> d6 - d32 - a35 },
     "5A" to simpleClue(::nGonIsConstructible),
-    "7A" to simpleClue { distinctDivisors(it).size.toDouble().pow(4.0).toLong() == it },
+    "7A" to simpleClue { hasWholeNthRoot(it, 4) && distinctDivisors(it).size.pow(4) == it },
     "9A" to simpleClue { properFactors(it).size == 9 },
     "11A" to singleReference("4D") { it.firstNDigits(4) },
     "12A" to simpleClue(::isPrime) + dualReference("3D", "34D", Long::minus),
@@ -89,7 +90,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "22A" to minimumOf(simpleClue(hasMultiplicativePersistence(11))),
     "24A" to isFactorOfRef("1A") + simpleClue { 3L.modPow(it, it) == 24L },
     "25A" to simpleClue { toRomanNumerals(it).sorted() == "CDL" } + isMultipleOfRef("27D"),
-    "26A" to simpleClue { dayOfWeek("$it-01-01") == Calendar.WEDNESDAY },
+    "26A" to simpleClue { it >= 1582 && dayOfWeek("$it-01-01") == Calendar.WEDNESDAY },
     "28A" to simpleClue(isMultipleOf(9)),
     "29A" to simpleClue { it.digitCounts().size == 1 },
     "31A" to simpleClue(::isSquare),
@@ -126,6 +127,8 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "38D" to simpleClue(isMultipleOf(10)) + dualReference("37D", "27D") { d37, d27 -> d37 / d27 }
 )
 
+val CROSSNUMBER_2 = factoryCrossnumber(grid, clueMap)
+
 /**
  * The 2nd, 4th, 6th, 8th, 10th, 12th and 14th digits of this number are each larger than the digits either side of them. (15)
  * Correction: The 13th digit is actually larger than the 14th.
@@ -143,12 +146,14 @@ private fun fourDown(value: Long): Boolean {
  *  - the first and last numbers are either 1 or 2
  */
 private tailrec fun tenDown(currentChains: List<List<Int>> = listOf(listOf(1), listOf(2))): List<List<Int>> {
-    if (currentChains.first().size == 16) {
-        return currentChains.filter { listOf(1, 2).contains(it.last()) }
+    val currentSize = currentChains.first().size
+    if (currentSize == 16) {
+        return currentChains
     } else {
         val newChains = currentChains.flatMap { chain ->
             val currentEnd = chain.last()
-            val nexts = listOf(currentEnd - 1, currentEnd, currentEnd + 1).filter { it > 0 }
+            val nexts =
+                listOf(currentEnd - 1, currentEnd, currentEnd + 1).filter { it > 0 && it < (16 - currentSize + 2) }
             nexts.map { chain + it }
         }
         return tenDown(newChains)

@@ -1,5 +1,7 @@
 package solver
 
+import logging.green
+
 /**
  * An "in-progress" solution with a list of the current possibilities we've narrowed down to
  */
@@ -30,7 +32,7 @@ data class PartialSolution(
     }
 
     override fun status() =
-        if (isSolved()) "solved! (${possibilities.first()})" else "${possibilities.size} possibilities"
+        if (isSolved()) "solved! (${possibilities.first()})".green() else "${possibilities.size} possibilities"
 
     override fun isSolved() = possibilities.size == 1
 
