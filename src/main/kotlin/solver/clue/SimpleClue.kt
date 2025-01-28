@@ -18,4 +18,4 @@ class SimpleClue(private val checker: Clue) : BaseClue() {
 
 fun emptyClue(): ClueConstructor = simpleClue { true }
 
-fun simpleClue(clue: (candidate: Long) -> Boolean): ClueConstructor = { _ -> SimpleClue(clue) }
+fun simpleClue(clue: Clue): ClueConstructor = { _ -> SimpleClue(clue) }
