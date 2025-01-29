@@ -10,4 +10,11 @@ class HcfTest {
         hcf(5, 7) shouldBe 1
         hcf(11, 11) shouldBe 11
     }
+
+    @Test
+    fun `Should calculate the LCM of a list of numbers`() {
+        lcm(listOf(12, 18, 30)) shouldBe 180
+        lcm(listOf(10, 12, 15, 75)) shouldBe 300
+        lcm(listOf(3, 5, 7)) shouldBe 3 * 5 * 7
+    }
 }

@@ -8,8 +8,10 @@ import maths.digitSum
 import maths.digits
 import maths.digitsAreStrictlyIncreasing
 import maths.distinctDivisors
+import maths.distinctIntegerPartitions
 import maths.hasWholeNthRoot
 import maths.hcf
+import maths.inWords
 import maths.isFibonacci
 import maths.isMultipleOf
 import maths.isOdd
@@ -19,7 +21,10 @@ import maths.isPrime
 import maths.isSquare
 import maths.isSumOfConsecutivePrimes
 import maths.nthRoot
+import maths.reciprocalSum
+import maths.sorted
 import maths.toBinary
+import maths.vowels
 import solver.ClueConstructor
 import solver.clue.asyncEquals
 import solver.clue.calculationWithReference
@@ -27,12 +32,14 @@ import solver.clue.dualReference
 import solver.clue.emptyClue
 import solver.clue.isEqualTo
 import solver.clue.isMultipleOfRef
+import solver.clue.largest
 import solver.clue.multiReference
 import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.singleReference
 import solver.clue.smallest
 import solver.factoryCrossnumber
+import java.math.BigInteger
 import kotlin.math.abs
 
 /**
@@ -68,21 +75,21 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "12A" to dualReference("4D", "43D", Long::times),
     "13A" to dualReference("7A", "43D", Long::minus),
     "14A" to dualReference("21D", "37A", Long::minus),
-    "15A" to emptyClue(), // TODO - A number whose name includes all five vowels exactly once.
+    "15A" to simpleClue { inWords(it).vowels().sorted() == "aeiou" },
     "16A" to singleReference("8D", ::digitSum),
     "18A" to simpleClue { it.digits().sorted() == listOf(0, 2, 4, 6, 8) },
     "21A" to simpleClue { hcf(it, 756) == 1L && !isPrime(it) },
     "24A" to singleReference("29D", ::digitSum),
     "25A" to emptyClue(), // TODO - The product of four consecutive Fibonacci numbers
     "26A" to dualReference("14A", "21D", Long::times),
-    "29A" to emptyClue(), // TODO - The largest known n such that all the digits of 2^n are not zero
+    "29A" to largest(simpleClue { !BigInteger.TWO.pow(it.toInt()).digits().contains(0) }),
     "30A" to isEqualTo(418), // I am a teapot
     "32A" to simpleClue(::isPrime) + simpleClue(isSumOfConsecutivePrimes(25, digitCount = 5)),
     "35A" to emptyClue(), // TODO - The number of different nets of a cube (with reflections and rotations being considered as the same net)
     "36A" to simpleClue(::isFibonacci),
     "37A" to simpleClue(canBeWrittenInSomeBaseAs(256, 3)),
     "39A" to isEqualTo(789), // Why is 6 afraid of 7?
-    "40A" to emptyClue(), // TODO - The number of ways to play the first 3 moves (2 white moves, 1 black move) in a game of chess.
+    "40A" to isEqualTo(8902), // The number of ways to play the first 3 moves (2 white moves, 1 black move) in a game of chess
     "41A" to simpleClue(isMultipleOf(719)),
     "42A" to simpleClue { isPrime(it) && isPrime(it + 2) },
     "44A" to singleReference("29D") { it / 2 },
@@ -112,7 +119,11 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "34D" to smallest(simpleClue { !it.toBinary().isPalindrome() && (it * it).toBinary().isPalindrome() }),
     "37D" to simpleClue { (it * it).digitCounts().keys.sorted() == listOf(1, 2, 3, 4) },
     "38D" to simpleClue(hasWholeNthRoot(3)),
-    "39D" to emptyClue(), // TODO - The largest number that cannot be written as the sum of positive, distinct integers, the sum of whose reciprocals is 1
+    "39D" to asyncEquals {
+        (10..99).filter {
+            it.distinctIntegerPartitions().none { partition -> reciprocalSum(partition) == 1.0 }
+        }.max().toLong()
+    },
     "43D" to smallest(simpleClue { it == 2L * it.digitSum() })
 )
 

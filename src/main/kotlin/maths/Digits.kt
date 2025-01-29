@@ -1,8 +1,20 @@
 package maths
 
 import solver.Clue
+import java.math.BigInteger
 
 fun Long.digitsAreStrictlyIncreasing() = digits().windowed(2).all { it[0] < it[1] }
+
+fun BigInteger.digits() = collectDigits(this)
+
+private fun collectDigits(remaining: BigInteger, digitsSoFar: List<Int> = emptyList()): List<Int> {
+    if (remaining == BigInteger.ZERO) {
+        return digitsSoFar
+    } else {
+        val lastDigit = remaining.mod(BigInteger.TEN).intValueExact()
+        return collectDigits(remaining.divide(BigInteger.TEN), listOf(lastDigit) + digitsSoFar)
+    }
+}
 
 fun Long.digits() = toString().toCharArray().map(Char::digitToInt)
 

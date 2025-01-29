@@ -13,3 +13,13 @@ private tailrec fun computeHcf(x: Long, y: Long, max: Long = maxOf(x, y), min: L
     } else {
         computeHcf(x, y, min, max % min)
     }
+
+
+fun lcm(values: List<Int>): Long {
+    val primeFactorisations = values.map { it.toLong().primeFactors() }
+    val primes = primeFactorisations.flatten().distinct()
+    return primes.flatMap { prime ->
+        val count = primeFactorisations.maxOf { it.count { p -> p == prime } }
+        List(count) { prime }
+    }.fold(1L, Long::times)
+}

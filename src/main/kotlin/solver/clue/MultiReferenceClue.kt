@@ -37,7 +37,7 @@ class MultiReferenceClue(
             return null
         }
 
-        return nonNullAnswers.fold(emptyList<List<Long>>()) { listsSoFar, newSolutions ->
+        return nonNullAnswers.fold(listOf<List<Long>>(emptyList())) { listsSoFar, newSolutions ->
             listsSoFar.flatMap { list -> newSolutions.map { x -> list + x } }
         }.map(combiner).toSet()
     }
