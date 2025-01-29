@@ -37,7 +37,7 @@ import solver.clue.dualReference
 import solver.clue.isEqualTo
 import solver.clue.isFactorOfRef
 import solver.clue.isMultipleOfRef
-import solver.clue.minimumOf
+import solver.clue.smallest
 import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.singleReference
@@ -87,7 +87,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "17A" to simpleClue { isTriangleNumber(it + 2) },
     "19A" to isEqualTo(a19Prime - 370262),
     "21A" to simpleClue(::isPrime),
-    "22A" to minimumOf(simpleClue(hasMultiplicativePersistence(11))),
+    "22A" to smallest(simpleClue(hasMultiplicativePersistence(11))),
     "24A" to isFactorOfRef("1A") + simpleClue { 3L.modPow(it, it) == 24L },
     "25A" to simpleClue { toRomanNumerals(it).sorted() == "CDL" } + isMultipleOfRef("27D"),
     "26A" to simpleClue { it >= 1582 && dayOfWeek("$it-01-01") == Calendar.WEDNESDAY },

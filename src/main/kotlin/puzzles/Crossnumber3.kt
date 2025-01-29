@@ -6,6 +6,7 @@ import maths.digits
 import maths.digitsAreStrictlyIncreasing
 import maths.distinctDivisors
 import maths.hasWholeNthRoot
+import maths.hcf
 import maths.isFibonacci
 import maths.isMultipleOf
 import maths.isOdd
@@ -21,7 +22,8 @@ import solver.clue.dualReference
 import solver.clue.emptyClue
 import solver.clue.isEqualTo
 import solver.clue.isMultipleOfRef
-import solver.clue.minimumOf
+import solver.clue.multiReference
+import solver.clue.smallest
 import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.singleReference
@@ -64,7 +66,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "15A" to emptyClue(), // TODO - A number whose name includes all five vowels exactly once.
     "16A" to singleReference("8D", ::digitSum),
     "18A" to simpleClue { it.digits().sorted() == listOf(0, 2, 4, 6, 8) },
-    "21A" to simpleClue { !isPrime(it) }, // TODO - A non-prime number whose highest common factor with 756 is 1.
+    "21A" to simpleClue { hcf(it, 756) == 1L && !isPrime(it) },
     "24A" to singleReference("29D", ::digitSum),
     "25A" to emptyClue(), // TODO - The product of four consecutive Fibonacci numbers
     "26A" to dualReference("14A", "21D", Long::times),
@@ -79,15 +81,15 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "41A" to simpleClue(isMultipleOf(719)),
     "42A" to simpleClue { isPrime(it) && isPrime(it + 2) },
     "44A" to singleReference("29D") { it / 2 },
-    "45A" to emptyClue(), // TODO - The sum of 6D, 8D, 31D, 37D and 43D
+    "45A" to multiReference("6D", "8D", "31D", "37D", "43D") { it.sum() },
 
     "1D" to simpleClue(isPowerOf(2)),
     "2D" to simpleClue(::isPalindrome),
     "3D" to simpleClue { hasWholeNthRoot(3)(it) && nthRoot(it, 3) == distinctDivisors(it).size.toLong() },
     "4D" to simpleClue(isOdd),
     "5D" to simpleClue(::isSquare),
-    "6D" to dualReference("5D", "27D") { d5, d27 -> d5 * (d27 - 1) },
-    "8D" to simpleClue(isOdd),
+    "6D" to dualReference("5D", "27D") { d5, d27 -> d5 * (d27 - 1) } + singleReference("33D") { it + 1000006 },
+    "8D" to simpleClue(isOdd) + calculationWithReference("16A") { value, other -> value.digitSum().toLong() == other },
     "10D" to simpleClue(isMultipleOf(7)),
     "11D" to emptyClue(), // TODO - The number of pairs of twin primes less than 1,000,000
     "17D" to singleReference("26A") { distinctDivisors(it).size.toLong() },
@@ -102,11 +104,11 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "29D" to simpleClue(isMultipleOf(7)),
     "31D" to simpleClue(::isPrime) + simpleClue { it.digitCounts().values.toList() == listOf(2, 2, 2) },
     "33D" to singleReference("6D") { it - 1000006 },
-    "34D" to minimumOf(simpleClue { !it.toBinary().isPalindrome() && (it * it).toBinary().isPalindrome() }),
+    "34D" to smallest(simpleClue { !it.toBinary().isPalindrome() && (it * it).toBinary().isPalindrome() }),
     "37D" to simpleClue { (it * it).digitCounts().keys.sorted() == listOf(1, 2, 3, 4) },
     "38D" to simpleClue(hasWholeNthRoot(3)),
     "39D" to emptyClue(), // TODO - The largest number that cannot be written as the sum of positive, distinct integers, the sum of whose reciprocals is 1
-    "43D" to minimumOf(simpleClue { it == 2L * it.digitSum() })
+    "43D" to smallest(simpleClue { it == 2L * it.digitSum() })
 )
 
 val CROSSNUMBER_3 = factoryCrossnumber(grid, clueMap)
