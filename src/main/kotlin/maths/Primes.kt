@@ -4,7 +4,7 @@ import solver.Clue
 import kotlin.math.log2
 
 fun isSumOfConsecutivePrimes(primes: Int, digitCount: Int): Clue {
-    val max = 10.pow(digitCount - 1)
+    val max = 10.pow(digitCount)
     val candidates = primesUpTo(max).windowed(primes).map { it.sum() }
 
     return { candidates.contains(it) }

@@ -78,4 +78,10 @@ class PrimesTest {
     fun `Should identfy Fermat primes`() {
         primesUpTo(100000).filter(::isFermatPrime) shouldContainExactly listOf(3, 5, 17, 257, 65537)
     }
+
+    @Test
+    fun `Should identify sums of consecutive primes`() {
+        isSumOfConsecutivePrimes(3, 2)(11 + 13 + 17) shouldBe true
+        isSumOfConsecutivePrimes(3, 2)(11 + 13 + 15) shouldBe false
+    }
 }
