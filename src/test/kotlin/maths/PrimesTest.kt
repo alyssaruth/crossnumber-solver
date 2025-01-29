@@ -30,6 +30,12 @@ class PrimesTest {
     }
 
     @Test
+    fun `Should correctly find the smallest prime factor`() {
+        firstPrimeFactor(35) shouldBe 5
+        firstPrimeFactor(42125857312073) shouldBe 6328831
+    }
+
+    @Test
     fun `Should find the next prime after a given number`() {
         nextPrime(1) shouldBe 2
         nextPrime(2) shouldBe 3
@@ -57,6 +63,15 @@ class PrimesTest {
         countPrimesUpTo(10) shouldBe 4
 
         countPrimesUpTo(10_000_000) shouldBe 664579
+    }
+
+    @Test
+    fun `Should count twin primes up to a limit`() {
+        countTwinPrimesUpTo(100) shouldBe 8
+        countTwinPrimesUpTo(1000) shouldBe 35
+        countTwinPrimesUpTo(10000) shouldBe 205
+        countTwinPrimesUpTo(100000) shouldBe 1224
+        countTwinPrimesUpTo(1_000_000) shouldBe 8169
     }
 
     @Test

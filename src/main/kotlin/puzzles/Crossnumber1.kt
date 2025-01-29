@@ -1,6 +1,7 @@
 package puzzles
 
 import kotlinx.datetime.Instant
+import maths.canBeWrittenInSomeBaseAs
 import maths.containsDigit
 import maths.digitCounts
 import maths.digits
@@ -12,32 +13,32 @@ import maths.isPalindrome
 import maths.isPerfect
 import maths.isPrime
 import maths.isSquare
+import maths.isSumOfConsecutivePrimes
 import maths.isTriangleNumber
 import maths.nextPrime
 import maths.primeFactors
-import maths.primesUpTo
 import maths.product
 import maths.reversed
 import maths.sorted
 import maths.toRomanNumerals
 import solver.ClueConstructor
 import solver.ClueId
-import solver.clue.ContextualClue
 import solver.Crossnumber
 import solver.Orientation
 import solver.PartialSolution
 import solver.PendingSolution
 import solver.RAM_THRESHOLD
+import solver.clue.ContextualClue
+import solver.clue.calculationWithReference
 import solver.clue.dualReference
 import solver.clue.isEqualTo
-import solver.factoryCrossnumber
-import solver.clue.plus
-import solver.clue.simpleClue
-import solver.clue.calculationWithReference
 import solver.clue.isFactorOfRef
 import solver.clue.isMultipleOfRef
+import solver.clue.plus
+import solver.clue.simpleClue
 import solver.clue.singleReference
 import solver.clue.tripleReference
+import solver.factoryCrossnumber
 import kotlin.math.abs
 
 /**
@@ -65,10 +66,6 @@ private val grid = """
         ####..........#
     """.trimIndent()
 
-private val consecutivePrimeSums = primesUpTo(999).windowed(7).map { it.sum() }
-
-private val a32Options = (7..20).map { "5331005655".toLong(it) }.toSet()
-
 private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1A" to dualReference("4D", "18D", Long::times),
     "5A" to simpleClue(isMultipleOf(101)),
@@ -81,14 +78,14 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "17A" to simpleClue(::isTriangleNumber),
     "19A" to isFactorOfRef("6D"),
     "20A" to singleReference("30A") { it + 5134240 },
-    "22A" to simpleClue { value -> consecutivePrimeSums.contains(value) },
+    "22A" to simpleClue(isSumOfConsecutivePrimes(7, digitCount = 3)),
     "23A" to simpleClue { toRomanNumerals(it).sorted() == "ILXXX" },
     "24A" to isEqualTo(733626510400L.primeFactors().max()),
     "25A" to simpleClue(::isSquare),
     "27A" to singleReference("7A") { it.digits().product() },
     "28A" to simpleClue(isMultipleOf(107)),
     "30A" to isEqualTo(Instant.parse("1970-01-02T01:29:41+00:00").epochSeconds),
-    "32A" to simpleClue { a32Options.contains(it) },
+    "32A" to simpleClue(canBeWrittenInSomeBaseAs(5331005655, 10)),
     "35A" to simpleClue { value -> value == 1 + (3 * value.reversed()) },
     "36A" to simpleClue { value -> value.digitCounts().let { it.size == 2 && it.values.contains(1) } },
 

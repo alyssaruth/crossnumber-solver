@@ -35,8 +35,6 @@ tailrec fun multiplicativePersistence(n: Long, persistenceSoFar: Int = 0): Int {
 val isEven: Clue = isMultipleOf(2L)
 val isOdd: Clue = { x -> !isMultipleOf(2L)(x) }
 
-fun Long.toBinary() = toString(2)
-
 fun List<Int>.product() = fold(1, Long::times)
 
 fun Long.reversed(): Long = toString().reversed().toLong()

@@ -1,6 +1,14 @@
 package maths
 
+import solver.Clue
 import kotlin.math.log2
+
+fun isSumOfConsecutivePrimes(primes: Int, digitCount: Int): Clue {
+    val max = 10.pow(digitCount - 1)
+    val candidates = primesUpTo(max).windowed(primes).map { it.sum() }
+
+    return { candidates.contains(it) }
+}
 
 fun isPrime(value: Long): Boolean {
     if (value == 1L) return false
@@ -37,6 +45,15 @@ tailrec fun primesUpTo(n: Long, primesSoFar: List<Long> = listOf(2)): List<Long>
         primesUpTo(n, primesSoFar + nextPrime)
     }
 }
+
+fun countTwinPrimesUpTo(n: Long): Int {
+    return primesUpTo(n).windowed(2).count { it[1] - it[0] == 2L }
+}
+
+fun firstPrimeFactor(n: Long) = findFirstPrimeFactor(n)
+
+private tailrec fun findFirstPrimeFactor(n: Long, currentPrime: Long = 2): Long =
+    if (isMultipleOf(currentPrime)(n)) currentPrime else findFirstPrimeFactor(n, nextPrime(currentPrime))
 
 fun countPrimesUpTo(n: Long) = (2..n).filter(::isPrime).size
 
