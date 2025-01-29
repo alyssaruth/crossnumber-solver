@@ -13,4 +13,9 @@ class PuzzleTests {
     fun `Crossnumber 2`() {
         CROSSNUMBER_2.solve().sumAcrossClues() shouldBe 277777800764962
     }
+
+    @Test
+    fun `Crossnumber 3`() {
+        CROSSNUMBER_3.solve().sumAcrossClues() shouldBe 60196499
+    }
 }

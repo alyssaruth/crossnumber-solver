@@ -75,7 +75,7 @@ class PrimesTest {
     }
 
     @Test
-    fun `Should identfy Fermat primes`() {
+    fun `Should identify Fermat primes`() {
         primesUpTo(100000).filter(::isFermatPrime) shouldContainExactly listOf(3, 5, 17, 257, 65537)
     }
 

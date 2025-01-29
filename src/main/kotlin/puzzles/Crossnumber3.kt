@@ -32,8 +32,8 @@ import solver.ClueConstructor
 import solver.clue.asyncEquals
 import solver.clue.calculationWithReference
 import solver.clue.dualReference
-import solver.clue.emptyClue
 import solver.clue.isEqualTo
+import solver.clue.isFactorOfRef
 import solver.clue.isMultipleOfRef
 import solver.clue.largest
 import solver.clue.multiReference
@@ -73,9 +73,9 @@ private val grid = """
 private val fibonacciProducts = fibonacciUpTo(999999).map(Long::toInt).windowed(4).map { it.product() }
 
 private val clueMap: Map<String, ClueConstructor> = mapOf(
-    "1A" to simpleClue(isMultipleOf(999)),
+    "1A" to simpleClue(isMultipleOf(999)) + dualReference("5A", "45A") { a5, a45 -> a45 - (2 * a5) },
     "5A" to dualReference("45A", "1A") { a, b -> abs(a - b) / 2 },
-    "7A" to emptyClue(),
+    "7A" to dualReference("13A", "43D", Long::plus),
     "9A" to isMultipleOfRef("41A"),
     "12A" to dualReference("4D", "43D", Long::times),
     "13A" to dualReference("7A", "43D", Long::minus),
@@ -95,7 +95,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "37A" to simpleClue(canBeWrittenInSomeBaseAs(256, 3)),
     "39A" to isEqualTo(789), // Why is 6 afraid of 7?
     "40A" to isEqualTo(8902), // The number of ways to play the first 3 moves (2 white moves, 1 black move) in a game of chess
-    "41A" to simpleClue(isMultipleOf(719)),
+    "41A" to simpleClue(isMultipleOf(719)) + isFactorOfRef("9A"),
     "42A" to simpleClue { isPrime(it) && isPrime(it + 2) },
     "44A" to singleReference("29D") { it / 2 },
     "45A" to multiReference("6D", "8D", "31D", "37D", "43D") { it.sum() },
@@ -103,10 +103,12 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1D" to simpleClue(isPowerOf(2)),
     "2D" to simpleClue(::isPalindrome),
     "3D" to simpleClue { hasWholeNthRoot(3)(it) && nthRoot(it, 3) == distinctDivisors(it).size.toLong() },
-    "4D" to simpleClue(isOdd),
+    "4D" to simpleClue(isOdd) + dualReference("12A", "43D", Long::div),
     "5D" to simpleClue(::isSquare),
     "6D" to dualReference("5D", "27D") { d5, d27 -> d5 * (d27 - 1) } + singleReference("33D") { it + 1000006 },
-    "8D" to simpleClue(isOdd) + calculationWithReference("16A") { value, other -> value.digitSum().toLong() == other },
+    "8D" to simpleClue(isOdd) +
+            calculationWithReference("16A") { value, other -> value.digitSum().toLong() == other } +
+            multiReference("45A", "6D", "31D", "37D", "43D") { it.first() - it.drop(1).sum() },
     "10D" to simpleClue(isMultipleOf(7)),
     "11D" to asyncEquals { countTwinPrimesUpTo(1_000_000).toLong() },
     "17D" to singleReference("26A") { distinctDivisors(it).size.toLong() },
@@ -118,7 +120,9 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "24D" to smallest(simpleClue { !canBePermutedSuchThat(::isPrime)(it) }),
     "27D" to dualReference("5D", "6D") { d5, d6 -> (d6 / d5) + 1 },
     "28D" to isMultipleOfRef("34D"),
-    "29D" to simpleClue(isMultipleOf(7)),
+    "29D" to simpleClue(isMultipleOf(7)) +
+            singleReference("44A") { it * 2 } +
+            calculationWithReference("24A") { value, other -> value.digitSum().toLong() == other },
     "31D" to simpleClue(::isPrime) + simpleClue { it.digitCounts().values.toList() == listOf(2, 2, 2) },
     "33D" to singleReference("6D") { it - 1000006 },
     "34D" to smallest(simpleClue { !it.toBinary().isPalindrome() && (it * it).toBinary().isPalindrome() }),
