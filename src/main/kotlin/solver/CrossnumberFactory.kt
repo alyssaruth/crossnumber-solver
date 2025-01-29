@@ -1,5 +1,6 @@
 package solver
 
+import maths.getViableDigits
 import solver.clue.emptyClue
 
 fun factoryCrossnumber(gridString: String, rawClues: Map<String, ClueConstructor>): Crossnumber {
@@ -29,5 +30,6 @@ private fun initialiseDigitMap(solutions: List<Word>): DigitMap {
     val leadingSpaces = solutions.map { it.squares.first() }.toSet()
     val nonLeadingSpaces = allPoints - leadingSpaces
 
-    return leadingSpaces.associateWith { (1..9).toList() } + nonLeadingSpaces.associateWith { (0..9).toList() }
+    return leadingSpaces.associateWith { getViableDigits(true) } +
+            nonLeadingSpaces.associateWith { getViableDigits(false) }
 }

@@ -1,5 +1,6 @@
 package puzzles
 
+import maths.canBePermutedSuchThat
 import maths.canBeWrittenInSomeBaseAs
 import maths.countTwinPrimesUpTo
 import maths.digitCounts
@@ -102,7 +103,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "21D" to dualReference("14A", "37A", Long::plus),
     "22D" to simpleClue(isMultipleOf(27)),
     "23D" to emptyClue(), // TODO - A number n such that (n−1)!+1 is divisible by n^2
-    "24D" to emptyClue(), // TODO - The smallest number that cannot be changed into a prime by changing one digit.
+    "24D" to smallest(simpleClue { !canBePermutedSuchThat(::isPrime)(it) }),
     "27D" to dualReference("5D", "6D") { d5, d6 -> (d6 / d5) + 1 },
     "28D" to isMultipleOfRef("34D"),
     "29D" to simpleClue(isMultipleOf(7)),
