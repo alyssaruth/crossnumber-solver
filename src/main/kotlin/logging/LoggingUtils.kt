@@ -15,3 +15,14 @@ fun timeTakenString(timeTaken: Long): String {
     val timeStr = " [${timeInSeconds}s]"
     return if (timeTaken < 5000) timeStr.orange() else timeStr.red()
 }
+
+fun possibleDigitsStr(possibilities: Int) = when (possibilities) {
+    2 -> "²"
+    3 -> "³"
+    4 -> "⁴"
+    5 -> "⁵"
+    6 -> "⁶"
+    7 -> "⁷"
+    8 -> "⁸"
+    else -> "⁹"
+}.red()

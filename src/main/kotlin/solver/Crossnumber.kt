@@ -1,5 +1,7 @@
 package solver
 
+import logging.green
+import logging.possibleDigitsStr
 import logging.red
 import logging.timeTakenString
 import solver.clue.AsyncEqualToClue
@@ -164,9 +166,9 @@ data class Crossnumber(
     private fun substituteKnownDigits(): Grid {
         return digitMap.entries.fold(originalGrid) { grid, (pt, digits) ->
             if (digits.size > 1) {
-                grid
+                grid.updateValue(pt, possibleDigitsStr(digits.size))
             } else {
-                grid.updateValue(pt, digits.first().toString())
+                grid.updateValue(pt, digits.first().toString().green())
             }
         }
     }
