@@ -5,7 +5,9 @@ import kotlin.math.pow
 
 fun Int.pow(power: Int) = toDouble().pow(power.toDouble()).toLong()
 
-fun hasWholeNthRoot(value: Long, power: Int): Boolean = binarySearch(value, { n -> n.pow(power) })
+fun nthRoot(value: Long, power: Int): Long? = binarySearchWithResult(value, { n -> n.pow(power) })
+
+fun hasWholeNthRoot(value: Long, power: Int): Boolean = nthRoot(value, power) != null
 
 fun Long.modPow(power: Long, base: Long) =
     modPow(this.toBigInteger(), power.toBigInteger(), base.toBigInteger()).toLong()

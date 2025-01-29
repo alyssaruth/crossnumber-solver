@@ -32,7 +32,7 @@ fun nthFibonacci(n: Int) = Matrix2d(1, 1, 1, 0).pow(n - 1).tl
 
 fun isFibonacci(value: Long) = testIsFibonacci(value, 1)
 
-tailrec fun testIsFibonacci(candidate: Long, n: Int): Boolean {
+private tailrec fun testIsFibonacci(candidate: Long, n: Int): Boolean {
     val nthFibonacci = nthFibonacci(n)
     return if (nthFibonacci == candidate) {
         true

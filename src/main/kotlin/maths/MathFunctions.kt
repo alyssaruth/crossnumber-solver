@@ -33,6 +33,7 @@ tailrec fun multiplicativePersistence(n: Long, persistenceSoFar: Int = 0): Int {
 }
 
 val isEven: Clue = isMultipleOf(2L)
+val isOdd: Clue = { x -> !isMultipleOf(2L)(x) }
 
 fun List<Int>.product() = fold(1, Long::times)
 
@@ -55,6 +56,8 @@ fun hasUniqueDigits(n: Int): Clue = { value -> value.toString().toCharArray().di
 fun hasDigitSum(n: Int): Clue = { value -> value.digitSum() == n }
 
 fun Long.digitSum() = digits().sum()
+
+fun digitSum(n: Long) = n.digitSum().toLong()
 
 fun distinctDivisors(n: Long): Set<Long> =
     (1..sqrtWhole(n)).filter { n % it == 0L }.flatMap { listOf(it, n / it) }.toSet()
