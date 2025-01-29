@@ -1,7 +1,9 @@
 package puzzles
 
+import maths.digitCounts
 import maths.digitSum
 import maths.digits
+import maths.digitsAreStrictlyIncreasing
 import maths.distinctDivisors
 import maths.hasWholeNthRoot
 import maths.isFibonacci
@@ -12,16 +14,23 @@ import maths.isPowerOf
 import maths.isPrime
 import maths.isSquare
 import maths.nthRoot
+import maths.toBinary
 import solver.ClueConstructor
+import solver.clue.calculationWithReference
 import solver.clue.dualReference
 import solver.clue.emptyClue
 import solver.clue.isEqualTo
 import solver.clue.isMultipleOfRef
+import solver.clue.minimumOf
+import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.singleReference
 import solver.factoryCrossnumber
 import kotlin.math.abs
 
+/**
+ * https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-03/
+ */
 fun main() {
     CROSSNUMBER_3.solve()
 }
@@ -74,9 +83,30 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
 
     "1D" to simpleClue(isPowerOf(2)),
     "2D" to simpleClue(::isPalindrome),
-    "3D" to simpleClue { hasWholeNthRoot(it, 3) && nthRoot(it, 3) == distinctDivisors(it).size.toLong() },
+    "3D" to simpleClue { hasWholeNthRoot(3)(it) && nthRoot(it, 3) == distinctDivisors(it).size.toLong() },
     "4D" to simpleClue(isOdd),
-    "5D" to simpleClue(::isSquare)
+    "5D" to simpleClue(::isSquare),
+    "6D" to dualReference("5D", "27D") { d5, d27 -> d5 * (d27 - 1) },
+    "8D" to simpleClue(isOdd),
+    "10D" to simpleClue(isMultipleOf(7)),
+    "11D" to emptyClue(), // TODO - The number of pairs of twin primes less than 1,000,000
+    "17D" to singleReference("26A") { distinctDivisors(it).size.toLong() },
+    "19D" to calculationWithReference("30A") { value, other -> value > other },
+    "20D" to simpleClue { it.digitsAreStrictlyIncreasing() && it.digits().all { digit -> isPrime(digit.toLong()) } },
+    "21D" to dualReference("14A", "37A", Long::plus),
+    "22D" to simpleClue(isMultipleOf(27)),
+    "23D" to emptyClue(), // TODO - A number n such that (n−1)!+1 is divisible by n^2
+    "24D" to emptyClue(), // TODO - The smallest number that cannot be changed into a prime by changing one digit.
+    "27D" to dualReference("5D", "6D") { d5, d6 -> (d6 / d5) + 1 },
+    "28D" to isMultipleOfRef("34D"),
+    "29D" to simpleClue(isMultipleOf(7)),
+    "31D" to simpleClue(::isPrime) + simpleClue { it.digitCounts().values.toList() == listOf(2, 2, 2) },
+    "33D" to singleReference("6D") { it - 1000006 },
+    "34D" to minimumOf(simpleClue { !it.toBinary().isPalindrome() && (it * it).toBinary().isPalindrome() }),
+    "37D" to simpleClue { (it * it).digitCounts().keys.sorted() == listOf(1, 2, 3, 4) },
+    "38D" to simpleClue(hasWholeNthRoot(3)),
+    "39D" to emptyClue(), // TODO - The largest number that cannot be written as the sum of positive, distinct integers, the sum of whose reciprocals is 1
+    "43D" to minimumOf(simpleClue { it == 2L * it.digitSum() })
 )
 
 val CROSSNUMBER_3 = factoryCrossnumber(grid, clueMap)

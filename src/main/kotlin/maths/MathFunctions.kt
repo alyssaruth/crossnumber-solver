@@ -35,19 +35,21 @@ tailrec fun multiplicativePersistence(n: Long, persistenceSoFar: Int = 0): Int {
 val isEven: Clue = isMultipleOf(2L)
 val isOdd: Clue = { x -> !isMultipleOf(2L)(x) }
 
+fun Long.toBinary() = toString(2)
+
 fun List<Int>.product() = fold(1, Long::times)
 
 fun Long.reversed(): Long = toString().reversed().toLong()
 
-fun isPalindrome(value: Long): Boolean = value.toString() == value.toString().reversed()
+fun isPalindrome(value: Long): Boolean = value.toString().isPalindrome()
 
 fun isTriangleNumber(value: Long): Boolean =
-    binarySearch(value, { it.times(it.plus(1.toBigInteger())).divide(2.toBigInteger()) })
+    binarySearch(value) { it.times(it.plus(1.toBigInteger())).divide(2.toBigInteger()) }
 
 fun isTetrahedralNumber(value: Long): Boolean =
     binarySearch(
-        value,
-        { it.times(it.plus(1.toBigInteger())).times(it.plus(2.toBigInteger())).divide(6.toBigInteger()) })
+        value
+    ) { it.times(it.plus(1.toBigInteger())).times(it.plus(2.toBigInteger())).divide(6.toBigInteger()) }
 
 fun isSquare(value: Long) = value == sqrtWhole(value) * sqrtWhole(value)
 

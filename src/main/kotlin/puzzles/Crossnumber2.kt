@@ -78,7 +78,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1A" to isMultipleOfRef("24A") +
             tripleReference("6D", "32D", "35A") { d6, d32, a35 -> d6 - d32 - a35 },
     "5A" to simpleClue(::nGonIsConstructible),
-    "7A" to simpleClue { hasWholeNthRoot(it, 4) && distinctDivisors(it).size.pow(4) == it },
+    "7A" to simpleClue { hasWholeNthRoot(4)(it) && distinctDivisors(it).size.pow(4) == it },
     "9A" to simpleClue { properFactors(it).size == 9 },
     "11A" to singleReference("4D") { it.firstNDigits(4) },
     "12A" to simpleClue(::isPrime) + dualReference("3D", "34D", Long::minus),

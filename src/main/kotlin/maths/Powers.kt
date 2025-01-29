@@ -1,5 +1,6 @@
 package maths
 
+import solver.Clue
 import java.math.BigInteger
 import kotlin.math.pow
 
@@ -7,7 +8,7 @@ fun Int.pow(power: Int) = toDouble().pow(power.toDouble()).toLong()
 
 fun nthRoot(value: Long, power: Int): Long? = binarySearchWithResult(value, { n -> n.pow(power) })
 
-fun hasWholeNthRoot(value: Long, power: Int): Boolean = nthRoot(value, power) != null
+fun hasWholeNthRoot(power: Int): Clue = { value -> nthRoot(value, power) != null }
 
 fun Long.modPow(power: Long, base: Long) =
     modPow(this.toBigInteger(), power.toBigInteger(), base.toBigInteger()).toLong()

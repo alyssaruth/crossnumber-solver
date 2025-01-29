@@ -2,9 +2,11 @@ package maths
 
 import solver.Clue
 
+fun Long.digitsAreStrictlyIncreasing() = digits().windowed(2).all { it[0] < it[1] }
+
 fun Long.digits() = toString().toCharArray().map(Char::digitToInt)
 
-fun Long.digitCounts() = digits().groupBy { it }.mapValues { it.value.size }
+fun Long.digitCounts(): Map<Int, Int> = digits().groupBy { it }.mapValues { it.value.size }
 
 fun Long.firstNDigits(n: Int) = digits().subList(0, n).joinToString("").toLong()
 

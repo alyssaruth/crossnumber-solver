@@ -24,5 +24,6 @@ fun possibleDigitsStr(possibilities: Int) = when (possibilities) {
     6 -> "⁶"
     7 -> "⁷"
     8 -> "⁸"
-    else -> "⁹"
+    9 -> "⁹"
+    else -> "⁺"
 }.red()
