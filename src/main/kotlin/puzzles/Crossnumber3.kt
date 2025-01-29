@@ -9,6 +9,8 @@ import maths.digits
 import maths.digitsAreStrictlyIncreasing
 import maths.distinctDivisors
 import maths.distinctIntegerPartitions
+import maths.factorialMod
+import maths.fibonacciUpTo
 import maths.hasWholeNthRoot
 import maths.hcf
 import maths.inWords
@@ -21,6 +23,7 @@ import maths.isPrime
 import maths.isSquare
 import maths.isSumOfConsecutivePrimes
 import maths.nthRoot
+import maths.product
 import maths.reciprocalSum
 import maths.sorted
 import maths.toBinary
@@ -67,6 +70,8 @@ private val grid = """
     .......#.......
 """.trimIndent()
 
+private val fibonacciProducts = fibonacciUpTo(999999).map(Long::toInt).windowed(4).map { it.product() }
+
 private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1A" to simpleClue(isMultipleOf(999)),
     "5A" to dualReference("45A", "1A") { a, b -> abs(a - b) / 2 },
@@ -80,12 +85,12 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "18A" to simpleClue { it.digits().sorted() == listOf(0, 2, 4, 6, 8) },
     "21A" to simpleClue { hcf(it, 756) == 1L && !isPrime(it) },
     "24A" to singleReference("29D", ::digitSum),
-    "25A" to emptyClue(), // TODO - The product of four consecutive Fibonacci numbers
+    "25A" to simpleClue { fibonacciProducts.contains(it) },
     "26A" to dualReference("14A", "21D", Long::times),
     "29A" to largest(simpleClue { !BigInteger.TWO.pow(it.toInt()).digits().contains(0) }),
     "30A" to isEqualTo(418), // I am a teapot
     "32A" to simpleClue(::isPrime) + simpleClue(isSumOfConsecutivePrimes(25, digitCount = 5)),
-    "35A" to emptyClue(), // TODO - The number of different nets of a cube (with reflections and rotations being considered as the same net)
+    "35A" to isEqualTo(11), // The number of different nets of a cube (with reflections and rotations being considered as the same net)
     "36A" to simpleClue(::isFibonacci),
     "37A" to simpleClue(canBeWrittenInSomeBaseAs(256, 3)),
     "39A" to isEqualTo(789), // Why is 6 afraid of 7?
@@ -109,7 +114,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "20D" to simpleClue { it.digitsAreStrictlyIncreasing() && it.digits().all { digit -> isPrime(digit.toLong()) } },
     "21D" to dualReference("14A", "37A", Long::plus),
     "22D" to simpleClue(isMultipleOf(27)),
-    "23D" to emptyClue(), // TODO - A number n such that (n−1)!+1 is divisible by n^2
+    "23D" to simpleClue { factorialMod(it - 1, it * it) == (it * it) - 1 },
     "24D" to smallest(simpleClue { !canBePermutedSuchThat(::isPrime)(it) }),
     "27D" to dualReference("5D", "6D") { d5, d6 -> (d6 / d5) + 1 },
     "28D" to isMultipleOfRef("34D"),
