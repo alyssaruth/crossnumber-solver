@@ -7,6 +7,7 @@ import maths.fromDigits
 import maths.hasDigitSum
 import maths.hasUniqueDigits
 import maths.isAnagramOf
+import maths.isKnownSierpinskiNumber
 import maths.isMultipleOf
 import maths.isPalindrome
 import maths.lcm
@@ -65,7 +66,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
         "15D",
         "6D"
     ) { a3, d15, d6 -> a3 - d15 - d6 }, // TODO - This number is equal to the number of digits in its factorial
-    "11A" to emptyClue(), // TODO - A Sierpiński number
+    "11A" to simpleClue(::isKnownSierpinskiNumber),
     "12A" to simpleClue { reciprocalSum(it.nonZeroDigits()) == 1.0 } + singleReference("27A") { it.reversed() },
     "13A" to singleReference("7D") { it * 2 },
     "16A" to emptyClue(), // TODO - A counterexample to the conjecture that every odd number can be written in the form p+2a2, where p is 1 or a prime and a is an integer

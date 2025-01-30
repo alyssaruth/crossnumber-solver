@@ -3,6 +3,47 @@ package maths
 import solver.Clue
 import kotlin.math.log2
 
+/**
+ * https://oeis.org/A076336
+ *
+ * Testing for these is pretty bespoke per number, various problems around these are unsolved (including if this list is
+ * even complete up to 3 million) so I can't program anything for it :(
+ *
+ * I *could* hit the OEIS API, but I don't really want to require an internet connection to run the solves
+ */
+fun isKnownSierpinskiNumber(value: Long) =
+    setOf<Long>(
+        78557,
+        271129,
+        271577,
+        322523,
+        327739,
+        482719,
+        575041,
+        603713,
+        903983,
+        934909,
+        965431,
+        1259779,
+        1290677,
+        1518781,
+        1624097,
+        1639459,
+        1777613,
+        2131043,
+        2131099,
+        2191531,
+        2510177,
+        2541601,
+        2576089,
+        2931767,
+        2931991,
+        3083723,
+        3098059,
+        3555593,
+        3608251
+    ).contains(value)
+
 fun isSumOfConsecutivePrimes(primes: Int, digitCount: Int): Clue {
     val max = 10.pow(digitCount)
     val candidates = primesUpTo(max).windowed(primes).map { it.sum() }
