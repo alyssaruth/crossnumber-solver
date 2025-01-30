@@ -80,13 +80,6 @@ class PrimesTest {
     }
 
     @Test
-    fun `Should identify sums of consecutive primes`() {
-        isSumOfConsecutivePrimes(3, 2)(11 + 13 + 17) shouldBe true
-        isSumOfConsecutivePrimes(3, 2)(11 + 13 + 15) shouldBe false
-        isSumOfConsecutivePrimes(7, 3)(947) shouldBe true
-    }
-
-    @Test
     fun `Should identify counterexamples to Golbach's conjecture`() {
         violatesGoldbachConjecture(5777) shouldBe true
         violatesGoldbachConjecture(5228) shouldBe false

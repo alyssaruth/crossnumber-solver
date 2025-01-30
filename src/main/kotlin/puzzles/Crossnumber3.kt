@@ -20,10 +20,11 @@ import maths.isOdd
 import maths.isPalindrome
 import maths.isPowerOf
 import maths.isPrime
+import maths.isProductOfConsecutive
 import maths.isSquare
-import maths.isSumOfConsecutivePrimes
+import maths.isSumOfConsecutive
 import maths.nthRoot
-import maths.product
+import maths.primesUpTo
 import maths.reciprocalSum
 import maths.sorted
 import maths.toBinary
@@ -70,8 +71,6 @@ private val grid = """
     .......#.......
 """.trimIndent()
 
-private val fibonacciProducts = fibonacciUpTo(999999).map(Long::toInt).windowed(4).map { it.product() }
-
 private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1A" to simpleClue(isMultipleOf(999)) + dualReference("5A", "45A") { a5, a45 -> a45 - (2 * a5) },
     "5A" to dualReference("45A", "1A") { a, b -> abs(a - b) / 2 },
@@ -85,11 +84,11 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "18A" to simpleClue { it.digits().sorted() == listOf(0, 2, 4, 6, 8) },
     "21A" to simpleClue { hcf(it, 756) == 1L && !isPrime(it) },
     "24A" to singleReference("29D", ::digitSum),
-    "25A" to simpleClue { fibonacciProducts.contains(it) },
+    "25A" to simpleClue(isProductOfConsecutive(4, digits = 6, ::fibonacciUpTo)),
     "26A" to dualReference("14A", "21D", Long::times),
     "29A" to largest(simpleClue { !BigInteger.TWO.pow(it.toInt()).digits().contains(0) }),
     "30A" to isEqualTo(418), // I am a teapot
-    "32A" to simpleClue(::isPrime) + simpleClue(isSumOfConsecutivePrimes(25, digitCount = 5)),
+    "32A" to simpleClue(::isPrime) + simpleClue(isSumOfConsecutive(25, digits = 5, ::primesUpTo)),
     "35A" to isEqualTo(11), // The number of different nets of a cube (with reflections and rotations being considered as the same net)
     "36A" to simpleClue(::isFibonacci),
     "37A" to simpleClue(canBeWrittenInSomeBaseAs(256, 3)),

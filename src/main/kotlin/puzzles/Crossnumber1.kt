@@ -13,10 +13,11 @@ import maths.isPalindrome
 import maths.isPerfect
 import maths.isPrime
 import maths.isSquare
-import maths.isSumOfConsecutivePrimes
+import maths.isSumOfConsecutive
 import maths.isTriangleNumber
 import maths.nextPrime
 import maths.primeFactors
+import maths.primesUpTo
 import maths.product
 import maths.reversed
 import maths.sorted
@@ -79,7 +80,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "17A" to simpleClue(::isTriangleNumber),
     "19A" to isFactorOfRef("6D"),
     "20A" to singleReference("30A") { it + 5134240 },
-    "22A" to simpleClue(isSumOfConsecutivePrimes(7, digitCount = 3)),
+    "22A" to simpleClue(isSumOfConsecutive(7, digits = 3, ::primesUpTo)),
     "23A" to simpleClue { toRomanNumerals(it).sorted() == "ILXXX" },
     "24A" to isEqualTo(733626510400L.primeFactors().max()),
     "25A" to simpleClue(::isSquare),

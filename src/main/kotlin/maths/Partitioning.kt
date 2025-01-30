@@ -15,7 +15,6 @@ private tailrec fun computeIntegerPartitions(
     wipPartitions: List<List<Int>> = (1..(n + 1) / 2).map(::listOf),
     completedPartitions: List<List<Int>> = emptyList(),
 ): List<List<Int>> {
-    println("WIP: ${wipPartitions.size}, Done: ${completedPartitions.size}")
     if (wipPartitions.isEmpty()) return completedPartitions.distinct()
         .filter { desiredLength == null || it.size == desiredLength }
 

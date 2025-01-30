@@ -1,6 +1,7 @@
 package puzzles
 
 import maths.countStraightLinesThroughGrid
+import maths.cubesUpTo
 import maths.digitSum
 import maths.digitToWord
 import maths.digits
@@ -15,6 +16,7 @@ import maths.isAnagramOf
 import maths.isKnownSierpinskiNumber
 import maths.isMultipleOf
 import maths.isPalindrome
+import maths.isSumOfConsecutive
 import maths.lcm
 import maths.modPow
 import maths.nonZeroDigits
@@ -22,6 +24,7 @@ import maths.product
 import maths.reciprocalSum
 import maths.reversed
 import maths.sqrtWhole
+import maths.squaresUpTo
 import maths.violatesGoldbachConjecture
 import solver.ClueConstructor
 import solver.clue.calculationWithReference
@@ -68,6 +71,8 @@ private val grid = """
 
 private val abundantNumbers = (1..99999).filter { isAbundant(it.toLong()) }.toSet()
 
+private val isSumOfFiftyConsecutiveSquares = isSumOfConsecutive(50, 8, ::squaresUpTo)
+
 private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1A" to isFactorOfRef("1D") + isMultipleOfRef("2D"), // TODO - This number is a multiple of one of the two-digit answers in the crossnumber and shares no factors with the other two-digit answers
     "3A" to tripleReference("15D", "9A", "6D") { a, b, c -> a + b + c },
@@ -95,7 +100,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
 
     "1D" to isMultipleOfRef("1A") + dualReference("15D", "26A", Long::minus),
     "2D" to isFactorOfRef("1A"),
-    "3D" to emptyClue(), // TODO - A positive integer whose square is the sum of 50 consecutive squares
+    "3D" to simpleClue { isSumOfFiftyConsecutiveSquares(it * it) },
     "4D" to simpleClue(hasUniqueDigits(1)),
     "5D" to dualReference("5A", "13A") { x, y -> abs(x - y) / 2 } +
             singleReference("5A") { it + 142 },
@@ -115,7 +120,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "22D" to emptyClue(), // TODO - The smallest number that appears eight times in Pascal’s triangle
     "24D" to emptyClue(), // TODO - The maximum number of regions that can be formed by joining 27 points on a circle with straight lines
     "27D" to isEqualTo(countStraightLinesThroughGrid(10)),
-    "28D" to emptyClue(), // TODO - The sum of four consecutive positive cubes
+    "28D" to simpleClue(isSumOfConsecutive(4, digits = 4, ::cubesUpTo)),
     "29D" to simpleClue { isPalindrome(it + 5) },
     "30D" to dualReference("18D", "31D", Long::plus),
     "31D" to calculationWithReference("18D") { value, other -> value.isAnagramOf(other) },
