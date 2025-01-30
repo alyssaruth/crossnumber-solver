@@ -65,12 +65,3 @@ fun properFactors(n: Long): Set<Long> = distinctDivisors(n) - n
 fun isPerfect(n: Long) = properFactors(n).sum() == n
 
 fun isAbundant(n: Long) = properFactors(n).sum() > n
-
-fun factorial(n: Long) = (1..n).toList().fold(1L, Long::times)
-
-tailrec fun reverseFactorial(n: Long, currentDivisor: Long = 2): Long? {
-    val remainder = n / currentDivisor
-    return if (n < currentDivisor || !isMultipleOf(currentDivisor)(n)) null else if (remainder == currentDivisor + 1) {
-        currentDivisor + 1
-    } else reverseFactorial(remainder, currentDivisor + 1)
-}

@@ -1,8 +1,10 @@
 package puzzles
 
+import maths.countStraightLinesThroughGrid
 import maths.digitSum
 import maths.digitToWord
 import maths.digits
+import maths.factorial
 import maths.fromDigits
 import maths.hasDigitSum
 import maths.hasUniqueDigits
@@ -16,14 +18,18 @@ import maths.isPalindrome
 import maths.lcm
 import maths.modPow
 import maths.nonZeroDigits
+import maths.product
 import maths.reciprocalSum
 import maths.reversed
 import maths.sqrtWhole
+import maths.violatesGoldbachConjecture
 import solver.ClueConstructor
 import solver.clue.calculationWithReference
+import solver.clue.doesNotEqualRef
 import solver.clue.dualReference
 import solver.clue.emptyClue
 import solver.clue.equalsSomeOther
+import solver.clue.isEqualTo
 import solver.clue.isFactorOfRef
 import solver.clue.isMultipleOfRef
 import solver.clue.largest
@@ -66,17 +72,13 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1A" to isFactorOfRef("1D") + isMultipleOfRef("2D"), // TODO - This number is a multiple of one of the two-digit answers in the crossnumber and shares no factors with the other two-digit answers
     "3A" to tripleReference("15D", "9A", "6D") { a, b, c -> a + b + c },
     "5A" to singleReference("5D") { it - 142 } + singleReference("7D") { it - 808 },
-    "8A" to emptyClue(), // TODO - The product of the three largest two-digit answers in this crossnumber
-    "9A" to tripleReference(
-        "3A",
-        "15D",
-        "6D"
-    ) { a3, d15, d6 -> a3 - d15 - d6 }, // TODO - This number is equal to the number of digits in its factorial
+    "8A" to multiReference("9A", "33A", "6D", "34D") { it.sorted().drop(1).map(Long::toInt).product() },
+    "9A" to simpleClue { factorial(it).digits().size.toLong() == it },
     "11A" to simpleClue(::isKnownSierpinskiNumber),
     "12A" to simpleClue { reciprocalSum(it.nonZeroDigits()) == 1.0 } + singleReference("27A") { it.reversed() },
     "13A" to singleReference("7D") { it * 2 },
-    "16A" to emptyClue(), // TODO - A counterexample to the conjecture that every odd number can be written in the form p+2a2, where p is 1 or a prime and a is an integer
-    "17A" to emptyClue(), // TODO - A second counterexample to the conjecture in 16A
+    "16A" to simpleClue(::violatesGoldbachConjecture) + doesNotEqualRef("17A"),
+    "17A" to simpleClue(::violatesGoldbachConjecture) + doesNotEqualRef("16A"),
     "19A" to simpleClue(isMultipleOf(717)),
     "23A" to equalsSomeOther("23A"),
     "25A" to simpleClue(::isPalindrome),
@@ -112,7 +114,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "21D" to equalsSomeOther("21D"),
     "22D" to emptyClue(), // TODO - The smallest number that appears eight times in Pascal’s triangle
     "24D" to emptyClue(), // TODO - The maximum number of regions that can be formed by joining 27 points on a circle with straight lines
-    "27D" to emptyClue(), // TODO - The number of straight lines that go through at least two points of a 10×10 grid of points
+    "27D" to isEqualTo(countStraightLinesThroughGrid(10)),
     "28D" to emptyClue(), // TODO - The sum of four consecutive positive cubes
     "29D" to simpleClue { isPalindrome(it + 5) },
     "30D" to dualReference("18D", "31D", Long::plus),

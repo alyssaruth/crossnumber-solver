@@ -104,3 +104,17 @@ fun countPrimesUpTo(n: Long) = (2..n).filter(::isPrime).size
  */
 fun isFermatPrime(p: Long) =
     isPowerOf(2)(p - 1) && isPowerOf(2)(log2((p - 1).toDouble()).toLong()) && isPrime(p)
+
+/**
+ * Goldbach's conjecture was: Every odd number can be written in the form p+2a^2, where p is prime or 1 and a is >= 0
+ *
+ * For a value to violate this it must be:
+ *
+ *  - Odd
+ *  - N - 2a^2 is not prime or 1 for all 0 <= a <= sqrt(n/2)
+ */
+fun violatesGoldbachConjecture(value: Long) =
+    isOdd(value) && (0..sqrtWhole(value / 2)).none {
+        val result = value - (2 * it * it)
+        result == 1L || (result > 0 && isPrime(result))
+    }

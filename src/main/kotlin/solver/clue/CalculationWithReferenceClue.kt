@@ -39,3 +39,5 @@ fun calculationWithReference(clueId: String, checker: (Long, Long) -> Boolean): 
 
 fun isMultipleOfRef(clueId: String) = calculationWithReference(clueId) { value, other -> isMultipleOf(other)(value) }
 fun isFactorOfRef(clueId: String) = calculationWithReference(clueId) { value, other -> isMultipleOf(value)(other) }
+
+fun doesNotEqualRef(clueId: String) = calculationWithReference(clueId) { x, y -> x != y }
