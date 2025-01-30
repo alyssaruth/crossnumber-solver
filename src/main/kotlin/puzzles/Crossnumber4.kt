@@ -6,6 +6,7 @@ import maths.digits
 import maths.fromDigits
 import maths.hasDigitSum
 import maths.hasUniqueDigits
+import maths.hasWholeNthRoot
 import maths.integerPartitions
 import maths.isAbundant
 import maths.isAnagramOf
@@ -116,7 +117,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "29D" to simpleClue { isPalindrome(it + 5) },
     "30D" to dualReference("18D", "31D", Long::plus),
     "31D" to calculationWithReference("18D") { value, other -> value.isAnagramOf(other) },
-    "34D" to simpleClue { it.digitSum().toLong() == sqrtWhole(it) }
+    "34D" to simpleClue { hasWholeNthRoot(2)(it) && it.digitSum().toLong() == sqrtWhole(it) }
 )
 
 val CROSSNUMBER_4 = factoryCrossnumber(grid, clueMap)
