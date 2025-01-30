@@ -58,9 +58,13 @@ private val grid = """
 private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1A" to isFactorOfRef("1D") + isMultipleOfRef("2D"), // TODO - This number is a multiple of one of the two-digit answers in the crossnumber and shares no factors with the other two-digit answers
     "3A" to tripleReference("15D", "9A", "6D") { a, b, c -> a + b + c },
-    "5A" to singleReference("5D") { it - 142 } + calculationWithReference("7D") { value, other -> other == value + 808 },
+    "5A" to singleReference("5D") { it - 142 } + singleReference("7D") { it - 808 },
     "8A" to emptyClue(), // TODO - The product of the three largest two-digit answers in this crossnumber
-    "9A" to emptyClue(), // TODO - This number is equal to the number of digits in its factorial
+    "9A" to tripleReference(
+        "3A",
+        "15D",
+        "6D"
+    ) { a3, d15, d6 -> a3 - d15 - d6 }, // TODO - This number is equal to the number of digits in its factorial
     "11A" to emptyClue(), // TODO - A Sierpiński number
     "12A" to simpleClue { reciprocalSum(it.nonZeroDigits()) == 1.0 } + singleReference("27A") { it.reversed() },
     "13A" to singleReference("7D") { it * 2 },
@@ -83,12 +87,15 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "2D" to isFactorOfRef("1A"),
     "3D" to emptyClue(), // TODO - A positive integer whose square is the sum of 50 consecutive squares
     "4D" to simpleClue(hasUniqueDigits(1)),
-    "5D" to dualReference("5A", "13A") { x, y -> abs(x - y) / 2 },
-    "6D" to singleReference("3A") { it.digits().drop(1).dropLast(1).fromDigits() },
+    "5D" to dualReference("5A", "13A") { x, y -> abs(x - y) / 2 } +
+            singleReference("5A") { it + 142 },
+    "6D" to singleReference("3A") { it.digits().drop(1).dropLast(1).fromDigits() } +
+            tripleReference("3A", "15D", "9A") { a3, d15, a9 -> a3 - d15 - a9 },
     "7D" to singleReference("5A") { it + 808 },
     "10D" to emptyClue(), // TODO - The largest number that is not the sum of two abundant numbers
     "14D" to calculationWithReference("12A") { value, other -> value.modPow(91, 18_793_739) == other },
-    "15D" to dualReference("1D", "26A", Long::plus),
+    "15D" to dualReference("1D", "26A", Long::plus) +
+            tripleReference("3A", "9A", "6D") { a3, a9, d6 -> a3 - a9 - d6 },
     "18D" to calculationWithReference("31D") { value, other -> value.isAnagramOf(other) },
     "19D" to calculationWithReference("6D") { value, other -> value.digitSum() + 1L == other },
     "20D" to dualReference("7D", "5A") { a, b -> lcm(a, b) },

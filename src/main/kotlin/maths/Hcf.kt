@@ -14,7 +14,9 @@ private tailrec fun computeHcf(x: Long, y: Long, max: Long = maxOf(x, y), min: L
         computeHcf(x, y, min, max % min)
     }
 
-fun lcm(vararg values: Long) = lcm(values.toList())
+fun lcm(vararg values: Long) = if (values.size == 2) fastLcm(values[0], values[1]) else lcm(values.toList())
+
+private fun fastLcm(x: Long, y: Long) = (x * y) / hcf(x, y)
 
 fun lcm(values: List<Long>): Long {
     val primeFactorisations = values.map { it.primeFactors() }

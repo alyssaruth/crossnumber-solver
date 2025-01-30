@@ -12,6 +12,12 @@ class HcfTest {
     }
 
     @Test
+    fun `Should calculate the LCM of two numbers quickly`() {
+        lcm(54463500, 2005830) shouldBe 63885685500
+        lcm(2005830, 54463500) shouldBe 63885685500
+    }
+
+    @Test
     fun `Should calculate the LCM of a list of numbers`() {
         lcm(listOf(12, 18, 30)) shouldBe 180
         lcm(listOf(10, 12, 15, 75)) shouldBe 300
