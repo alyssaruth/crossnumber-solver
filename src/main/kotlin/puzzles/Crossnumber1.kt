@@ -31,6 +31,7 @@ import solver.RAM_THRESHOLD
 import solver.clue.ContextualClue
 import solver.clue.calculationWithReference
 import solver.clue.dualReference
+import solver.clue.equalsSomeOther
 import solver.clue.isEqualTo
 import solver.clue.isFactorOfRef
 import solver.clue.isMultipleOfRef
@@ -92,7 +93,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1D" to singleReference("3D") { it - 700 },
     "2D" to simpleClue(hasDigitSum(16)),
     "3D" to simpleClue(::isFibonacci) + singleReference("1D") { it + 700 },
-    "4D" to ::FourDown,
+    "4D" to equalsSomeOther("4D"),
     "5D" to simpleClue { value -> isSquare(value) && hasUniqueDigits(10)(value) },
     "6D" to simpleClue(::sixDown),
     "8D" to singleReference("25A") { nextPrime(it) },
@@ -120,47 +121,6 @@ val CROSSNUMBER_1 = factoryCrossnumber(grid, clueMap)
 private fun sixDown(value: Long): Boolean {
     val digits = value.digits()
     return digits.indices.all { i -> digits.count { it == i } == digits[i] }
-}
-
-/**
- * This is the same as another number in the crossnumber
- */
-class FourDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
-    private val id = ClueId(4, Orientation.DOWN)
-    private val myLength = crossnumber.solutions.getValue(id).squares.size
-
-    private val potentialSolutions = computePotentialSolutions()
-
-    override fun totalCombinations(solutionCombos: Long) = solutionCombos
-
-    override fun check(value: Long) = potentialSolutions?.contains(value) ?: true
-
-    override val onSolve: ((Long) -> Crossnumber) = { solution ->
-        val clues =
-            (crossnumber.solutions - id).filterValues { it is PartialSolution && it.possibilities.contains(solution) }
-        if (clues.size == 1) {
-            val (clueId, currentSolution) = clues.toList().first()
-            crossnumber.replaceSolution(
-                clueId,
-                PartialSolution(currentSolution.squares, currentSolution.clue, listOf(solution))
-            )
-        } else {
-            crossnumber
-        }
-    }
-
-    private fun computePotentialSolutions(): Set<Long>? {
-        val potentialSolutions =
-            crossnumber.solutions.filterNot { (clueId, _) -> clueId == id }.values.filter { it.squares.size == myLength }
-
-        val partialSolutions = potentialSolutions.filterIsInstance<PartialSolution>()
-        if (partialSolutions.size < potentialSolutions.size) {
-            // At least one still pending, can't tell anything
-            return null
-        }
-
-        return partialSolutions.flatMap { it.possibilities }.toSet()
-    }
 }
 
 /**

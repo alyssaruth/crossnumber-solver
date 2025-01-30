@@ -51,8 +51,6 @@ fun isTetrahedralNumber(value: Long): Boolean =
 
 fun isSquare(value: Long) = value == sqrtWhole(value) * sqrtWhole(value)
 
-fun hasUniqueDigits(n: Int): Clue = { value -> value.toString().toCharArray().distinct().size == n }
-
 fun hasDigitSum(n: Int): Clue = { value -> value.digitSum() == n }
 
 fun Long.digitSum() = digits().sum()

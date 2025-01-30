@@ -10,6 +10,7 @@ import maths.distinctDivisors
 import maths.firstNDigits
 import maths.hasDigitSum
 import maths.hasMultiplicativePersistence
+import maths.hasUniqueDigits
 import maths.hasWholeNthRoot
 import maths.inPence
 import maths.isAbundant
@@ -92,7 +93,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "25A" to simpleClue { toRomanNumerals(it).sorted() == "CDL" } + isMultipleOfRef("27D"),
     "26A" to simpleClue { it >= 1582 && dayOfWeek("$it-01-01") == Calendar.WEDNESDAY },
     "28A" to simpleClue(isMultipleOf(9)),
-    "29A" to simpleClue { it.digitCounts().size == 1 },
+    "29A" to simpleClue(hasUniqueDigits(1)),
     "31A" to simpleClue(::isSquare),
     "33A" to singleReference("4D") { it.lastNDigits(4) },
     "35A" to isEqualTo(12), // https://en.wikipedia.org/wiki/Mathematical_chess_problem#Domination_problems

@@ -16,9 +16,15 @@ private fun collectDigits(remaining: BigInteger, digitsSoFar: List<Int> = emptyL
     }
 }
 
+fun Long.isAnagramOf(other: Long) = digits().sorted() == other.digits().sorted()
+
 fun Long.digits() = toString().toCharArray().map(Char::digitToInt)
 
+fun Long.nonZeroDigits() = digits().filter { it > 0 }
+
 fun Long.digitCounts(): Map<Int, Int> = digits().groupBy { it }.mapValues { it.value.size }
+
+fun hasUniqueDigits(n: Int): Clue = { it.digits().toSet().size == n }
 
 fun Long.firstNDigits(n: Int) = digits().subList(0, n).fromDigits()
 

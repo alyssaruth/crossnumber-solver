@@ -38,7 +38,8 @@ private fun appendAnd(currentDescription: String, remainder: Long): String =
 private fun append(currentDescription: String, next: String, sep: String = " ") =
     if (currentDescription.isNotEmpty()) "$currentDescription$sep$next" else next
 
-private fun digitToWord(digit: Int) = when (digit) {
+fun digitToWord(digit: Int) = when (digit) {
+    0 -> "zero"
     1 -> "one"
     2 -> "two"
     3 -> "three"
