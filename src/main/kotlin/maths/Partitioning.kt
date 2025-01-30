@@ -1,22 +1,32 @@
 package maths
 
 
-fun Int.distinctIntegerPartitions(): List<List<Int>> = computeIntegerPartitions(this)
+fun Int.distinctIntegerPartitions(): List<List<Int>> = computeIntegerPartitions(this, true)
+
+fun Int.integerPartitions(ofLength: Int? = null): List<List<Int>> =
+    if (ofLength == 2) computePartitionsOfTwo() else computeIntegerPartitions(this, false, ofLength)
+
+private fun Int.computePartitionsOfTwo(): List<List<Int>> = (1..this / 2).map { listOf(it, this - it) }
 
 private tailrec fun computeIntegerPartitions(
     n: Int,
+    distinct: Boolean,
+    desiredLength: Int? = null,
     wipPartitions: List<List<Int>> = (1..(n + 1) / 2).map(::listOf),
     completedPartitions: List<List<Int>> = emptyList(),
 ): List<List<Int>> {
+    println("WIP: ${wipPartitions.size}, Done: ${completedPartitions.size}")
     if (wipPartitions.isEmpty()) return completedPartitions.distinct()
+        .filter { desiredLength == null || it.size == desiredLength }
 
     val (newlyFinished, newlyWip) =
         wipPartitions.flatMap { wipPartition ->
             val last = wipPartition.last()
             val currentSum = wipPartition.sum()
-            val nextCandidates = (last + 1..(n - currentSum))
+            val nextCandidate = if (distinct) last + 1 else last
+            val nextCandidates = (nextCandidate..(n - currentSum))
             nextCandidates.map { candidate -> wipPartition + candidate }
-        }.partition { it.sum() == n }
+        }.filter { desiredLength == null || it.size <= desiredLength }.partition { it.sum() == n }
 
-    return computeIntegerPartitions(n, newlyWip, completedPartitions + newlyFinished)
+    return computeIntegerPartitions(n, distinct, desiredLength, newlyWip, completedPartitions + newlyFinished)
 }

@@ -6,6 +6,8 @@ import maths.digits
 import maths.fromDigits
 import maths.hasDigitSum
 import maths.hasUniqueDigits
+import maths.integerPartitions
+import maths.isAbundant
 import maths.isAnagramOf
 import maths.isKnownSierpinskiNumber
 import maths.isMultipleOf
@@ -23,6 +25,7 @@ import solver.clue.emptyClue
 import solver.clue.equalsSomeOther
 import solver.clue.isFactorOfRef
 import solver.clue.isMultipleOfRef
+import solver.clue.largest
 import solver.clue.multiReference
 import solver.clue.plus
 import solver.clue.simpleClue
@@ -56,6 +59,8 @@ private val grid = """
     ....##....#....
 """.trimIndent()
 
+private val abundantNumbers = (1..99999).filter { isAbundant(it.toLong()) }.toSet()
+
 private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1A" to isFactorOfRef("1D") + isMultipleOfRef("2D"), // TODO - This number is a multiple of one of the two-digit answers in the crossnumber and shares no factors with the other two-digit answers
     "3A" to tripleReference("15D", "9A", "6D") { a, b, c -> a + b + c },
@@ -74,7 +79,8 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "19A" to simpleClue(isMultipleOf(717)),
     "23A" to equalsSomeOther("23A"),
     "25A" to simpleClue(::isPalindrome),
-    "26A" to calculationWithReference("15D") { value, other -> value < other },
+    "26A" to calculationWithReference("15D") { value, other -> value < other } +
+            dualReference("15D", "1D", Long::minus),
     "27A" to singleReference("12A") { it.reversed() },
     "30A" to simpleClue(hasDigitSum(5)),
     "32A" to simpleClue { it.digits().map(::digitToWord).windowed(2).all { (x, y) -> x.last() == y.first() } },
@@ -84,7 +90,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "36A" to singleReference("29D") { (it * 1.5).toLong() },
     "37A" to calculationWithReference("30A") { value, other -> isMultipleOf(other)(value + 1) },
 
-    "1D" to isMultipleOfRef("1A"),
+    "1D" to isMultipleOfRef("1A") + dualReference("15D", "26A", Long::minus),
     "2D" to isFactorOfRef("1A"),
     "3D" to emptyClue(), // TODO - A positive integer whose square is the sum of 50 consecutive squares
     "4D" to simpleClue(hasUniqueDigits(1)),
@@ -93,7 +99,9 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "6D" to singleReference("3A") { it.digits().drop(1).dropLast(1).fromDigits() } +
             tripleReference("3A", "15D", "9A") { a3, d15, a9 -> a3 - d15 - a9 },
     "7D" to singleReference("5A") { it + 808 },
-    "10D" to emptyClue(), // TODO - The largest number that is not the sum of two abundant numbers
+    "10D" to largest(simpleClue {
+        it.toInt().integerPartitions(ofLength = 2).none { partition -> partition.all(abundantNumbers::contains) }
+    }),
     "14D" to calculationWithReference("12A") { value, other -> value.modPow(91, 18_793_739) == other },
     "15D" to dualReference("1D", "26A", Long::plus) +
             tripleReference("3A", "9A", "6D") { a3, a9, d6 -> a3 - a9 - d6 },
