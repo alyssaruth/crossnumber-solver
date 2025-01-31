@@ -13,6 +13,8 @@ import solver.PendingSolution
  *  - Multiply this by 13D to get a perfect number.
  *  - A factor of 6D
  *  - The sum of this number’s digits is 2D
+ *
+ * N.B. This will scale like O(n*m) - use "transformedEqualsRef" or "singleRef" instead where possible
  */
 class CalculationWithReferenceClue(
     crossnumber: Crossnumber,

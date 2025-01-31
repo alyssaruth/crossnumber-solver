@@ -42,6 +42,7 @@ import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.singleReference
 import solver.clue.smallest
+import solver.clue.transformedEqualsRef
 import solver.factoryCrossnumber
 import java.math.BigInteger
 import kotlin.math.abs
@@ -106,7 +107,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "5D" to simpleClue(::isSquare),
     "6D" to dualReference("5D", "27D") { d5, d27 -> d5 * (d27 - 1) } + singleReference("33D") { it + 1000006 },
     "8D" to simpleClue(isOdd) +
-            calculationWithReference("16A") { value, other -> value.digitSum().toLong() == other } +
+            transformedEqualsRef("16A", ::digitSum) +
             multiReference("45A", "6D", "31D", "37D", "43D") { it.first() - it.drop(1).sum() },
     "10D" to simpleClue(isMultipleOf(7)),
     "11D" to asyncEquals { countTwinPrimesUpTo(1_000_000).toLong() },
@@ -121,7 +122,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "28D" to isMultipleOfRef("34D"),
     "29D" to simpleClue(isMultipleOf(7)) +
             singleReference("44A") { it * 2 } +
-            calculationWithReference("24A") { value, other -> value.digitSum().toLong() == other },
+            transformedEqualsRef("24A", ::digitSum),
     "31D" to simpleClue(::isPrime) + simpleClue { it.digitCounts().values.toList() == listOf(2, 2, 2) },
     "33D" to singleReference("6D") { it - 1000006 },
     "34D" to smallest(simpleClue { !it.toBinary().isPalindrome() && (it * it).toBinary().isPalindrome() }),

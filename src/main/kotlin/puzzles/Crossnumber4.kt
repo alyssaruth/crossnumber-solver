@@ -49,6 +49,7 @@ import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.singleReference
 import solver.clue.smallest
+import solver.clue.transformedEqualsRef
 import solver.clue.tripleReference
 import solver.factoryCrossnumber
 import kotlin.math.abs
@@ -85,7 +86,7 @@ private val isSumOfFiftyConsecutiveSquares = isSumOfConsecutive(50, 8, ::squares
 private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1A" to ::OneAcross + isFactorOfRef("1D") + isMultipleOfRef("2D"),
     "3A" to tripleReference("15D", "9A", "6D") { a, b, c -> a + b + c } +
-            calculationWithReference("6D") { value, other -> middleNDigits(2, value) == other },
+            transformedEqualsRef("6D") { middleNDigits(2, it) },
     "5A" to singleReference("5D") { it - 142 } +
             singleReference("7D") { it - 808 } +
             dualReference("5D", "13A") { d5, a13 -> abs(a13 - (2 * d5)) },
@@ -122,11 +123,11 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "10D" to largest(simpleClue {
         it.toInt().integerPartitions(ofLength = 2).none { partition -> partition.all(abundantNumbers::contains) }
     }),
-    "14D" to calculationWithReference("12A") { value, other -> value.modPow(91, 18_793_739) == other },
+    "14D" to transformedEqualsRef("12A") { it.modPow(91, 18_793_739) },
     "15D" to dualReference("1D", "26A", Long::plus) +
             tripleReference("3A", "9A", "6D") { a3, a9, d6 -> a3 - a9 - d6 },
     "18D" to calculationWithReference("31D") { value, other -> value.isAnagramOf(other) },
-    "19D" to calculationWithReference("6D") { value, other -> value.digitSum() + 1L == other },
+    "19D" to transformedEqualsRef("6D") { it.digitSum() + 1L },
     "20D" to dualReference("7D", "5A") { a, b -> lcm(a, b) },
     "21D" to equalsSomeOther("21D"),
     "22D" to smallest(simpleClue(appearsInPascalsTriangle(times = 8))),

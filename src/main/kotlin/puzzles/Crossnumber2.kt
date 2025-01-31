@@ -33,7 +33,6 @@ import maths.sorted
 import maths.toRomanNumerals
 import solver.ClueConstructor
 import solver.clue.asyncEquals
-import solver.clue.calculationWithReference
 import solver.clue.dualReference
 import solver.clue.isEqualTo
 import solver.clue.isFactorOfRef
@@ -42,6 +41,7 @@ import solver.clue.smallest
 import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.singleReference
+import solver.clue.transformedEqualsRef
 import solver.clue.tripleReference
 import solver.factoryCrossnumber
 import java.util.Calendar
@@ -105,9 +105,9 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "2D" to simpleClue(hasDigitSum(8)) + singleReference("5D") { it.digitSum().toLong() },
     "3D" to dualReference("34D", "12A", Long::plus),
     "4D" to simpleClue(::fourDown) +
-            calculationWithReference("11A") { value, other -> value.firstNDigits(4) == other } +
-            calculationWithReference("33A") { value, other -> value.lastNDigits(4) == other },
-    "5D" to calculationWithReference("2D") { value, other -> value.digitSum().toLong() == other },
+            transformedEqualsRef("11A") { it.firstNDigits(4) } +
+            transformedEqualsRef("33A") { it.lastNDigits(4) },
+    "5D" to transformedEqualsRef("2D", ::digitSum),
     "6D" to tripleReference("32D", "35A", "1A") { d32, a35, a1 -> d32 + a35 + a1 },
     "8D" to simpleClue(::isPrime),
     "10D" to asyncEquals { tenDown().size.toLong() },
