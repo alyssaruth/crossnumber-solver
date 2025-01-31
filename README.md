@@ -99,7 +99,7 @@ val grid = """
 ```
 
 The solver will automatically validate that the grid is square and has rotational symmetry to help catch typos. It will
-also compute what the expected clue identifiers are - in this case the across clues are 1A, 5A, 7A and 10A.
+also compute what the expected clue identifiers are - in this case the across clues are 1A, 5A, 6A, 8A, 10A and 11A.
 
 #### Clues
 

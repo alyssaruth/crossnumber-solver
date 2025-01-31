@@ -191,8 +191,7 @@ class TwentyOneDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
     }
 
     private fun calculatePossibilities(): List<Long> {
-        val cluesOfRightLength =
-            crossnumber.solutions.filter { it.key.orientation == Orientation.DOWN && it.value.squares.size == 5 }
+        val cluesOfRightLength = crossnumber.solutionsOfLength(5).filterKeys { it.orientation == Orientation.DOWN }
         val viableClues =
             cluesOfRightLength.filter { (_, value) -> (value is PartialSolution && value.possibilities.contains(91199)) || value is PendingSolution }
         return viableClues.keys.map { it.number.toLong() }
