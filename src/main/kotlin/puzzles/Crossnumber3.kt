@@ -72,7 +72,7 @@ private val grid = """
 """.trimIndent()
 
 private val clueMap: Map<String, ClueConstructor> = mapOf(
-    "1A" to simpleClue(isMultipleOf(999)) + dualReference("5A", "45A") { a5, a45 -> a45 - (2 * a5) },
+    "1A" to simpleClue(isMultipleOf(999)) + dualReference("5A", "45A") { a5, a45 -> abs(a45 - (2 * a5)) },
     "5A" to dualReference("45A", "1A") { a, b -> abs(a - b) / 2 },
     "7A" to dualReference("13A", "43D", Long::plus),
     "9A" to isMultipleOfRef("41A"),

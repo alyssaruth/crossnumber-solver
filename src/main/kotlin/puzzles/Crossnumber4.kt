@@ -9,7 +9,6 @@ import maths.digitToWord
 import maths.digits
 import maths.factorial
 import maths.fibonacciUpTo
-import maths.fromDigits
 import maths.hasDigitSum
 import maths.hasUniqueDigits
 import maths.hasWholeNthRoot
@@ -23,6 +22,7 @@ import maths.isPalindrome
 import maths.isSumOfConsecutive
 import maths.lcm
 import maths.maximumRegionsByJoiningPointsOnACircle
+import maths.middleNDigits
 import maths.modPow
 import maths.nonZeroDigits
 import maths.product
@@ -84,8 +84,11 @@ private val isSumOfFiftyConsecutiveSquares = isSumOfConsecutive(50, 8, ::squares
 
 private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1A" to ::OneAcross + isFactorOfRef("1D") + isMultipleOfRef("2D"),
-    "3A" to tripleReference("15D", "9A", "6D") { a, b, c -> a + b + c },
-    "5A" to singleReference("5D") { it - 142 } + singleReference("7D") { it - 808 },
+    "3A" to tripleReference("15D", "9A", "6D") { a, b, c -> a + b + c } +
+            calculationWithReference("6D") { value, other -> middleNDigits(2, value) == other },
+    "5A" to singleReference("5D") { it - 142 } +
+            singleReference("7D") { it - 808 } +
+            dualReference("5D", "13A") { d5, a13 -> abs(a13 - (2 * d5)) },
     "8A" to ::EightAcross,
     "9A" to simpleClue { factorial(it).digits().size.toLong() == it },
     "11A" to simpleClue(::isKnownSierpinskiNumber),
@@ -113,7 +116,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "4D" to simpleClue(hasUniqueDigits(1)),
     "5D" to dualReference("5A", "13A") { x, y -> abs(x - y) / 2 } +
             singleReference("5A") { it + 142 },
-    "6D" to singleReference("3A") { it.digits().drop(1).dropLast(1).fromDigits() } +
+    "6D" to singleReference("3A") { middleNDigits(2, it) } +
             tripleReference("3A", "15D", "9A") { a3, d15, a9 -> a3 - d15 - a9 },
     "7D" to singleReference("5A") { it + 808 },
     "10D" to largest(simpleClue {

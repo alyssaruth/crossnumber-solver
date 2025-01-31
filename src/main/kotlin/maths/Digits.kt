@@ -16,6 +16,17 @@ private fun collectDigits(remaining: BigInteger, digitsSoFar: List<Int> = emptyL
     }
 }
 
+fun middleNDigits(n: Int, value: Long) = findMiddleNDigits(n, value.digits())
+
+private tailrec fun findMiddleNDigits(n: Int, digits: List<Int>): Long =
+    if (digits.size == n) {
+        digits.fromDigits()
+    } else if (digits.size < n) {
+        throw Exception("Unable to get middle $n digits!")
+    } else {
+        findMiddleNDigits(n, digits.drop(1).dropLast(1))
+    }
+
 fun Long.isAnagramOf(other: Long) = digits().sorted() == other.digits().sorted()
 
 fun Long.digits() = toString().toCharArray().map(Char::digitToInt)

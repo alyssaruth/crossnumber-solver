@@ -22,6 +22,17 @@ class DigitsTest {
     }
 
     @Test
+    fun `Should be able to get middle N digits of a number`() {
+        middleNDigits(2, 12344321) shouldBe 44
+        middleNDigits(4, 12344321) shouldBe 3443
+        middleNDigits(8, 12344321) shouldBe 12344321
+
+        middleNDigits(1, 123454321) shouldBe 5
+        middleNDigits(3, 123454321) shouldBe 454
+        middleNDigits(9, 123454321) shouldBe 123454321
+    }
+
+    @Test
     fun `Should report whether a number contains specified digit`() {
         containsDigit(0)(1044) shouldBe true
         containsDigit(1)(1044) shouldBe true
