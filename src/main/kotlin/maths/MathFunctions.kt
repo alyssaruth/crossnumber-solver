@@ -6,6 +6,8 @@ import kotlin.math.sqrt
 
 fun sqrtWhole(value: Long) = sqrt(value.toDouble()).roundToLong()
 
+fun sqrtFloor(value: Long) = sqrt(value.toDouble()).toLong()
+
 fun isMultipleOf(divisor: Long): Clue = { value -> value % divisor == 0L }
 
 fun isPowerOf(x: Long): Clue = { isPowerOf(x, it) }

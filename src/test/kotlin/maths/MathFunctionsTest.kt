@@ -167,4 +167,15 @@ class MathFunctionsTest {
         isPowerOf(3)(27) shouldBe true
         isPowerOf(3)(1594323) shouldBe true
     }
+
+    @Test
+    fun `Whole square roots`() {
+        // 7.483...
+        sqrtWhole(56) shouldBe 7
+        sqrtFloor(56) shouldBe 7
+
+        // 7.549...
+        sqrtWhole(57) shouldBe 8
+        sqrtFloor(57) shouldBe 7
+    }
 }

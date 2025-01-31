@@ -7,6 +7,7 @@ import maths.digitSum
 import maths.digitToWord
 import maths.digits
 import maths.factorial
+import maths.fibonacciUpTo
 import maths.fromDigits
 import maths.hasDigitSum
 import maths.hasUniqueDigits
@@ -25,6 +26,7 @@ import maths.nonZeroDigits
 import maths.product
 import maths.reciprocalSum
 import maths.reversed
+import maths.sqrtFloor
 import maths.sqrtWhole
 import maths.squaresUpTo
 import maths.violatesGoldbachConjecture
@@ -96,7 +98,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "30A" to simpleClue(hasDigitSum(5)),
     "32A" to simpleClue { it.digits().map(::digitToWord).windowed(2).all { (x, y) -> x.last() == y.first() } },
     "33A" to simpleClue { it == it.digitSum() * 3L },
-    "34A" to emptyClue(), // TODO - Integer part of the square root of a Fibonacci number.
+    "34A" to simpleClue { value -> fibonacciUpTo((value + 1) * (value + 1)).map(::sqrtFloor).contains(value) },
     "35A" to multiReference("9A", "27A", "27D", "28D") { it.sum() },
     "36A" to singleReference("29D") { (it * 1.5).toLong() },
     "37A" to calculationWithReference("30A") { value, other -> isMultipleOf(other)(value + 1) },
