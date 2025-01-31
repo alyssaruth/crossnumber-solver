@@ -1,3 +1,120 @@
 ## Crossnumber Solver
 
-Generic solver for crossnumber puzzles. 
+Generic solver for crossnumber puzzles - find them all here: https://chalkdustmagazine.com/category/regulars/crossnumber/
+
+### How do I run it?
+
+You'll need a version of Java installed. Then, from the root of the repo simply run e.g.:
+
+```shell
+./gradlew solve -Puzzle=3
+```
+
+### How it works
+
+The solver makes repeated "passes" over each of the clues in turn, attempting to make progress. 
+
+For each clue, it will carry out the following steps:
+
+1. Restrict potential solutions based on what we know from our "digit map". 
+2. Run through our potential solutions and apply all the clue(s) we have.
+3. Update our digit map based on the reduced list
+
+It keeps going until the crossnumber is solved or no more progress is being made. In the latter case, the grid is printed along with the state of all unsolved clues:
+
+![img.png](docs/unsolved-output.png)
+
+### No hard-coding!
+
+To make the solver as authentic as possible, I am avoiding hardcoding answers wherever possible - even when it might be tempting for performance reasons.
+
+For example, consider this clue from [Crossnumber 2](https://chalkdustmagazine.com/regulars/crossnumber/100-prize-crossnumber-issue-02/):
+
+> 22. The smallest number with a (multiplicative) persistence of 11. (15)
+
+This can simply be looked up in OEIS - the sequence is [A003001](https://oeis.org/A003001). Despite this, my solution instead derives the answer:
+
+```kotlin
+    "22A" to smallest(simpleClue(hasMultiplicativePersistence(11)))
+```
+
+This obviously slows the solver down, although various strategies allow it to not go _too_ slowly - in particular, the solver defers long clues like these for as long as possible, only attempting them when it can make no progress elsewhere (by which point, we'll have placed/narrowed down some digits, reducing our search space) 
+
+### No hard-coding - exceptions
+
+There are, of course, some exceptions to the hard-coding rule.
+
+#### Pop culture/trivia
+
+Clues like:
+
+ - The answer to the ultimate question of life, the universe and everything
+ - The HTTP error code for “I’m a teapot”
+ - Why is 6 afraid of 7?
+
+I could _arguably_ use API requests or something to look these answers up, but I don't want the solver to require an internet connection.
+
+#### Prohibitively complex
+
+Clues like:
+
+ - The number of ways to play the first 3 moves (2 white moves, 1 black move) in a game of chess
+ - A Sierpiński number.
+
+In the first case, to directly compute this I'd basically have to write a full chess sim, which would be another project in itself!
+In the latter case, there is no straightforward test for a Sierpinski number - in fact, though there is an OEIS [sequence](https://oeis.org/A076336), it's not known to be complete and there are various open problems around them. Perhaps one day a new one will be discovered which renders this crossnumber non-deterministic!
+
+### Input
+
+To see full examples, take a look at any of the complete puzzles [here](src/main/kotlin/puzzles)
+
+#### Grid
+
+The grid should be input as a String, with # representing black squares and . representing white squares - for example:
+
+![img.png](docs/example-grid.png)
+
+```kotlin
+val grid = """
+    ......#
+    .#.#.#.
+    .......
+    .##.##.
+    .......
+    .#.#.#.
+    #......
+""".trimIndent()
+```
+
+The solver will automatically validate that the grid is square and has rotational symmetry to help catch typos. It will
+also compute what the expected clue identifiers are - in this case the across clues are 1A, 5A, 7A and 10A.
+
+#### Clues
+
+The other data to be provided are the clues themselves, which should be provided as a map. 
+Many types of clues exist; all the most common cases should be possible to capture using various helpers. 
+Clues can also be combined using the + operator.
+
+Here are some examples:
+
+```kotlin
+val clueMap: Map<String, ClueConstructor> = mapOf(
+    // 4D multiplied by 18D
+    "1A" to dualReference("4D", "18D", Long::times),
+    
+    // A multiple of 101
+    "5A" to simpleClue(isMultipleOf(101)),
+    
+    // A palindromic number containing at least one 0
+    "9A" to simpleClue { value -> isPalindrome(value) && containsDigit(0)(value) },
+    
+    // A factor of 6D
+    "19A" to isFactorOfRef("6D"),
+    
+    // This number is both square and tetrahedral.
+    "39A" to simpleClue(::isSquare) + simpleClue(::isTetrahedralNumber),
+    
+    // An odd number. Also, the clue for 16A is: The sum of the digits of 8D, so here we also encode the "reciprocal" relationship
+    "8D" to simpleClue(isOdd) + transformedEqualsRef("16A", ::digitSum)
+)
+```

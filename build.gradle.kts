@@ -20,6 +20,21 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:5.5.4")
 }
 
+tasks.create("solve", JavaExec::class) {
+    configure(
+        closureOf<JavaExec> {
+            group = "run"
+            classpath = project.the<SourceSetContainer>()["main"].runtimeClasspath
+            mainClass.set("EntrypointKt")
+
+            val puzzleNumber = properties["uzzle"]
+            if (puzzleNumber != null) {
+                args(puzzleNumber)
+            }
+        }
+    )
+}
+
 tasks.test {
     minHeapSize = "1024m"
     maxHeapSize = "1024m"
