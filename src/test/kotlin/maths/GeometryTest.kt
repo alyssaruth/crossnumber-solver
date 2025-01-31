@@ -1,7 +1,6 @@
 package maths
 
 import io.kotest.matchers.collections.shouldContainExactly
-import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
 class GeometryTest {
@@ -14,8 +13,8 @@ class GeometryTest {
 
     @Test
     fun `Should compute the number of straight lines passing through at least two points in an NxN grid`() {
-        countStraightLinesThroughGrid(2) shouldBe 6
-        countStraightLinesThroughGrid(3) shouldBe 20
-        countStraightLinesThroughGrid(10) shouldBe 2306
+        (2..10).map(::countStraightLinesThroughGrid).shouldContainExactly(
+            6, 20, 62, 140, 306, 536, 938, 1492, 2306
+        )
     }
 }

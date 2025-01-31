@@ -17,6 +17,8 @@ fun nGonIsConstructible(n: Long): Boolean {
 
 /**
  * The number of straight lines that go through at least two points of a NxN grid of points
+ *
+ * Computation should correspond to A018808
  */
 fun countStraightLinesThroughGrid(n: Int): Long {
     val pts = (0 until n).flatMap { x -> (0 until n).map { y -> Point(x, y) } }

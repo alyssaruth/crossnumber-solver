@@ -1,5 +1,6 @@
 package puzzles
 
+import maths.appearsInPascalsTriangle
 import maths.countStraightLinesThroughGrid
 import maths.cubesUpTo
 import maths.digitSum
@@ -40,6 +41,7 @@ import solver.clue.multiReference
 import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.singleReference
+import solver.clue.smallest
 import solver.clue.tripleReference
 import solver.factoryCrossnumber
 import kotlin.math.abs
@@ -117,7 +119,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "19D" to calculationWithReference("6D") { value, other -> value.digitSum() + 1L == other },
     "20D" to dualReference("7D", "5A") { a, b -> lcm(a, b) },
     "21D" to equalsSomeOther("21D"),
-    "22D" to emptyClue(), // TODO - The smallest number that appears eight times in Pascal’s triangle
+    "22D" to smallest(simpleClue(appearsInPascalsTriangle(times = 8))),
     "24D" to emptyClue(), // TODO - The maximum number of regions that can be formed by joining 27 points on a circle with straight lines
     "27D" to isEqualTo(countStraightLinesThroughGrid(10)),
     "28D" to simpleClue(isSumOfConsecutive(4, digits = 4, ::cubesUpTo)),
