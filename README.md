@@ -26,7 +26,7 @@ It keeps going until the crossnumber is solved or no more progress is being made
 
 ### No hard-coding!
 
-To make the solver as authentic as possible, I am avoiding hardcoding answers wherever possible - even when it might be tempting for performance reasons.
+To make the solver as authentic as I can, I am avoiding hardcoding answers wherever possible - even when it might be tempting for performance reasons.
 
 For example, consider this clue from [Crossnumber 2](https://chalkdustmagazine.com/regulars/crossnumber/100-prize-crossnumber-issue-02/):
 
@@ -38,7 +38,19 @@ This can simply be looked up in OEIS - the sequence is [A003001](https://oeis.or
     "22A" to smallest(simpleClue(hasMultiplicativePersistence(11)))
 ```
 
-This obviously slows the solver down, although various strategies allow it to not go _too_ slowly - in particular, the solver defers long clues like these for as long as possible, only attempting them when it can make no progress elsewhere (by which point, we'll have placed/narrowed down some digits, reducing our search space) 
+This obviously slows the solver down, although various strategies allow it to not go _too_ slowly. In particular, it will defer long clues like these until it stops making progress elsewhere, hopefully allowing it to have narrowed down some digits to reduce the search space.
+
+It's also possible to kick off "async work" in parallel to save time, for instance for this clue:
+
+> 36. The number of primes less than 100,000,000. (7)
+
+Again, I could compute this once then hardcode it, but instead this solution does the following:
+
+```kotlin
+    "36A" to asyncEquals { countPrimesUpTo(100_000_000).toLong() }
+```
+
+This begins the computation immediately, but allows the solver to otherwise get on with working on other clues. Like with numbers with lots of digits, it will defer waiting for this work until it stops making progress elsewhere.
 
 ### No hard-coding - exceptions
 
@@ -64,7 +76,7 @@ Clues like:
 In the first case, to directly compute this I'd basically have to write a full chess sim, which would be another project in itself!
 In the latter case, there is no straightforward test for a Sierpinski number - in fact, though there is an OEIS [sequence](https://oeis.org/A076336), it's not known to be complete and there are various open problems around them. Perhaps one day a new one will be discovered which renders this crossnumber non-deterministic!
 
-### Input
+### Input / Usage
 
 To see full examples, take a look at any of the complete puzzles [here](src/main/kotlin/puzzles)
 
@@ -118,3 +130,14 @@ val clueMap: Map<String, ClueConstructor> = mapOf(
     "8D" to simpleClue(isOdd) + transformedEqualsRef("16A", ::digitSum)
 )
 ```
+
+### Results
+
+Below are the crossnumbers this can solve so far, along with roughly how long each solve takes:
+
+| Number | Solve time (s) | URL                                                                                |
+|--------|----------------|------------------------------------------------------------------------------------|
+| 1      | 30             | https://chalkdustmagazine.com/regulars/100-prize-crossnumber-issue-01/             |
+| 2      | 120            | https://chalkdustmagazine.com/regulars/crossnumber/100-prize-crossnumber-issue-02/ |
+| 3      | 12             | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-03/     |
+| 4      | 12             | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-04/     |
