@@ -1,5 +1,6 @@
 package solver.clue
 
+import maths.allCombinations
 import solver.ClueConstructor
 import solver.ClueId
 import solver.Crossnumber
@@ -11,9 +12,9 @@ import java.math.BigInteger
  *
  *  - The sum of 6D, 8D, 31D, 37D and 43D
  */
-class MultiReferenceClue(
+open class MultiReferenceClue(
     crossnumber: Crossnumber,
-    private val clues: List<ClueId>,
+    protected val clues: List<ClueId>,
     private val combiner: (List<Long>) -> Long
 ) :
     ContextualClue(crossnumber) {
@@ -37,9 +38,7 @@ class MultiReferenceClue(
             return null
         }
 
-        return nonNullAnswers.fold(listOf<List<Long>>(emptyList())) { listsSoFar, newSolutions ->
-            listsSoFar.flatMap { list -> newSolutions.map { x -> list + x } }
-        }.map(combiner).toSet()
+        return nonNullAnswers.allCombinations().map(combiner).toSet()
     }
 }
 

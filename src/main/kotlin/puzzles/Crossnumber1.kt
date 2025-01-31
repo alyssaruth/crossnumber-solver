@@ -138,11 +138,7 @@ class FourteenDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
         if (d17 != null) {
             val a16id = ClueId(16, Orientation.ACROSS)
             val a16 = findSixteenAcross(solution, d17)
-            val existingSolution = crossnumber.solutions.getValue(a16id)
-            crossnumber.replaceSolution(
-                a16id,
-                PartialSolution(existingSolution.squares, existingSolution.clue, listOf(a16))
-            )
+            crossnumber.replaceSolution(a16id, listOf(a16))
         } else {
             crossnumber
         }
@@ -191,9 +187,7 @@ class TwentyOneDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
 
     override val onSolve = { solution: Long ->
         val clueId = ClueId(solution.toInt(), Orientation.DOWN)
-        val existingSolution = crossnumber.solutions.getValue(clueId)
-        val newSolution = PartialSolution(existingSolution.squares, existingSolution.clue, listOf(91199))
-        crossnumber.replaceSolution(clueId, newSolution)
+        crossnumber.replaceSolution(clueId, listOf(91199))
     }
 
     private fun calculatePossibilities(): List<Long> {

@@ -1,5 +1,6 @@
 package puzzles
 
+import maths.allCombinations
 import maths.appearsInPascalsTriangle
 import maths.countStraightLinesThroughGrid
 import maths.cubesUpTo
@@ -15,6 +16,7 @@ import maths.hasWholeNthRoot
 import maths.integerPartitions
 import maths.isAbundant
 import maths.isAnagramOf
+import maths.isCoprimeWith
 import maths.isKnownSierpinskiNumber
 import maths.isMultipleOf
 import maths.isPalindrome
@@ -31,10 +33,12 @@ import maths.sqrtWhole
 import maths.squaresUpTo
 import maths.violatesGoldbachConjecture
 import solver.ClueConstructor
+import solver.Crossnumber
+import solver.clue.ContextualClue
+import solver.clue.MultiReferenceClue
 import solver.clue.calculationWithReference
 import solver.clue.doesNotEqualRef
 import solver.clue.dualReference
-import solver.clue.emptyClue
 import solver.clue.equalsSomeOther
 import solver.clue.isEqualTo
 import solver.clue.isFactorOfRef
@@ -79,10 +83,10 @@ private val abundantNumbers = (1..99999).filter { isAbundant(it.toLong()) }.toSe
 private val isSumOfFiftyConsecutiveSquares = isSumOfConsecutive(50, 8, ::squaresUpTo)
 
 private val clueMap: Map<String, ClueConstructor> = mapOf(
-    "1A" to isFactorOfRef("1D") + isMultipleOfRef("2D"), // TODO - This number is a multiple of one of the two-digit answers in the crossnumber and shares no factors with the other two-digit answers
+    "1A" to ::OneAcross + isFactorOfRef("1D") + isMultipleOfRef("2D"),
     "3A" to tripleReference("15D", "9A", "6D") { a, b, c -> a + b + c },
     "5A" to singleReference("5D") { it - 142 } + singleReference("7D") { it - 808 },
-    "8A" to multiReference("9A", "33A", "6D", "34D") { it.sorted().drop(1).map(Long::toInt).product() },
+    "8A" to ::EightAcross,
     "9A" to simpleClue { factorial(it).digits().size.toLong() == it },
     "11A" to simpleClue(::isKnownSierpinskiNumber),
     "12A" to simpleClue { reciprocalSum(it.nonZeroDigits()) == 1.0 } + singleReference("27A") { it.reversed() },
@@ -133,3 +137,49 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
 )
 
 val CROSSNUMBER_4 = factoryCrossnumber(grid, clueMap)
+
+/**
+ * This number is a multiple of one of the two-digit answers in the crossnumber and shares no factors with the other two-digit answers
+ */
+class OneAcross(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
+    private val twoDigitAnswers = getTwoDigitAnswers()
+
+    override fun totalCombinations(solutionCombos: Long) = solutionCombos
+
+    override fun check(value: Long) = if (twoDigitAnswers == null) true else {
+        val divisors = twoDigitAnswers.filter { divisor -> isMultipleOf(divisor)(value) }
+        val others = twoDigitAnswers - divisors
+
+        divisors.size == 1 && others.all(isCoprimeWith(value))
+    }
+
+    private fun getTwoDigitAnswers(): List<Long>? {
+        val answers = crossnumber.solutionsOfLength(2).keys.map(::lookupAnswer)
+        if (answers.any { it == null }) {
+            return null
+        }
+
+        return answers.filterNotNull()
+    }
+}
+
+/**
+ * The product of the three largest two-digit answers in this crossnumber
+ */
+class EightAcross(crossnumber: Crossnumber) : MultiReferenceClue(
+    crossnumber,
+    crossnumber.solutionsOfLength(2).keys.toList(),
+    { it.sorted().takeLast(3).map(Long::toInt).product() }
+) {
+    override val onSolve: ((Long) -> Crossnumber) = { solution ->
+        val twoDigitThings = clues.associateWith { lookupAnswers(it)!! }.entries.sortedBy { it.value.max() }.takeLast(3)
+        val flattened = twoDigitThings.map { (clueId, values) -> values.map { clueId to it } }
+
+        val correctCombo =
+            flattened.allCombinations().first { (a, b, c) -> solution == a.second * b.second * c.second }
+
+        correctCombo.fold(crossnumber) { crossnumber, (clueId, twoDigitSolution) ->
+            crossnumber.replaceSolution(clueId, listOf(twoDigitSolution))
+        }
+    }
+}

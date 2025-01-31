@@ -173,8 +173,15 @@ data class Crossnumber(
         }
     }
 
+    fun replaceSolution(clueId: ClueId, possibilities: List<Long>): Crossnumber {
+        val existing = solutions.getValue(clueId)
+        return replaceSolution(clueId, PartialSolution(existing.squares, existing.clue, possibilities))
+    }
+
     fun replaceSolution(clueId: ClueId, solution: ISolution): Crossnumber =
         copy(solutions = solutions + (clueId to solution))
+
+    fun solutionsOfLength(length: Int) = solutions.filterValues { it.squares.size == length }
 
     fun sumAcrossClues(): Long? {
         val acrossSolutions = solutions.filterKeys { it.orientation == Orientation.ACROSS }.values

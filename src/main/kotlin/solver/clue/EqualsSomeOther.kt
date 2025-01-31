@@ -46,7 +46,7 @@ class EqualsSomeOther(private val myClueId: ClueId, crossnumber: Crossnumber) : 
         return partialSolutions.flatMap { it.possibilities }.toSet()
     }
 
-    private fun otherSolutions() = (crossnumber.solutions - myClueId).filterValues { it.squares.size == myLength }
+    private fun otherSolutions() = crossnumber.solutionsOfLength(myLength) - myClueId
 }
 
 fun equalsSomeOther(myClueId: String): ClueConstructor =
