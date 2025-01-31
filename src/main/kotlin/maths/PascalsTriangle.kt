@@ -33,7 +33,7 @@ tailrec fun generateTriangle(
     toRow: Int,
     rowsSoFar: List<List<BigInteger>> = listOf(ROW_ZERO, ROW_ONE)
 ): List<List<BigInteger>> {
-    return if (rowsSoFar.size == toRow + 1) {
+    return if (rowsSoFar.size >= toRow + 1) {
         rowsSoFar
     } else {
         val nextRow = nextRow(rowsSoFar.last())

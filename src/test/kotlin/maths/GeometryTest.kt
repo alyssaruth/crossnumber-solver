@@ -12,6 +12,13 @@ class GeometryTest {
     }
 
     @Test
+    fun `Should compute the max regions that can be formed by joining N points on a circle with straight lines`() {
+        (1..10).map(::maximumRegionsByJoiningPointsOnACircle).shouldContainExactly(
+            1, 2, 4, 8, 16, 31, 57, 99, 163, 256
+        )
+    }
+
+    @Test
     fun `Should compute the number of straight lines passing through at least two points in an NxN grid`() {
         (2..10).map(::countStraightLinesThroughGrid).shouldContainExactly(
             6, 20, 62, 140, 306, 536, 938, 1492, 2306

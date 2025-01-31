@@ -19,6 +19,7 @@ import maths.isMultipleOf
 import maths.isPalindrome
 import maths.isSumOfConsecutive
 import maths.lcm
+import maths.maximumRegionsByJoiningPointsOnACircle
 import maths.modPow
 import maths.nonZeroDigits
 import maths.product
@@ -120,10 +121,10 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "20D" to dualReference("7D", "5A") { a, b -> lcm(a, b) },
     "21D" to equalsSomeOther("21D"),
     "22D" to smallest(simpleClue(appearsInPascalsTriangle(times = 8))),
-    "24D" to emptyClue(), // TODO - The maximum number of regions that can be formed by joining 27 points on a circle with straight lines
+    "24D" to isEqualTo(maximumRegionsByJoiningPointsOnACircle(27)),
     "27D" to isEqualTo(countStraightLinesThroughGrid(10)),
     "28D" to simpleClue(isSumOfConsecutive(4, digits = 4, ::cubesUpTo)),
-    "29D" to simpleClue { isPalindrome(it + 5) },
+    "29D" to simpleClue { isPalindrome(it + 5) } + singleReference("36A") { (it / 1.5).toLong() },
     "30D" to dualReference("18D", "31D", Long::plus),
     "31D" to calculationWithReference("18D") { value, other -> value.isAnagramOf(other) },
     "34D" to simpleClue { hasWholeNthRoot(2)(it) && it.digitSum().toLong() == sqrtWhole(it) }
