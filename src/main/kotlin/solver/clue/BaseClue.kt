@@ -8,7 +8,7 @@ abstract class BaseClue {
     open val filterFunction: (possibles: List<Long>, predicate: (Long) -> Boolean) -> List<Long> =
         { possibles, predicate -> possibles.filter(predicate) }
 
-    abstract fun totalCombinations(solutionCombos: Long): Long
+    open fun totalCombinations(solutionCombos: Long) = solutionCombos
 
     abstract fun check(value: Long): Boolean
 

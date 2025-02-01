@@ -13,8 +13,6 @@ class EqualsSomeOther(private val myClueId: ClueId, crossnumber: Crossnumber) : 
 
     private val potentialSolutions = computePotentialSolutions()
 
-    override fun totalCombinations(solutionCombos: Long) = solutionCombos
-
     override fun check(value: Long) = potentialSolutions?.contains(value) ?: true
 
     override val onSolve: ((Long) -> Crossnumber) = { solution ->

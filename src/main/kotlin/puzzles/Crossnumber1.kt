@@ -130,8 +130,6 @@ class FourteenDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
     private val d17s = lookupAnswers(ClueId(17, Orientation.DOWN))
     private val a16s = lookupAnswers(ClueId(16, Orientation.ACROSS))
 
-    override fun totalCombinations(solutionCombos: Long) = solutionCombos
-
     override val onSolve = { solution: Long ->
         val d17 = lookupAnswer(ClueId(17, Orientation.DOWN))
         if (d17 != null) {

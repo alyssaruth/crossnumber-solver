@@ -22,8 +22,6 @@ open class MultiReferenceClue(
 
     override fun check(value: Long) = potentialSolutions?.contains(value) ?: true
 
-    override fun totalCombinations(solutionCombos: Long) = solutionCombos
-
     private fun computePotentialSolutions(): Set<Long>? {
         val answers = clues.map(::lookupAnswers)
         if (answers.any { it == null }) {

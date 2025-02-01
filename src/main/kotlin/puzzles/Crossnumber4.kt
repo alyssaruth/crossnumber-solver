@@ -148,8 +148,6 @@ val CROSSNUMBER_4 = factoryCrossnumber(grid, clueMap)
 class OneAcross(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
     private val twoDigitAnswers = getTwoDigitAnswers()
 
-    override fun totalCombinations(solutionCombos: Long) = solutionCombos
-
     override fun check(value: Long) = if (twoDigitAnswers == null) true else {
         val divisors = twoDigitAnswers.filter { divisor -> isMultipleOf(divisor)(value) }
         val others = twoDigitAnswers - divisors

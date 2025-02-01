@@ -21,8 +21,6 @@ class EqualToNumberOfClueWithAnswer(
 ) : ContextualClue(crossnumber) {
     private val candidates = calculatePossibilities()
 
-    override fun totalCombinations(solutionCombos: Long) = solutionCombos
-
     override val onSolve = { solution: Long ->
         val clueId = ClueId(solution.toInt(), orientation)
         crossnumber.replaceSolution(clueId, listOf(answer))

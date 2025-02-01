@@ -22,8 +22,6 @@ class TripleReferenceClue(
 
     override fun check(value: Long) = potentialSolutions?.contains(value) ?: true
 
-    override fun totalCombinations(solutionCombos: Long) = solutionCombos
-
     private fun computePotentialSolutions(): Set<Long>? {
         val aValues = lookupAnswers(clueA) ?: return null
         val bValues = lookupAnswers(clueB) ?: return null

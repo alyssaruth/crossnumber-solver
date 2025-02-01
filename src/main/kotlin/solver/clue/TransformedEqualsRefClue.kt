@@ -25,8 +25,6 @@ class TransformedEqualsRefClue(
     private val potentialSolutions = lookupAnswers(other)
 
     override fun check(value: Long) = potentialSolutions?.contains(mapper(value)) ?: true
-
-    override fun totalCombinations(solutionCombos: Long) = solutionCombos
 }
 
 fun transformedEqualsRef(clue: String, mapper: (Long) -> Long): ClueConstructor =

@@ -19,7 +19,9 @@ import maths.lastNDigits
 import maths.sqrtWhole
 import maths.squaresOnNByNChessboard
 import solver.ClueConstructor
+import solver.Crossnumber
 import solver.Orientation
+import solver.clue.ContextualClue
 import solver.clue.emptyClue
 import solver.clue.equalToNumberOfClueWithAnswer
 import solver.clue.isEqualTo
@@ -98,8 +100,10 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "22D" to emptyClue(), // TODO - The number of 41-dimensional sides on a 43-dimensional hypercube
     "23D" to twentyThreeDown(),
     "25D" to emptyClue(), // TODO - A number of the form n^2+2^n
-    "27D" to emptyClue(), // TODO - The total number of zeros, threes, sixes, and nines that appear in the completed crossnumber
+    "27D" to equalsTotalCountOfDigits(0, 3, 6, 9),
 )
+
+val CROSSNUMBER_5 = factoryCrossnumber(grid, clueMap)
 
 /**
  * A number a such that the equation 3x^2+ax+75 has a repeated root
@@ -125,4 +129,21 @@ private fun twentyThreeDown() = simpleClue { value ->
 
 private fun geometricMeanOf(a: String, b: String) = multiReference(a, b, combiner = ::geometricMean)
 
-val CROSSNUMBER_5 = factoryCrossnumber(grid, clueMap)
+/**
+ * 27D: The total number of zeros, threes, sixes, and nines that appear in the completed crossnumber
+ */
+class EqualsTotalCountOfDigits(crossnumber: Crossnumber, digits: List<Int>) : ContextualClue(crossnumber) {
+    private val digitSet = digits.toSet()
+    private val range = computeRange()
+
+    private fun computeRange(): IntRange {
+        val minimum = crossnumber.digitMap.values.count { it.intersect(digitSet) == it.toSet() }
+        val maximum = crossnumber.digitMap.values.count { it.intersect(digitSet).isNotEmpty() }
+        return minimum..maximum
+    }
+
+    override fun check(value: Long) = range.contains(value)
+}
+
+private fun equalsTotalCountOfDigits(vararg digits: Int): ClueConstructor =
+    { crossnumber -> EqualsTotalCountOfDigits(crossnumber, digits.toList()) }

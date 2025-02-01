@@ -14,8 +14,6 @@ class EqualToClue(val value: Long) : BaseClue() {
         { _, _ -> listOf(value) }
 
     override fun check(value: Long) = false // unused
-
-    override fun totalCombinations(solutionCombos: Long) = 1L
 }
 
 fun isEqualTo(answer: Long): ClueConstructor = { _ -> EqualToClue(answer) }

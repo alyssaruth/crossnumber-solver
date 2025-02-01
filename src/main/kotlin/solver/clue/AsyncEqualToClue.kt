@@ -15,8 +15,6 @@ private val asyncWorkResults = mutableMapOf<UUID, Long>()
  *  - The number of primes less than 100,000,000
  */
 class AsyncEqualToClue(private val id: UUID, private val worker: Thread) : BaseClue() {
-    override fun totalCombinations(solutionCombos: Long) = solutionCombos
-
     override fun check(value: Long) = if (isPending()) true else value == asyncWorkResults.getValue(id)
 
     fun isPending() = worker.isAlive
