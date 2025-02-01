@@ -16,10 +16,13 @@ import maths.isPalindrome
 import maths.isProductOfConsecutive
 import maths.isSumOfTwoDistinctSquares
 import maths.lastNDigits
+import maths.sqrtWhole
+import maths.squaresOnNByNChessboard
 import solver.ClueConstructor
 import solver.Orientation
 import solver.clue.emptyClue
 import solver.clue.equalToNumberOfClueWithAnswer
+import solver.clue.isEqualTo
 import solver.clue.isFactorOfRef
 import solver.clue.isMultipleOfRef
 import solver.clue.multiReference
@@ -59,10 +62,10 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1A" to simpleClue { it == (it * it).lastNDigits(5) },
     "5A" to simpleClue { isProductOfFourConsecutiveIntegers((it * it) - 1) },
     "7A" to simpleClue { it == it.digits().map(::integerFactorial).sum() },
-    "9A" to emptyClue(), // TODO - A number a such that the equation 3x^2+ax+75 has a repeated root
-    "10A" to geometricMeanOf("6D", "4D"),
+    "9A" to isEqualTo(nineAcross()),
+    "10A" to geometricMeanOf("27D", "6D"),
     "12A" to emptyClue(), // TODO - The 2nd, 4th, 6th, 8th, and 10th digits of this number are the highest common factors of the digits either side of them
-    "13A" to geometricMeanOf("4D", "5D"),
+    "13A" to geometricMeanOf("6D", "4D"),
     "14A" to simpleClue(hasUniqueDigits(9)) +
             simpleClue(doesNotContainDigit(0)), // TODO - The number formed by the first n digits of this number is divisible by n (for all n)
     "15A" to geometricMeanOf("4D", "5D"),
@@ -88,15 +91,37 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "6D" to geometricMeanOf("10A", "13A") + isFactorOfRef("13D"),
     "7D" to isMultipleOfRef("3D") + simpleClue(isNotMultipleOf(4)) + transformedEqualsRef("27D", ::digitSum),
     "8D" to emptyClue(), // TODO - This number can be made by concatenating two other answers in this crossnumber
-    "11D" to emptyClue(), // TODO - The number of squares (of any size) on a 13,178-by-13,178 chessboard
+    "11D" to isEqualTo(squaresOnNByNChessboard(13_178)),
     "13D" to isMultipleOfRef("6D") + isMultipleOfRef("20A"),
     "16D" to simpleClue { it.firstNDigits(5).digitSum() == it.lastNDigits(3).digitSum() + 1 },
     "19D" to simpleClue { isPalindrome(it * it) },
     "22D" to emptyClue(), // TODO - The number of 41-dimensional sides on a 43-dimensional hypercube
-    "23D" to emptyClue(), // TODO - Each digit of this number is either a factor or a multiple of the previous digit.
+    "23D" to twentyThreeDown(),
     "25D" to emptyClue(), // TODO - A number of the form n^2+2^n
     "27D" to emptyClue(), // TODO - The total number of zeros, threes, sixes, and nines that appear in the completed crossnumber
 )
+
+/**
+ * A number a such that the equation 3x^2+ax+75 has a repeated root
+ *
+ * Only way to factorise this is (3x + m)(x + n) for some m, n
+ * Repeated root => m = 3n.
+ * So 3n^2 = 75
+ *
+ * And the quadratic becomes 3x^2 + 6nx + 75, hence a = 6n
+ */
+private fun nineAcross(): Long {
+    val n = sqrtWhole(75 / 3)
+    return 6 * n
+}
+
+/**
+ * Each digit of this number is either a factor or a multiple of the previous digit
+ */
+private fun twentyThreeDown() = simpleClue { value ->
+    val digitWindows = value.digits().map(Int::toLong).windowed(2)
+    digitWindows.all { (a, b) -> isMultipleOf(a)(b) || isMultipleOf(b)(a) }
+}
 
 private fun geometricMeanOf(a: String, b: String) = multiReference(a, b, combiner = ::geometricMean)
 

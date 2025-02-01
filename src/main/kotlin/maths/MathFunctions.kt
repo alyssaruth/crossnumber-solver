@@ -2,7 +2,7 @@ package maths
 
 import solver.Clue
 
-fun isMultipleOf(divisor: Long): Clue = { value -> value % divisor == 0L }
+fun isMultipleOf(divisor: Long): Clue = { value -> divisor != 0L && value % divisor == 0L }
 
 fun isNotMultipleOf(divisor: Long): Clue = { value -> !isMultipleOf(divisor)(value) }
 
