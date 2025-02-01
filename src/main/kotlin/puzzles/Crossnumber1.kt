@@ -26,12 +26,11 @@ import solver.ClueConstructor
 import solver.ClueId
 import solver.Crossnumber
 import solver.Orientation
-import solver.PartialSolution
-import solver.PendingSolution
 import solver.RAM_THRESHOLD
 import solver.clue.ContextualClue
 import solver.clue.calculationWithReference
 import solver.clue.dualReference
+import solver.clue.equalToNumberOfClueWithAnswer
 import solver.clue.equalsSomeOther
 import solver.clue.isEqualTo
 import solver.clue.isFactorOfRef
@@ -105,7 +104,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "14D" to ::FourteenDown,
     "17D" to isEqualTo(42),
     "18D" to simpleClue(isMultipleOf(5)) + dualReference("1A", "4D", Long::div),
-    "21D" to ::TwentyOneDown,
+    "21D" to equalToNumberOfClueWithAnswer(Orientation.DOWN, 91199),
     "26D" to isEqualTo(4 + 8 + 6 + 20 + 12),
     "27D" to singleReference("29D") { it + 2 },
     "29D" to simpleClue { it.toString().first() == it.toString().last() },
@@ -175,27 +174,4 @@ class FourteenDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
 
         return possibles.contains(value)
     }
-}
-
-/**
- * The number of the D clue which has the answer 91199
- */
-class TwentyOneDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
-    private val candidates = calculatePossibilities()
-
-    override fun totalCombinations(solutionCombos: Long) = solutionCombos
-
-    override val onSolve = { solution: Long ->
-        val clueId = ClueId(solution.toInt(), Orientation.DOWN)
-        crossnumber.replaceSolution(clueId, listOf(91199))
-    }
-
-    private fun calculatePossibilities(): List<Long> {
-        val cluesOfRightLength = crossnumber.solutionsOfLength(5).filterKeys { it.orientation == Orientation.DOWN }
-        val viableClues =
-            cluesOfRightLength.filter { (_, value) -> (value is PartialSolution && value.possibilities.contains(91199)) || value is PendingSolution }
-        return viableClues.keys.map { it.number.toLong() }
-    }
-
-    override fun check(value: Long) = candidates.contains(value)
 }

@@ -15,7 +15,7 @@ import java.math.BigInteger
 open class MultiReferenceClue(
     crossnumber: Crossnumber,
     protected val clues: List<ClueId>,
-    private val combiner: (List<Long>) -> Long
+    private val combiner: (List<Long>) -> Long?
 ) :
     ContextualClue(crossnumber) {
     private val potentialSolutions = computePotentialSolutions()
@@ -38,13 +38,13 @@ open class MultiReferenceClue(
             return null
         }
 
-        return nonNullAnswers.allCombinations().map(combiner).toSet()
+        return nonNullAnswers.allCombinations().mapNotNull(combiner).toSet()
     }
 }
 
 fun multiReference(
     vararg clues: String,
-    combiner: (List<Long>) -> Long
+    combiner: (List<Long>) -> Long?
 ): ClueConstructor =
     { crossnumber ->
         MultiReferenceClue(

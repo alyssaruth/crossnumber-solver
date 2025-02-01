@@ -1,12 +1,18 @@
 package maths
 
+fun isSumOfTwoDistinctSquares(n: Long): Boolean =
+    n.toInt().distinctIntegerPartitions(2).any { partition -> partition.all { isSquare(it.toLong()) } }
 
-fun Int.distinctIntegerPartitions(): List<List<Int>> = computeIntegerPartitions(this, true)
+fun Int.distinctIntegerPartitions(ofLength: Int? = null): List<List<Int>> =
+    if (ofLength == 2) computePartitionsOfTwo(true) else computeIntegerPartitions(this, true, ofLength)
 
 fun Int.integerPartitions(ofLength: Int? = null): List<List<Int>> =
-    if (ofLength == 2) computePartitionsOfTwo() else computeIntegerPartitions(this, false, ofLength)
+    if (ofLength == 2) computePartitionsOfTwo(false) else computeIntegerPartitions(this, false, ofLength)
 
-private fun Int.computePartitionsOfTwo(): List<List<Int>> = (1..this / 2).map { listOf(it, this - it) }
+private fun Int.computePartitionsOfTwo(distinct: Boolean): List<List<Int>> {
+    val upperLimit = if (distinct && this % 2 == 0) this / 2 - 1 else this / 2
+    return (1..upperLimit).map { listOf(it, this - it) }
+}
 
 private tailrec fun computeIntegerPartitions(
     n: Int,

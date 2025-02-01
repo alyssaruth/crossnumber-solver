@@ -1,27 +1,10 @@
 package maths
 
 import solver.Clue
-import kotlin.math.roundToLong
-import kotlin.math.sqrt
-
-fun sqrtWhole(value: Long) = sqrt(value.toDouble()).roundToLong()
-
-fun sqrtFloor(value: Long) = sqrt(value.toDouble()).toLong()
 
 fun isMultipleOf(divisor: Long): Clue = { value -> value % divisor == 0L }
 
-fun isPowerOf(x: Long): Clue = { isPowerOf(x, it) }
-
-private tailrec fun isPowerOf(x: Long, value: Long): Boolean =
-    if (value == 0L) {
-        false
-    } else if (value == x || value == 1L) {
-        true
-    } else if (!isMultipleOf(x)(value)) {
-        false
-    } else {
-        isPowerOf(x, value / x)
-    }
+fun isNotMultipleOf(divisor: Long): Clue = { value -> !isMultipleOf(divisor)(value) }
 
 fun hasMultiplicativePersistence(persistence: Int): Clue = { value -> multiplicativePersistence(value) == persistence }
 

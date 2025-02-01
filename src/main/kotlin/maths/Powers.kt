@@ -3,6 +3,30 @@ package maths
 import solver.Clue
 import java.math.BigInteger
 import kotlin.math.pow
+import kotlin.math.roundToLong
+import kotlin.math.sqrt
+
+fun geometricMean(values: List<Long>): Long? {
+    val product = values.fold(1L, Long::times)
+    return nthRoot(product, values.size)
+}
+
+fun sqrtWhole(value: Long) = sqrt(value.toDouble()).roundToLong()
+
+fun sqrtFloor(value: Long) = sqrt(value.toDouble()).toLong()
+
+fun isPowerOf(x: Long): Clue = { isPowerOf(x, it) }
+
+private tailrec fun isPowerOf(x: Long, value: Long): Boolean =
+    if (value == 0L) {
+        false
+    } else if (value == x || value == 1L) {
+        true
+    } else if (!isMultipleOf(x)(value)) {
+        false
+    } else {
+        isPowerOf(x, value / x)
+    }
 
 fun Int.pow(power: Int) = toDouble().pow(power.toDouble()).toLong()
 

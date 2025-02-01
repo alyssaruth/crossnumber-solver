@@ -91,6 +91,23 @@ class PartitioningTest {
     }
 
     @Test
+    fun `Distinct partitions of specified length`() {
+        10.distinctIntegerPartitions(2).shouldContainExactlyInAnyOrder(
+            listOf(1, 9),
+            listOf(2, 8),
+            listOf(3, 7),
+            listOf(4, 6),
+        )
+
+        9.distinctIntegerPartitions(2).shouldContainExactlyInAnyOrder(
+            listOf(1, 8),
+            listOf(2, 7),
+            listOf(3, 6),
+            listOf(4, 5),
+        )
+    }
+
+    @Test
     fun `Should efficiently calculate a partition of a specified length`() {
         50000.integerPartitions(ofLength = 2).size shouldBe 25000
         50001.integerPartitions(ofLength = 2).size shouldBe 25000

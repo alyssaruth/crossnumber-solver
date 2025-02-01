@@ -9,6 +9,8 @@ fun factorialMod(n: Long, base: Long, currentMultiplier: Long = n - 1): Long {
     return factorialMod((n * currentMultiplier) % base, base, currentMultiplier - 1)
 }
 
+fun integerFactorial(n: Int) = (2..n).toList().product()
+
 fun factorial(n: Long) = (1..n).map(Long::toBigInteger).fold(BigInteger.ONE, BigInteger::times)
 
 tailrec fun reverseFactorial(n: Long, currentDivisor: Long = 2): Long? {

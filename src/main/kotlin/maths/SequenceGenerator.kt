@@ -7,17 +7,19 @@ typealias Generator = (Long) -> List<Long>
 
 fun isProductOfConsecutive(chainSize: Int, digits: Int, generator: Generator): Clue {
     val max = 10.pow(digits)
-    val candidates = generator(max).windowed(chainSize).map { it.fold(1L, Long::times) }
+    val candidates = generator(max).windowed(chainSize).map { it.fold(1L, Long::times) }.toSet()
 
     return { candidates.contains(it) }
 }
 
 fun isSumOfConsecutive(chainSize: Int, digits: Int, generator: Generator): Clue {
     val max = 10.pow(digits)
-    val candidates = generator(max).windowed(chainSize).map { it.sum() }
+    val candidates = generator(max).windowed(chainSize).map { it.sum() }.toSet()
 
     return { candidates.contains(it) }
 }
+
+fun integersUpTo(limit: Long) = (1..limit).toList()
 
 fun squaresUpTo(limit: Long) = numbersUpTo(limit, listOf(1L)) {
     val n = it.size.toLong() + 1

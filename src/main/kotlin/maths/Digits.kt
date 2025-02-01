@@ -48,6 +48,8 @@ fun Long.lastNDigits(n: Int): Long {
     return digits.subList(length - n, length).fromDigits()
 }
 
+fun doesNotContainDigit(digit: Int): Clue = { value -> !containsDigit(digit)(value) }
+
 fun containsDigit(digit: Int): Clue = { value -> value.digits().contains(digit) }
 
 fun canBePermutedSuchThat(condition: Clue): Clue = { value ->
