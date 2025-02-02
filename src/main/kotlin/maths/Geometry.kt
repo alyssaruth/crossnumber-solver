@@ -4,6 +4,14 @@ import solver.Point
 import java.math.BigInteger
 
 /**
+ * 2 ^ (n-k) * nCk
+ *
+ * Lovely explanation here: https://www.math.brown.edu/tbanchof/Beyond3d/chapter4/section07.html
+ */
+fun facesOfAHypercube(faceDimension: Int, cubeDimension: Int) =
+    2.pow(cubeDimension - faceDimension) * cubeDimension.choose(faceDimension)
+
+/**
  * https://oeis.org/A003401
  *
  * n-gon is constructible iff n is the product of a power of 2 and any number of distinct Fermat primes

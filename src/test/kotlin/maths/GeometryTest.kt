@@ -1,6 +1,7 @@
 package maths
 
 import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
 class GeometryTest {
@@ -23,5 +24,19 @@ class GeometryTest {
         (2..10).map(::countStraightLinesThroughGrid).shouldContainExactly(
             6, 20, 62, 140, 306, 536, 938, 1492, 2306
         )
+    }
+
+    @Test
+    fun `Should count k-faces of an n-dimensional hypercube`() {
+        facesOfAHypercube(0, 3) shouldBe 8  // vertices
+        facesOfAHypercube(1, 3) shouldBe 12 // edges
+        facesOfAHypercube(2, 3) shouldBe 6
+        facesOfAHypercube(3, 3) shouldBe 1
+
+        facesOfAHypercube(0, 4) shouldBe 16
+        facesOfAHypercube(1, 4) shouldBe 32
+        facesOfAHypercube(2, 4) shouldBe 24
+        facesOfAHypercube(3, 4) shouldBe 8
+        facesOfAHypercube(4, 4) shouldBe 1
     }
 }

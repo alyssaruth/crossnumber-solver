@@ -4,14 +4,16 @@ import maths.canBeWrittenInSomeBaseAs
 import maths.digitSum
 import maths.digits
 import maths.distinctDivisors
-import maths.doesNotContainDigit
+import maths.facesOfAHypercube
 import maths.firstNDigits
+import maths.fromDigits
 import maths.geometricMean
-import maths.hasUniqueDigits
+import maths.hcf
 import maths.integerFactorial
 import maths.integersUpTo
 import maths.isMultipleOf
 import maths.isNotMultipleOf
+import maths.isOdd
 import maths.isPalindrome
 import maths.isProductOfConsecutive
 import maths.isSumOfTwoDistinctSquares
@@ -66,10 +68,9 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "7A" to simpleClue { it == it.digits().map(::integerFactorial).sum() },
     "9A" to isEqualTo(nineAcross()),
     "10A" to geometricMeanOf("27D", "6D"),
-    "12A" to emptyClue(), // TODO - The 2nd, 4th, 6th, 8th, and 10th digits of this number are the highest common factors of the digits either side of them
+    "12A" to twelveAcross(),
     "13A" to geometricMeanOf("6D", "4D"),
-    "14A" to simpleClue(hasUniqueDigits(9)) +
-            simpleClue(doesNotContainDigit(0)), // TODO - The number formed by the first n digits of this number is divisible by n (for all n)
+    "14A" to fourteenAcross(),
     "15A" to geometricMeanOf("4D", "5D"),
     "17A" to simpleClue { it.digits()[1] == 9 }, // TODO - Each digit of this number (after the first two) is a digit in the product of the previous two digits of this number
     "18A" to emptyClue(),
@@ -97,7 +98,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "13D" to isMultipleOfRef("6D") + isMultipleOfRef("20A"),
     "16D" to simpleClue { it.firstNDigits(5).digitSum() == it.lastNDigits(3).digitSum() + 1 },
     "19D" to simpleClue { isPalindrome(it * it) },
-    "22D" to emptyClue(), // TODO - The number of 41-dimensional sides on a 43-dimensional hypercube
+    "22D" to isEqualTo(facesOfAHypercube(41, 43)),
     "23D" to twentyThreeDown(),
     "25D" to emptyClue(), // TODO - A number of the form n^2+2^n
     "27D" to equalsTotalCountOfDigits(0, 3, 6, 9),
@@ -117,6 +118,30 @@ val CROSSNUMBER_5 = factoryCrossnumber(grid, clueMap)
 private fun nineAcross(): Long {
     val n = sqrtWhole(75 / 3)
     return 6 * n
+}
+
+/**
+ * The 2nd, 4th, 6th, 8th, and 10th digits of this number are the highest common factors of the digits either side of them
+ */
+private fun twelveAcross() = simpleClue { value ->
+    val digitWindows = value.digits().map(Int::toLong).windowed(3).filterIndexed { ix, _ -> isOdd(ix.toLong()) }
+    digitWindows.all { (a, b, c) -> hcf(a, c) == b }
+}
+
+/**
+ * This number contains each of the digits 1 to 9 exactly once.
+ * The number formed by the first n digits of this number is divisible by n (for all n)
+ */
+private val oneToNine = (1..9).toSet()
+private fun fourteenAcross() = simpleClue { value ->
+    val digits = value.digits()
+    if (!isMultipleOf(digits.size.toLong())(value) || digits.toSet() != oneToNine) {
+        false
+    } else {
+        (digits.size - 1 downTo 2).all { n ->
+            isMultipleOf(n.toLong())(digits.subList(0, n).fromDigits())
+        }
+    }
 }
 
 /**

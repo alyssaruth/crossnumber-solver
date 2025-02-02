@@ -3,7 +3,7 @@ package maths
 /**
  * Euclidean algorithm for HCF / GCD
  */
-fun hcf(x: Long, y: Long) = computeHcf(x, y)
+fun hcf(x: Long, y: Long) = if (x == 0L || y == 0L) 0L else computeHcf(x, y)
 
 private tailrec fun computeHcf(x: Long, y: Long, max: Long = maxOf(x, y), min: Long = minOf(x, y)): Long =
     if (x == y) {

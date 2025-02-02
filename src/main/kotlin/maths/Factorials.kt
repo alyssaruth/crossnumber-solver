@@ -11,7 +11,7 @@ fun factorialMod(n: Long, base: Long, currentMultiplier: Long = n - 1): Long {
 
 fun integerFactorial(n: Int) = (2..n).toList().product()
 
-fun factorial(n: Long) = (1..n).map(Long::toBigInteger).fold(BigInteger.ONE, BigInteger::times)
+fun factorial(n: Long, downTo: Long = 2L) = (downTo..n).map(Long::toBigInteger).fold(BigInteger.ONE, BigInteger::times)
 
 tailrec fun reverseFactorial(n: Long, currentDivisor: Long = 2): Long? {
     val remainder = n / currentDivisor
