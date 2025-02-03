@@ -2,6 +2,8 @@ package maths
 
 import solver.Clue
 
+fun wholeDiv(x: Long, y: Long) = if (isMultipleOf(y)(x)) x / y else null
+
 fun isMultipleOf(divisor: Long): Clue = { value -> divisor != 0L && value % divisor == 0L }
 
 fun isNotMultipleOf(divisor: Long): Clue = { value -> !isMultipleOf(divisor)(value) }

@@ -33,13 +33,17 @@ import maths.sorted
 import maths.toRomanNumerals
 import solver.ClueConstructor
 import solver.clue.asyncEquals
+import solver.clue.clueMap
 import solver.clue.dualReference
+import solver.clue.emptyClue
 import solver.clue.isEqualTo
-import solver.clue.isFactorOfRef
-import solver.clue.isMultipleOfRef
+import solver.clue.isMultipleOf
+import solver.clue.isProductOf
+import solver.clue.isSumOf
 import solver.clue.makeSingleReference
 import solver.clue.plus
 import solver.clue.simpleClue
+import solver.clue.singleReference
 import solver.clue.smallest
 import solver.clue.transformedEqualsRef
 import solver.clue.tripleReference
@@ -75,40 +79,38 @@ private val a19Prime = nextPrime(370262)
 
 private val a16 = (10..99).first { inPence(it).size == 5 }
 
-private val clueMap: Map<String, ClueConstructor> = mapOf(
-    "1A" to isMultipleOfRef("24A") +
-            tripleReference("6D", "32D", "35A") { d6, d32, a35 -> d6 - d32 - a35 },
+private val clueMap: Map<String, ClueConstructor> = clueMap(
+    *"1A".isMultipleOf("24A"),
     "5A" to simpleClue(::nGonIsConstructible),
     "7A" to simpleClue { hasWholeNthRoot(4)(it) && distinctDivisors(it).size.pow(4) == it },
     "9A" to simpleClue { properFactors(it).size == 9 },
-    "11A" to makeSingleReference("4D") { it.firstNDigits(4) },
-    "12A" to simpleClue(::isPrime) + dualReference("3D", "34D", Long::minus),
-    "13A" to dualReference("30D", "12A", Long::times),
+    *"11A".singleReference("4D") { it.firstNDigits(4) },
+    "12A" to simpleClue(::isPrime),
+    *"13A".isProductOf("30D", "12A"),
     "16A" to isEqualTo(a16.toLong()),
     "17A" to simpleClue { isTriangleNumber(it + 2) },
     "19A" to isEqualTo(a19Prime - 370262),
     "21A" to simpleClue(::isPrime),
     "22A" to smallest(simpleClue(hasMultiplicativePersistence(11))),
-    "24A" to isFactorOfRef("1A") + simpleClue { 3L.modPow(it, it) == 24L },
-    "25A" to simpleClue { toRomanNumerals(it).sorted() == "CDL" } + isMultipleOfRef("27D"),
+    "24A" to simpleClue { 3L.modPow(it, it) == 24L },
+    *"25A".isMultipleOf("27D"),
+    "25A" to simpleClue { toRomanNumerals(it).sorted() == "CDL" },
     "26A" to simpleClue { it >= 1582 && dayOfWeek("$it-01-01") == Calendar.WEDNESDAY },
-    "28A" to simpleClue(isMultipleOf(9)),
+    "28A" to simpleClue(isMultipleOf(9)) + dualReference("15D", "5D") { d15, d5 -> d15 / d5.reversed() },
     "29A" to simpleClue(hasUniqueDigits(1)),
     "31A" to simpleClue(::isSquare),
-    "33A" to makeSingleReference("4D") { it.lastNDigits(4) },
+    *"33A".singleReference("4D") { it.lastNDigits(4) },
     "35A" to isEqualTo(12), // https://en.wikipedia.org/wiki/Mathematical_chess_problem#Domination_problems
     "36A" to asyncEquals { countPrimesUpTo(100_000_000).toLong() },
     "39A" to simpleClue(::isSquare) + simpleClue(::isTetrahedralNumber),
     "40A" to simpleClue(isEven) + simpleClue { 2L.modPow(it, it) == 2L },
 
-    "1D" to makeSingleReference("32D") { other -> properFactors(other).sum() },
+    *"1D".singleReference("32D") { other -> properFactors(other).sum() },
     "2D" to simpleClue(hasDigitSum(8)) + makeSingleReference("5D") { it.digitSum().toLong() },
-    "3D" to dualReference("34D", "12A", Long::plus),
-    "4D" to simpleClue(::fourDown) +
-            transformedEqualsRef("11A") { it.firstNDigits(4) } +
-            transformedEqualsRef("33A") { it.lastNDigits(4) },
+    *"3D".isSumOf("34D", "12A"),
+    "4D" to simpleClue(::fourDown),
     "5D" to transformedEqualsRef("2D", ::digitSum),
-    "6D" to tripleReference("32D", "35A", "1A") { d32, a35, a1 -> d32 + a35 + a1 },
+    *"6D".isSumOf("32D", "35A", "1A"),
     "8D" to simpleClue(::isPrime),
     "10D" to asyncEquals { tenDown().size.toLong() },
     "11D" to simpleClue(::isPalindrome),
@@ -120,12 +122,12 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "21D" to simpleClue { value -> value.digitCounts().let { it.size == 2 && it.values.contains(1) } },
     "23D" to tripleReference("15D", "17A", "34D") { d15, a17, d34 -> d15 + a17 - d34 },
     "26D" to simpleClue(hasDigitSum(3)),
-    "27D" to isFactorOfRef("25A"),
+    "27D" to emptyClue(),
     "30D" to simpleClue { !isPalindrome(it) },
-    "32D" to makeSingleReference("1D") { other -> properFactors(other).sum() },
-    "34D" to simpleClue(::isSquare) + dualReference("3D", "12A", Long::minus),
-    "37D" to dualReference("27D", "38D", Long::times),
-    "38D" to simpleClue(isMultipleOf(10)) + dualReference("37D", "27D") { d37, d27 -> d37 / d27 }
+    *"32D".singleReference("1D") { other -> properFactors(other).sum() },
+    "34D" to simpleClue(::isSquare),
+    *"37D".isProductOf("27D", "38D"),
+    "38D" to simpleClue(isMultipleOf(10))
 )
 
 val CROSSNUMBER_2 = factoryCrossnumber(grid, clueMap)

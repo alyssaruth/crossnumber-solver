@@ -1,6 +1,7 @@
 package solver.clue
 
 import maths.geometricMean
+import maths.wholeDiv
 import solver.ClueConstructor
 
 /**
@@ -16,9 +17,23 @@ fun String.isMultipleOf(other: String) = arrayOf(
  */
 fun String.isProductOf(a: String, b: String) = arrayOf(
     this to dualReference(a, b, Long::times),
-    a to dualReference(this, b, Long::div),
-    b to dualReference(this, a, Long::div)
+    a to dualReference(this, b, ::wholeDiv),
+    b to dualReference(this, a, ::wholeDiv)
 )
+
+/**
+ * a = b + c + d =>  b = a - c - d  and  c = a - b - d  and  d = a - b - c
+ */
+fun String.isSumOf(vararg others: String): Array<Pair<String, ClueConstructor>> {
+    val reciprocals = others.map { other ->
+        val othersNotMe = others.toList() - other
+        other to multiReference(this, *othersNotMe.toTypedArray()) { it.first() - it.drop(1).sum() }
+    }
+
+    return arrayOf(
+        this to multiReference(*others) { it.sum() },
+    ) + reciprocals
+}
 
 /**
  * X = sqrt(Y * Z) => Z = X^2 / Y and Y = X^2 / Z

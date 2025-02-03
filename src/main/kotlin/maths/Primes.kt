@@ -10,7 +10,7 @@ fun isPrime(value: Long): Boolean {
     if (value == 2L) return true
     if (value % 2 == 0L) return false
 
-    val range = 3..(sqrtWhole(value)) step 2
+    val range = 3..(sqrtFloor(value)) step 2
     return range.all { value % it != 0L }
 }
 
@@ -43,7 +43,7 @@ fun firstPrimeFactor(n: Long) = findFirstPrimeFactor(n)
 private tailrec fun findFirstPrimeFactor(n: Long, currentPrime: Long = 2): Long =
     if (isMultipleOf(currentPrime)(n)) currentPrime else findFirstPrimeFactor(n, nextPrime(currentPrime))
 
-fun countPrimesUpTo(n: Long) = (2..n).filter(::isPrime).size
+fun countPrimesUpTo(n: Long) = (3..n step 2).count(::isPrime) + 1
 
 /**
  * Of the form 2^(2^k) + 1 for some k

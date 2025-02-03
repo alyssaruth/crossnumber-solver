@@ -135,9 +135,9 @@ val clueMap: Map<String, ClueConstructor> = mapOf(
 
 Below are the crossnumbers this can solve so far, along with roughly how long each solve takes:
 
-| Number | Solve time (s) | URL                                                                                |
-|--------|----------------|------------------------------------------------------------------------------------|
-| 1      | 30             | https://chalkdustmagazine.com/regulars/100-prize-crossnumber-issue-01/             |
-| 2      | 120            | https://chalkdustmagazine.com/regulars/crossnumber/100-prize-crossnumber-issue-02/ |
-| 3      | 12             | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-03/     |
-| 4      | 12             | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-04/     |
+| Number | Time (s) | URL                                                                                |
+|--------|----------|------------------------------------------------------------------------------------|
+| 1      | 30       | https://chalkdustmagazine.com/regulars/100-prize-crossnumber-issue-01/             |
+| 2      | 90       | https://chalkdustmagazine.com/regulars/crossnumber/100-prize-crossnumber-issue-02/ |
+| 3      | 12       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-03/     |
+| 4      | 12       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-04/     |

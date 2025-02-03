@@ -15,7 +15,7 @@ class DualReferenceClue(
     crossnumber: Crossnumber,
     private val clueA: ClueId,
     private val clueB: ClueId,
-    private val combiner: (Long, Long) -> Long
+    private val combiner: (Long, Long) -> Long?
 ) :
     ContextualClue(crossnumber) {
     private val potentialSolutions = computePotentialSolutions()
@@ -31,9 +31,9 @@ class DualReferenceClue(
             return null
         }
 
-        return aValues.flatMap { a -> bValues.map { b -> combiner(a, b) } }.toSet()
+        return aValues.flatMap { a -> bValues.mapNotNull { b -> combiner(a, b) } }.toSet()
     }
 }
 
-fun dualReference(clueA: String, clueB: String, combiner: (Long, Long) -> Long): ClueConstructor =
+fun dualReference(clueA: String, clueB: String, combiner: (Long, Long) -> Long?): ClueConstructor =
     { crossnumber -> DualReferenceClue(crossnumber, ClueId.fromString(clueA), ClueId.fromString(clueB), combiner) }
