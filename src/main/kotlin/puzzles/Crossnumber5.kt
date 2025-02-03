@@ -15,7 +15,6 @@ import maths.integerFactorial
 import maths.integersUpTo
 import maths.isMultipleOf
 import maths.isNotMultipleOf
-import maths.isOdd
 import maths.isPalindrome
 import maths.isProductOfConsecutive
 import maths.isSumOfTwoDistinctSquares
@@ -94,7 +93,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
 
     "1D" to simpleClue { it == (it * it).lastNDigits(4) },
     "2D" to simpleClue { ((it * it).digits() + (it * it * it).digits()).distinct().size == 10 },
-    "3D" to emptyClue(), // TODO - This number can be written as the sum of the fourth powers of two rational numbers, but it cannot be written as the sum of the fourth powers of two integers
+    "3D" to isEqualTo(5906), // A111152 - I... don't know how you would test / derive this. It's (25/17)^4 + (149/17)^4
     *"4D".isGeometricMeanOf("13A", "15A"),
     *"5D".isGeometricMeanOf("15A", "18A"),
     *"6D".isGeometricMeanOf("10A", "13A"),
@@ -129,8 +128,11 @@ private fun nineAcross() = isEqualTo(6 * sqrtWhole(75 / 3))
  * The 2nd, 4th, 6th, 8th, and 10th digits of this number are the highest common factors of the digits either side of them
  */
 private fun twelveAcross() = simpleClue { value ->
-    val digitWindows = value.digits().map(Int::toLong).windowed(3).filterIndexed { ix, _ -> isOdd(ix.toLong()) }
-    digitWindows.all { (a, b, c) -> hcf(a, c) == b }
+    val digits = value.digits().map(Int::toLong)
+
+    (1..9 step 2).all {
+        digits[it] == hcf(digits[it - 1], digits[it + 1])
+    }
 }
 
 /**
@@ -159,10 +161,17 @@ private fun seventeenAcross() = simpleClue { value ->
 
 /**
  * Each digit of this number is either a factor or a multiple of the previous digit
+ *
+ * N.B. seems to assume no 0s, even though arguably 0 is a multiple of everything and everything is a factor of 0
  */
 private fun twentyThreeDown() = simpleClue { value ->
-    val digitWindows = value.digits().map(Int::toLong).windowed(2)
-    digitWindows.all { (a, b) -> isMultipleOf(a)(b) || isMultipleOf(b)(a) }
+    val digits = value.digits()
+    if (digits.contains(0)) {
+        false
+    } else {
+        val digitWindows = value.digits().map(Int::toLong).windowed(2)
+        digitWindows.all { (a, b) -> isMultipleOf(a)(b) || isMultipleOf(b)(a) }
+    }
 }
 
 /**
