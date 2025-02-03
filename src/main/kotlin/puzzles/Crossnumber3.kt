@@ -36,6 +36,7 @@ import solver.clue.clueMap
 import solver.clue.dualReference
 import solver.clue.emptyClue
 import solver.clue.isEqualTo
+import solver.clue.isHalfTheDifferenceBetween
 import solver.clue.isMultipleOf
 import solver.clue.isProductOf
 import solver.clue.isSumOf
@@ -46,7 +47,6 @@ import solver.clue.singleReference
 import solver.clue.smallest
 import solver.factoryCrossnumber
 import java.math.BigInteger
-import kotlin.math.abs
 
 /**
  * https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-03/
@@ -74,8 +74,8 @@ private val grid = """
 """.trimIndent()
 
 private val clueMap: Map<String, ClueConstructor> = clueMap(
-    "1A" to simpleClue(isMultipleOf(999)) + dualReference("5A", "45A") { a5, a45 -> abs(a45 - (2 * a5)) },
-    "5A" to dualReference("45A", "1A") { a, b -> abs(a - b) / 2 },
+    "1A" to simpleClue(isMultipleOf(999)),
+    *"5A".isHalfTheDifferenceBetween("45A", "1A"),
     *"7A".isSumOf("13A", "43D"),
     *"9A".isMultipleOf("41A"),
     *"12A".isProductOf("4D", "43D"),

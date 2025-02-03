@@ -3,13 +3,19 @@ package solver.clue
 import maths.geometricMean
 import maths.wholeDiv
 import solver.ClueConstructor
+import kotlin.math.abs
 
 /**
- * X is multiple of Y => Y is factor of X
+ * X is multiple of Y <=> Y is factor of X
  */
 fun String.isMultipleOf(other: String) = arrayOf(
     this to isMultipleOfRef(other),
     other to isFactorOfRef(this)
+)
+
+fun String.isFactorOf(other: String) = arrayOf(
+    this to isFactorOfRef(other),
+    other to isMultipleOfRef(this)
 )
 
 /**
@@ -43,6 +49,16 @@ fun String.isGeometricMeanOf(a: String, b: String): Array<Pair<String, ClueConst
         this to multiReference(a, b, combiner = ::geometricMean),
         a to dualReference(this, b) { x, y -> (x * x) / y },
         b to dualReference(this, a) { x, y -> (x * x) / y },
+    )
+
+/**
+ * X = |Y-Z|/2  =>  Y = 2X - Z or 2X + Z, whichever is positive. And same for X.
+ */
+fun String.isHalfTheDifferenceBetween(a: String, b: String): Array<Pair<String, ClueConstructor>> =
+    arrayOf(
+        this to dualReference(a, b) { x, y -> abs(x - y) / 2 },
+        a to dualReference(this, b) { x, y -> listOf(y - (2 * x), y + (2 * x)).first { it > 0 } },
+        b to dualReference(this, a) { x, y -> listOf(y - (2 * x), y + (2 * x)).first { it > 0 } },
     )
 
 /**
