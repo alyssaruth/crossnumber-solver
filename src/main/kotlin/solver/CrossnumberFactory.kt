@@ -3,10 +3,10 @@ package solver
 import maths.getViableDigits
 import solver.clue.emptyClue
 
-fun factoryCrossnumber(gridString: String, rawClues: Map<String, ClueConstructor>): Crossnumber {
+fun factoryCrossnumber(gridString: String, rawClues: Map<String, ClueConstructor>, skipSymmetryCheck: Boolean = false): Crossnumber {
     val clues = rawClues.mapKeys { (clueStr, _) -> ClueId.fromString(clueStr) }
     val grid = parseGrid(gridString)
-    grid.validate()
+    grid.validate(skipSymmetryCheck)
 
     val detectedWords = grid.detectWords()
     val validIds = detectedWords.map { it.clueId }

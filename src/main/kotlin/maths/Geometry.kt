@@ -24,6 +24,11 @@ fun nGonIsConstructible(n: Long): Boolean {
 }
 
 /**
+ * A000125
+ */
+fun nthCakeNumber(n: Int) = (n.pow(3) + (5 * n) + 6) / 6
+
+/**
  * OEIS: A000127
  *
  * (n^4 - 6n^3 + 23n^2 - 18n^24 + 24) / 24

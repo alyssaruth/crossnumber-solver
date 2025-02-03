@@ -1,6 +1,11 @@
 package maths
 
+import kotlin.math.ceil
+import kotlin.math.floor
+
 fun degreesToFahrenheit(degrees: Long) = 32 + (degrees * 9) / 5
+
+fun Double.longOrNull() = if (floor(this) == ceil(this)) this.toLong() else null
 
 fun String.sorted() = toCharArray().sorted().joinToString("")
 

@@ -27,6 +27,13 @@ class GeometryTest {
     }
 
     @Test
+    fun `Should compute cake numbers correctly`() {
+        (1..10).map(::nthCakeNumber).shouldContainExactly(
+             2, 4, 8, 15, 26, 42, 64, 93, 130, 176
+        )
+    }
+
+    @Test
     fun `Should count k-faces of an n-dimensional hypercube`() {
         facesOfAHypercube(0, 3) shouldBe 8  // vertices
         facesOfAHypercube(1, 3) shouldBe 12 // edges

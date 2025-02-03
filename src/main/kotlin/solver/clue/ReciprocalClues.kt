@@ -1,6 +1,7 @@
 package solver.clue
 
 import maths.geometricMean
+import maths.longOrNull
 import maths.wholeDiv
 import solver.ClueConstructor
 import kotlin.math.abs
@@ -42,6 +43,20 @@ fun String.isSumOf(vararg others: String): Array<Pair<String, ClueConstructor>> 
 }
 
 /**
+ * X = (Y + Z)/2  =>  Y = 2X - Z  and  Z = 2X - Y
+ */
+fun String.isMeanOf(vararg others: String): Array<Pair<String, ClueConstructor>> {
+    val reciprocals = others.map { other ->
+        val othersNotMe = others.toList() - other
+        other to multiReference(this, *othersNotMe.toTypedArray()) { (others.size * it.first()) - it.drop(1).sum() }
+    }
+    return arrayOf(
+        this to multiReference(*others) { l -> l.average().longOrNull() },
+    ) + reciprocals
+}
+
+
+/**
  * X = sqrt(Y * Z) => Z = X^2 / Y and Y = X^2 / Z
  */
 fun String.isGeometricMeanOf(a: String, b: String): Array<Pair<String, ClueConstructor>> =
@@ -59,6 +74,13 @@ fun String.isHalfTheDifferenceBetween(a: String, b: String): Array<Pair<String, 
         this to dualReference(a, b) { x, y -> abs(x - y) / 2 },
         a to dualReference(this, b) { x, y -> listOf(y - (2 * x), y + (2 * x)).first { it > 0 } },
         b to dualReference(this, a) { x, y -> listOf(y - (2 * x), y + (2 * x)).first { it > 0 } },
+    )
+
+fun String.isDifferenceBetween(a: String, b: String): Array<Pair<String, ClueConstructor>> =
+    arrayOf(
+        this to dualReference(a, b) { x, y -> abs(x - y) },
+        // a to dualReference(this, b) { x, y -> listOf(y - x, y + x).first { it > 0 } },
+        // b to dualReference(this, a) { x, y -> listOf(y - x, y + x).first { it > 0 } },
     )
 
 /**

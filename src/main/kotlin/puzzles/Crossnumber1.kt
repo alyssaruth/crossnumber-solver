@@ -33,6 +33,7 @@ import solver.clue.clueMap
 import solver.clue.dualReference
 import solver.clue.equalToNumberOfClueWithAnswer
 import solver.clue.equalsSomeOther
+import solver.clue.isDifferenceBetween
 import solver.clue.isEqualTo
 import solver.clue.isFactorOfRef
 import solver.clue.isMultipleOf
@@ -71,7 +72,7 @@ private val grid = """
 private val clueMap: Map<String, ClueConstructor> = clueMap(
     *"1A".isProductOf("4D", "18D"),
     "5A" to simpleClue(isMultipleOf(101)),
-    "7A" to dualReference("10D", "11D") { a, b -> abs(a - b) },
+    *"7A".isDifferenceBetween("10D", "11D"),
     "9A" to simpleClue { value -> isPalindrome(value) && containsDigit(0)(value) },
     *"10A".singleReference("24A") { other -> 100000 - (other * other.reversed()) },
     "13A" to tripleReference("35A", "8D", "17A") { a35, d8, a17 -> (a35 - d8) * a17 },

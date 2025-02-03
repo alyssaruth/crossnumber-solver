@@ -28,7 +28,7 @@ class Grid(private val pointMap: Map<Point, String>) {
         (0..xMax).joinToString("") { x -> pointMap.getValue(Point(x, y)).toString() }
     }
 
-    fun validate() {
+    fun validate(skipSymmetry: Boolean = true) {
         if (xMax != yMax) {
             throw IllegalArgumentException("Grid is not square, detected dimensions: ${xMax + 1}x${yMax + 1}")
         }
@@ -38,7 +38,7 @@ class Grid(private val pointMap: Map<Point, String>) {
             throw IllegalArgumentException("Invalid character(s) detected: $invalids")
         }
 
-        if (rotate().rotate().pointMap != pointMap) {
+        if (!skipSymmetry && rotate().rotate().pointMap != pointMap) {
             throw IllegalArgumentException("Grid is not rotationally symmetric!")
         }
     }

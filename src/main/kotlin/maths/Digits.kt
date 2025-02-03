@@ -7,6 +7,8 @@ fun Long.digitsAreStrictlyIncreasing() = digits().windowed(2).all { it[0] < it[1
 
 fun BigInteger.digits() = collectDigits(this)
 
+fun BigInteger.digitSum() = digits().sum()
+
 private fun collectDigits(remaining: BigInteger, digitsSoFar: List<Int> = emptyList()): List<Int> {
     if (remaining == BigInteger.ZERO) {
         return digitsSoFar

@@ -30,6 +30,8 @@ private tailrec fun isPowerOf(x: Long, value: Long): Boolean =
 
 fun Int.pow(power: Int) = toDouble().pow(power.toDouble()).toLong()
 
+fun Long.bigPow(power: Int) = toBigInteger().pow(power)
+
 fun nthRoot(value: Long, power: Int): Long? = binarySearchWithResult(value, { n -> n.pow(power) })
 
 fun hasWholeNthRoot(power: Int): Clue = { value -> nthRoot(value, power) != null }
