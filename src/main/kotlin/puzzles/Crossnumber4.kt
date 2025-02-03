@@ -98,7 +98,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "16A" to simpleClue(::violatesGoldbachConjecture) + doesNotEqualRef("17A"),
     "17A" to simpleClue(::violatesGoldbachConjecture) + doesNotEqualRef("16A"),
     "19A" to simpleClue(isMultipleOf(717)),
-    "23A" to equalsSomeOther("23A"),
+    "23A".equalsSomeOther(),
     "25A" to simpleClue(::isPalindrome),
     "26A" to calculationWithReference("15D") { value, other -> value < other } +
             dualReference("15D", "1D", Long::minus),
@@ -129,7 +129,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "18D" to calculationWithReference("31D") { value, other -> value.isAnagramOf(other) },
     "19D" to transformedEqualsRef("6D") { it.digitSum() + 1L },
     "20D" to dualReference("7D", "5A") { a, b -> lcm(a, b) },
-    "21D" to equalsSomeOther("21D"),
+    "21D".equalsSomeOther(),
     "22D" to smallest(simpleClue(appearsInPascalsTriangle(times = 8))),
     "24D" to isEqualTo(maximumRegionsByJoiningPointsOnACircle(27)),
     "27D" to isEqualTo(countStraightLinesThroughGrid(10)),

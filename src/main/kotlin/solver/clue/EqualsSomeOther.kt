@@ -47,5 +47,5 @@ class EqualsSomeOther(private val myClueId: ClueId, crossnumber: Crossnumber) : 
     private fun otherSolutions() = crossnumber.solutionsOfLength(myLength) - myClueId
 }
 
-fun equalsSomeOther(myClueId: String): ClueConstructor =
-    { crossnumber -> EqualsSomeOther(ClueId.fromString(myClueId), crossnumber) }
+fun String.equalsSomeOther(): Pair<String, ClueConstructor> =
+    this to { crossnumber -> EqualsSomeOther(ClueId.fromString(this), crossnumber) }

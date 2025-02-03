@@ -93,7 +93,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "1D" to singleReference("3D") { it - 700 },
     "2D" to simpleClue(hasDigitSum(16)),
     "3D" to simpleClue(::isFibonacci) + singleReference("1D") { it + 700 },
-    "4D" to equalsSomeOther("4D"),
+    "4D".equalsSomeOther(),
     "5D" to simpleClue { value -> isSquare(value) && hasUniqueDigits(10)(value) },
     "6D" to simpleClue(::sixDown),
     "8D" to singleReference("25A") { nextPrime(it) },

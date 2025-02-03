@@ -24,7 +24,7 @@ import solver.ClueConstructor
 import solver.Crossnumber
 import solver.Orientation
 import solver.clue.ContextualClue
-import solver.clue.collectClues
+import solver.clue.clueMap
 import solver.clue.emptyClue
 import solver.clue.equalToNumberOfClueWithAnswer
 import solver.clue.isEqualTo
@@ -62,26 +62,16 @@ private val grid = """
 
 private val isProductOfFourConsecutiveIntegers = isProductOfConsecutive(4, 6, ::integersUpTo)
 
-private val reciprocalClues: List<Pair<String, ClueConstructor>> = listOf(
-    "10A".isGeometricMeanOf("27D", "6D"),
-    "13A".isGeometricMeanOf("6D", "4D"),
-    "15A".isGeometricMeanOf("4D", "5D"),
-
-    "4D".isGeometricMeanOf("13A", "15A"),
-    "5D".isGeometricMeanOf("15A", "18A"),
-    "6D".isGeometricMeanOf("10A", "13A"),
-    "7D".isMultipleOf("3D"),
-    "13D".isMultipleOf("6D"),
-    "13D".isMultipleOf("20A")
-).flatten()
-
-private val simpleClues = listOf(
+private val clueMap: Map<String, ClueConstructor> = clueMap(
     "1A" to simpleClue { it == (it * it).lastNDigits(5) },
     "5A" to simpleClue { isProductOfFourConsecutiveIntegers((it * it) - 1) },
     "7A" to simpleClue { it == it.digits().map(::integerFactorial).sum() },
     "9A" to nineAcross(),
+    *"10A".isGeometricMeanOf("27D", "6D"),
     "12A" to twelveAcross(),
+    *"13A".isGeometricMeanOf("6D", "4D"),
     "14A" to fourteenAcross(),
+    *"15A".isGeometricMeanOf("4D", "5D"),
     "17A" to seventeenAcross(),
     "18A" to emptyClue(),
     "20A" to simpleClue { value -> (value..value + 4).map { distinctDivisors(it).size }.toSet().size == 1 },
@@ -99,9 +89,15 @@ private val simpleClues = listOf(
     "1D" to simpleClue { it == (it * it).lastNDigits(4) },
     "2D" to simpleClue { ((it * it).digits() + (it * it * it).digits()).distinct().size == 10 },
     "3D" to emptyClue(), // TODO - This number can be written as the sum of the fourth powers of two rational numbers, but it cannot be written as the sum of the fourth powers of two integers
+    *"4D".isGeometricMeanOf("13A", "15A"),
+    *"5D".isGeometricMeanOf("15A", "18A"),
+    *"6D".isGeometricMeanOf("10A", "13A"),
+    *"7D".isMultipleOf("3D"),
     "7D" to simpleClue(isNotMultipleOf(4)) + transformedEqualsRef("27D", ::digitSum),
     "8D" to emptyClue(), // TODO - This number can be made by concatenating two other answers in this crossnumber
     "11D" to isEqualTo(squaresOnNByNChessboard(13_178)),
+    *"13D".isMultipleOf("6D"),
+    *"13D".isMultipleOf("20A"),
     "16D" to simpleClue { it.firstNDigits(5).digitSum() == it.lastNDigits(3).digitSum() + 1 },
     "19D" to simpleClue { isPalindrome(it * it) },
     "22D" to isEqualTo(facesOfAHypercube(41, 43)),
@@ -110,7 +106,7 @@ private val simpleClues = listOf(
     "27D" to equalsTotalCountOfDigits(0, 3, 6, 9),
 )
 
-val CROSSNUMBER_5 = factoryCrossnumber(grid, (reciprocalClues + simpleClues).collectClues())
+val CROSSNUMBER_5 = factoryCrossnumber(grid, clueMap)
 
 /**
  * A number a such that the equation 3x^2+ax+75 has a repeated root
