@@ -12,8 +12,8 @@ abstract class ContextualClue(protected val crossnumber: Crossnumber) : BaseClue
         } else null
     }
 
-    protected fun lookupAnswers(clueId: ClueId): List<Long>? {
+    protected fun lookupAnswers(clueId: ClueId): Set<Long>? {
         val solution = crossnumber.solutions.getValue(clueId)
-        return if (solution is PartialSolution) solution.possibilities else null
+        return if (solution is PartialSolution) solution.possibilities.toSet() else null
     }
 }

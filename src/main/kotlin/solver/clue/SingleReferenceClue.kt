@@ -28,5 +28,5 @@ class SingleReferenceClue(
     }
 }
 
-fun singleReference(clue: String, mapper: (Long) -> Long): ClueConstructor =
+fun makeSingleReference(clue: String, mapper: (Long) -> Long): ClueConstructor =
     { crossnumber -> SingleReferenceClue(crossnumber, ClueId.fromString(clue), mapper) }

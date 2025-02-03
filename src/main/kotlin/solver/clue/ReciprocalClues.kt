@@ -14,7 +14,7 @@ fun String.isMultipleOf(other: String) = arrayOf(
 /**
  * a = b * c => b = a/c and c = a/b
  */
-fun String.isProductOf(a: String, b: String) = listOf(
+fun String.isProductOf(a: String, b: String) = arrayOf(
     this to dualReference(a, b, Long::times),
     a to dualReference(this, b, Long::div),
     b to dualReference(this, a, Long::div)
@@ -28,6 +28,15 @@ fun String.isGeometricMeanOf(a: String, b: String): Array<Pair<String, ClueConst
         this to multiReference(a, b, combiner = ::geometricMean),
         a to dualReference(this, b) { x, y -> (x * x) / y },
         b to dualReference(this, a) { x, y -> (x * x) / y },
+    )
+
+/**
+ * X = f(Y) => f(Y) = X
+ */
+fun String.singleReference(other: String, mapper: (Long) -> Long): Array<Pair<String, ClueConstructor>> =
+    arrayOf(
+        this to makeSingleReference(other, mapper),
+        other to transformedEqualsRef(this, mapper)
     )
 
 

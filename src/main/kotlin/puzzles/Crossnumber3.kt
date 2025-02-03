@@ -37,10 +37,10 @@ import solver.clue.isEqualTo
 import solver.clue.isFactorOfRef
 import solver.clue.isMultipleOfRef
 import solver.clue.largest
+import solver.clue.makeSingleReference
 import solver.clue.multiReference
 import solver.clue.plus
 import solver.clue.simpleClue
-import solver.clue.singleReference
 import solver.clue.smallest
 import solver.clue.transformedEqualsRef
 import solver.factoryCrossnumber
@@ -81,10 +81,10 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "13A" to dualReference("7A", "43D", Long::minus),
     "14A" to dualReference("21D", "37A", Long::minus),
     "15A" to simpleClue { inWords(it).vowels().sorted() == "aeiou" },
-    "16A" to singleReference("8D", ::digitSum),
+    "16A" to makeSingleReference("8D", ::digitSum),
     "18A" to simpleClue { it.digits().sorted() == listOf(0, 2, 4, 6, 8) },
     "21A" to simpleClue { hcf(it, 756) == 1L && !isPrime(it) },
-    "24A" to singleReference("29D", ::digitSum),
+    "24A" to makeSingleReference("29D", ::digitSum),
     "25A" to simpleClue(isProductOfConsecutive(4, digits = 6, ::fibonacciUpTo)),
     "26A" to dualReference("14A", "21D", Long::times),
     "29A" to largest(simpleClue { !BigInteger.TWO.pow(it.toInt()).digits().contains(0) }),
@@ -97,7 +97,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "40A" to isEqualTo(8902), // The number of ways to play the first 3 moves (2 white moves, 1 black move) in a game of chess
     "41A" to simpleClue(isMultipleOf(719)) + isFactorOfRef("9A"),
     "42A" to simpleClue { isPrime(it) && isPrime(it + 2) },
-    "44A" to singleReference("29D") { it / 2 },
+    "44A" to makeSingleReference("29D") { it / 2 },
     "45A" to multiReference("6D", "8D", "31D", "37D", "43D") { it.sum() },
 
     "1D" to simpleClue(isPowerOf(2)),
@@ -105,13 +105,13 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "3D" to simpleClue { hasWholeNthRoot(3)(it) && nthRoot(it, 3) == distinctDivisors(it).size.toLong() },
     "4D" to simpleClue(isOdd) + dualReference("12A", "43D", Long::div),
     "5D" to simpleClue(::isSquare),
-    "6D" to dualReference("5D", "27D") { d5, d27 -> d5 * (d27 - 1) } + singleReference("33D") { it + 1000006 },
+    "6D" to dualReference("5D", "27D") { d5, d27 -> d5 * (d27 - 1) } + makeSingleReference("33D") { it + 1000006 },
     "8D" to simpleClue(isOdd) +
             transformedEqualsRef("16A", ::digitSum) +
             multiReference("45A", "6D", "31D", "37D", "43D") { it.first() - it.drop(1).sum() },
     "10D" to simpleClue(isMultipleOf(7)),
     "11D" to asyncEquals { countTwinPrimesUpTo(1_000_000).toLong() },
-    "17D" to singleReference("26A") { distinctDivisors(it).size.toLong() },
+    "17D" to makeSingleReference("26A") { distinctDivisors(it).size.toLong() },
     "19D" to calculationWithReference("30A") { value, other -> value > other },
     "20D" to simpleClue { it.digitsAreStrictlyIncreasing() && it.digits().all { digit -> isPrime(digit.toLong()) } },
     "21D" to dualReference("14A", "37A", Long::plus),
@@ -121,10 +121,10 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "27D" to dualReference("5D", "6D") { d5, d6 -> (d6 / d5) + 1 },
     "28D" to isMultipleOfRef("34D"),
     "29D" to simpleClue(isMultipleOf(7)) +
-            singleReference("44A") { it * 2 } +
+            makeSingleReference("44A") { it * 2 } +
             transformedEqualsRef("24A", ::digitSum),
     "31D" to simpleClue(::isPrime) + simpleClue { it.digitCounts().values.toList() == listOf(2, 2, 2) },
-    "33D" to singleReference("6D") { it - 1000006 },
+    "33D" to makeSingleReference("6D") { it - 1000006 },
     "34D" to smallest(simpleClue { !it.toBinary().isPalindrome() && (it * it).toBinary().isPalindrome() }),
     "37D" to simpleClue { (it * it).digitCounts().keys.sorted() == listOf(1, 2, 3, 4) },
     "38D" to simpleClue(hasWholeNthRoot(3)),

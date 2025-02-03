@@ -25,7 +25,7 @@ data class PartialSolution(
 
         val finalCrossnumber = if (reduced.isSolved()) {
             val solution = reduced.possibilities.first()
-            clue(newCrossnumber).onSolve?.invoke(solution) ?: newCrossnumber
+            clue(newCrossnumber).onSolve?.invoke(solution, newCrossnumber) ?: newCrossnumber
         } else newCrossnumber
 
         return finalCrossnumber

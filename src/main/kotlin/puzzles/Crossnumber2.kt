@@ -37,10 +37,10 @@ import solver.clue.dualReference
 import solver.clue.isEqualTo
 import solver.clue.isFactorOfRef
 import solver.clue.isMultipleOfRef
-import solver.clue.smallest
+import solver.clue.makeSingleReference
 import solver.clue.plus
 import solver.clue.simpleClue
-import solver.clue.singleReference
+import solver.clue.smallest
 import solver.clue.transformedEqualsRef
 import solver.clue.tripleReference
 import solver.factoryCrossnumber
@@ -81,7 +81,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "5A" to simpleClue(::nGonIsConstructible),
     "7A" to simpleClue { hasWholeNthRoot(4)(it) && distinctDivisors(it).size.pow(4) == it },
     "9A" to simpleClue { properFactors(it).size == 9 },
-    "11A" to singleReference("4D") { it.firstNDigits(4) },
+    "11A" to makeSingleReference("4D") { it.firstNDigits(4) },
     "12A" to simpleClue(::isPrime) + dualReference("3D", "34D", Long::minus),
     "13A" to dualReference("30D", "12A", Long::times),
     "16A" to isEqualTo(a16.toLong()),
@@ -95,14 +95,14 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "28A" to simpleClue(isMultipleOf(9)),
     "29A" to simpleClue(hasUniqueDigits(1)),
     "31A" to simpleClue(::isSquare),
-    "33A" to singleReference("4D") { it.lastNDigits(4) },
+    "33A" to makeSingleReference("4D") { it.lastNDigits(4) },
     "35A" to isEqualTo(12), // https://en.wikipedia.org/wiki/Mathematical_chess_problem#Domination_problems
     "36A" to asyncEquals { countPrimesUpTo(100_000_000).toLong() },
     "39A" to simpleClue(::isSquare) + simpleClue(::isTetrahedralNumber),
     "40A" to simpleClue(isEven) + simpleClue { 2L.modPow(it, it) == 2L },
 
-    "1D" to singleReference("32D") { other -> properFactors(other).sum() },
-    "2D" to simpleClue(hasDigitSum(8)) + singleReference("5D") { it.digitSum().toLong() },
+    "1D" to makeSingleReference("32D") { other -> properFactors(other).sum() },
+    "2D" to simpleClue(hasDigitSum(8)) + makeSingleReference("5D") { it.digitSum().toLong() },
     "3D" to dualReference("34D", "12A", Long::plus),
     "4D" to simpleClue(::fourDown) +
             transformedEqualsRef("11A") { it.firstNDigits(4) } +
@@ -122,7 +122,7 @@ private val clueMap: Map<String, ClueConstructor> = mapOf(
     "26D" to simpleClue(hasDigitSum(3)),
     "27D" to isFactorOfRef("25A"),
     "30D" to simpleClue { !isPalindrome(it) },
-    "32D" to singleReference("1D") { other -> properFactors(other).sum() },
+    "32D" to makeSingleReference("1D") { other -> properFactors(other).sum() },
     "34D" to simpleClue(::isSquare) + dualReference("3D", "12A", Long::minus),
     "37D" to dualReference("27D", "38D", Long::times),
     "38D" to simpleClue(isMultipleOf(10)) + dualReference("37D", "27D") { d37, d27 -> d37 / d27 }

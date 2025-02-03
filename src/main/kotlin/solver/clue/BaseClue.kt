@@ -3,7 +3,7 @@ package solver.clue
 import solver.Crossnumber
 
 abstract class BaseClue {
-    open val onSolve: ((Long) -> Crossnumber)? = null
+    open val onSolve: ((Long, Crossnumber) -> Crossnumber)? = null
 
     open val filterFunction: (possibles: List<Long>, predicate: (Long) -> Boolean) -> List<Long> =
         { possibles, predicate -> possibles.filter(predicate) }
