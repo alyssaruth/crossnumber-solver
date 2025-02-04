@@ -12,6 +12,8 @@ class CombinedClue(clueOne: BaseClue, clueTwo: BaseClue) : BaseClue() {
         clueList.all { it.attemptCheck(solutionCombos, crossnumber, value) }
 
     override fun totalCombinations(solutionCombos: Long) = clueList.minOf { it.totalCombinations(solutionCombos) }
+
+    override fun knownPossibilities() = clueList.mapNotNull { it.knownPossibilities() }.minByOrNull { it.size }
 }
 
 operator fun ClueConstructor.plus(other: ClueConstructor): ClueConstructor = { crossnumber ->

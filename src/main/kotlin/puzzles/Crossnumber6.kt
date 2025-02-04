@@ -132,7 +132,7 @@ private val clues = clueMap(
         it.bigPow(3).digitSum() == it.bigPow(6).digitSum() &&
                 it.bigPow(3).digitSum() == it.bigPow(7).digitSum()
     },
-    "38D" to simpleClue(canBeWrittenInSomeBaseAs(110001, 4)),
+    "38D" to canBeWrittenInSomeBaseAs(110001, 4),
     *"39D".singleReference("34D", ::digitProduct),
     "40D" to simpleClue { it == it.digitSum() + digitProduct(it) },
     "45D" to simpleClue(isMultipleOf(5))

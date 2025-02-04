@@ -1,12 +1,13 @@
 package maths
 
-import solver.Clue
+import solver.ClueConstructor
+import solver.clue.knownPossibilities
 
 fun Long.toBinary() = toString(2)
 
-fun canBeWrittenInSomeBaseAs(value: Long, digitCount: Int): Clue {
+fun canBeWrittenInSomeBaseAs(value: Long, digitCount: Int): ClueConstructor {
     val possibles = buildBaseCandidates(value, digitCount).toSet()
-    return { candidate -> possibles.contains(candidate) }
+    return knownPossibilities(possibles)
 }
 
 private tailrec fun buildBaseCandidates(

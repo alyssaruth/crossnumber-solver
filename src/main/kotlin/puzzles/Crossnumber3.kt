@@ -93,7 +93,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "32A" to simpleClue(::isPrime) + simpleClue(isSumOfConsecutive(25, digits = 5, ::primesUpTo)),
     "35A" to isEqualTo(11), // The number of different nets of a cube (with reflections and rotations being considered as the same net)
     "36A" to simpleClue(::isFibonacci),
-    "37A" to simpleClue(canBeWrittenInSomeBaseAs(256, 3)),
+    "37A" to canBeWrittenInSomeBaseAs(256, 3),
     "39A" to isEqualTo(789), // Why is 6 afraid of 7?
     "40A" to isEqualTo(8902), // The number of ways to play the first 3 moves (2 white moves, 1 black move) in a game of chess
     "41A" to simpleClue(isMultipleOf(719)),

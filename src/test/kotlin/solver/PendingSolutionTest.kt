@@ -1,7 +1,7 @@
 package solver
 
 import CLUE_ID
-import VALID_GRID
+import dummyCrossnumber
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
@@ -128,7 +128,4 @@ class PendingSolutionTest {
         newSolution.shouldBeInstanceOf<PartialSolution>()
         newSolution.possibilities.size shouldBe 864000
     }
-
-    private fun dummyCrossnumber(digitMap: DigitMap): Crossnumber =
-        Crossnumber(parseGrid(VALID_GRID), digitMap, emptyMap())
 }

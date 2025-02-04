@@ -87,7 +87,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     *"27A".singleReference("7A", ::digitProduct),
     "28A" to simpleClue(isMultipleOf(107)),
     "30A" to isEqualTo(Instant.parse("1970-01-02T01:29:41+00:00").epochSeconds),
-    "32A" to simpleClue(canBeWrittenInSomeBaseAs(5331005655, 10)),
+    "32A" to canBeWrittenInSomeBaseAs(5331005655, 10),
     "35A" to simpleClue { value -> value == 1 + (3 * value.reversed()) },
     "36A" to simpleClue(::digitsAllSameExceptOne),
 

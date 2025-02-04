@@ -2,7 +2,6 @@ package solver
 
 import maths.product
 import solver.clue.BaseClue
-import solver.clue.EqualToClue
 import solver.clue.MinimumClue
 
 // Limits to prevent OOMs or slowness due to doomed loops
@@ -28,8 +27,10 @@ data class PendingSolution(
 
     override fun iterate(clueId: ClueId, crossnumber: Crossnumber): Crossnumber {
         val actualClue = clue(crossnumber)
-        if (actualClue is EqualToClue) {
-            return PartialSolution(squares, clue, listOf(actualClue.value)).iterate(clueId, crossnumber)
+        val knownPossibilities = actualClue.knownPossibilities()
+        if (knownPossibilities != null) {
+            val correctLength = knownPossibilities.filter { it > 0 && "$it".length == squares.size }
+            return PartialSolution(squares, clue, correctLength).iterate(clueId, crossnumber)
         }
 
         val digitMap = crossnumber.digitMap

@@ -1,12 +1,14 @@
 package maths
 
+import dummyCrossnumber
 import io.kotest.matchers.collections.shouldContainExactly
 import org.junit.jupiter.api.Test
 
 class BasesTest {
     @Test
     fun `Should find all candidates that can be written as N in some other base`() {
-        (100L..999).filter(canBeWrittenInSomeBaseAs(256, 3)).shouldContainExactly(
+        val clue = canBeWrittenInSomeBaseAs(256, 3)
+        clue(dummyCrossnumber(emptyMap())).knownPossibilities()!!.shouldContainExactly(
             139, // Base 7
             174, // Base 8
             213, // Base 9

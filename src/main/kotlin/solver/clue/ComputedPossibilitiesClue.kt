@@ -1,5 +1,6 @@
 package solver.clue
 
+import solver.ClueConstructor
 import solver.Crossnumber
 
 /**
@@ -12,4 +13,12 @@ abstract class ComputedPossibilitiesClue(crossnumber: Crossnumber) : ContextualC
     protected abstract val possibilities: Set<Long>?
 
     override fun check(value: Long) = possibilities?.contains(value) ?: true
+
+    override fun knownPossibilities() = possibilities?.toList()?.sorted()
 }
+
+class KnownPossibilitiesClue(override val possibilities: Set<Long>, crossnumber: Crossnumber) :
+    ComputedPossibilitiesClue(crossnumber)
+
+fun knownPossibilities(possibilities: Set<Long>): ClueConstructor =
+    { crossnumber -> KnownPossibilitiesClue(possibilities, crossnumber) }

@@ -1,5 +1,8 @@
 import solver.ClueId
+import solver.Crossnumber
+import solver.DigitMap
 import solver.Orientation
+import solver.parseGrid
 
 val VALID_GRID = """
             .....###.....#
@@ -19,3 +22,6 @@ val VALID_GRID = """
         """.trimIndent()
 
 val CLUE_ID = ClueId(1, Orientation.ACROSS)
+
+fun dummyCrossnumber(digitMap: DigitMap): Crossnumber =
+    Crossnumber(parseGrid(VALID_GRID), digitMap, emptyMap())

@@ -85,7 +85,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "21A" to simpleClue(isMultipleOf(5_318_008)),
     "24A" to simpleClue { isMultipleOf(9)(it) && it.digits().all { digit -> digit % 2 == 0 } },
     "26A" to equalToNumberOfClueWithAnswer(Orientation.ACROSS, 26),
-    "28A" to simpleClue(canBeWrittenInSomeBaseAs(1_000_000, 3)),
+    "28A" to canBeWrittenInSomeBaseAs(1_000_000, 3),
     "29A" to simpleClue {
         isSumOfTwoDistinctSquares(it) &&
                 isSumOfTwoDistinctSquares(it + 1) &&
@@ -197,7 +197,7 @@ private fun equalsTotalCountOfDigits(vararg digits: Int): ClueConstructor =
 
 class EqualsTwoOthersConcatenated(myClueId: ClueId, crossnumber: Crossnumber) : ComputedPossibilitiesClue(crossnumber) {
     private val myLength = crossnumber.solutions.getValue(myClueId).squares.size
-    
+
     override val possibilities = buildPossibilities()
 
     private fun buildPossibilities(): Set<Long>? {
