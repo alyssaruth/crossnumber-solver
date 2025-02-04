@@ -15,11 +15,8 @@ class SingleReferenceClue(
     crossnumber: Crossnumber,
     private val other: ClueId,
     private val mapper: (Long) -> Long
-) :
-    ContextualClue(crossnumber) {
-    private val potentialSolutions = computePotentialSolutions()
-
-    override fun check(value: Long) = potentialSolutions?.contains(value) ?: true
+) : ComputedPossibilitiesClue(crossnumber) {
+    override val possibilities = computePotentialSolutions()
 
     private fun computePotentialSolutions(): Set<Long>? {
         val values = lookupAnswers(other) ?: return null

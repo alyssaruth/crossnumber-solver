@@ -16,11 +16,8 @@ class DualReferenceClue(
     private val clueA: ClueId,
     private val clueB: ClueId,
     private val combiner: (Long, Long) -> Long?
-) :
-    ContextualClue(crossnumber) {
-    private val potentialSolutions = computePotentialSolutions()
-
-    override fun check(value: Long) = potentialSolutions?.contains(value) ?: true
+) : ComputedPossibilitiesClue(crossnumber) {
+    override val possibilities = computePotentialSolutions()
 
     private fun computePotentialSolutions(): Set<Long>? {
         val aValues = lookupAnswers(clueA) ?: return null

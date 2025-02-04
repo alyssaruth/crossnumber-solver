@@ -20,8 +20,7 @@ class TransformedEqualsRefClue(
     crossnumber: Crossnumber,
     other: ClueId,
     private val mapper: (Long) -> Long
-) :
-    ContextualClue(crossnumber) {
+) : ContextualClue(crossnumber) {
     private val potentialSolutions = lookupAnswers(other)
 
     override fun check(value: Long) = potentialSolutions?.contains(mapper(value)) ?: true

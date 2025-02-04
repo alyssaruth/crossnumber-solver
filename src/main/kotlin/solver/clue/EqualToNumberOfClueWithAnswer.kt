@@ -17,18 +17,16 @@ class EqualToNumberOfClueWithAnswer(
     crossnumber: Crossnumber,
     private val orientation: Orientation,
     private val answer: Long
-) : ContextualClue(crossnumber) {
-    private val candidates = calculatePossibilities()
+) : ComputedPossibilitiesClue(crossnumber) {
+    override val possibilities = calculatePossibilities()
 
-    private fun calculatePossibilities(): List<Long> {
+    private fun calculatePossibilities(): Set<Long> {
         val cluesOfRightLength =
             crossnumber.solutionsOfLength(answer.digits().size).filterKeys { it.orientation == orientation }
         val viableClues =
             cluesOfRightLength.filter { (_, value) -> (value is PartialSolution && value.possibilities.contains(answer)) || value is PendingSolution }
-        return viableClues.keys.map { it.number.toLong() }
+        return viableClues.keys.map { it.number.toLong() }.toSet()
     }
-
-    override fun check(value: Long) = candidates.contains(value)
 }
 
 fun equalToNumberOfClueWithAnswer(orientation: Orientation, answer: Long): ClueConstructor =

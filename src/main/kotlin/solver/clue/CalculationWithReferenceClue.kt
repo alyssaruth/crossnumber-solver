@@ -4,8 +4,6 @@ import maths.isMultipleOf
 import solver.ClueConstructor
 import solver.ClueId
 import solver.Crossnumber
-import solver.PartialSolution
-import solver.PendingSolution
 
 /**
  * For clues like:
@@ -22,18 +20,11 @@ class CalculationWithReferenceClue(
     private val checker: (Long, Long) -> Boolean
 ) : ContextualClue(crossnumber) {
 
-    private val otherSolution = crossnumber.solutions.getValue(otherClueId)
+    private val otherAnswers = lookupAnswers(otherClueId)
 
-    override fun totalCombinations(solutionCombos: Long) = when (otherSolution) {
-        is PendingSolution -> solutionCombos
-        is PartialSolution -> otherSolution.possibilities.size * solutionCombos
-    }
+    override fun totalCombinations(solutionCombos: Long) = solutionCombos * (otherAnswers?.size ?: 1)
 
-    override fun check(value: Long) =
-        when (otherSolution) {
-            is PendingSolution -> true
-            is PartialSolution -> otherSolution.possibilities.any { checker(value, it) }
-        }
+    override fun check(value: Long) = otherAnswers?.any { checker(value, it) } ?: true
 }
 
 fun calculationWithReference(clueId: String, checker: (Long, Long) -> Boolean): ClueConstructor =

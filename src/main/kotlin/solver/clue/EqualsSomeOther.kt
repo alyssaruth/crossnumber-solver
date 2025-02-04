@@ -8,12 +8,10 @@ import solver.PartialSolution
 /**
  * This is the same as another number in the crossnumber
  */
-class EqualsSomeOther(private val myClueId: ClueId, crossnumber: Crossnumber) : ContextualClue(crossnumber) {
+class EqualsSomeOther(private val myClueId: ClueId, crossnumber: Crossnumber) : ComputedPossibilitiesClue(crossnumber) {
     private val myLength = crossnumber.solutions.getValue(myClueId).squares.size
 
-    private val potentialSolutions = computePotentialSolutions()
-
-    override fun check(value: Long) = potentialSolutions?.contains(value) ?: true
+    override val possibilities = computePotentialSolutions()
 
     private fun computePotentialSolutions(): Set<Long>? {
         val potentialSolutions = otherSolutions().values

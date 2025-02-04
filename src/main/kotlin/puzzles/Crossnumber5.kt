@@ -29,6 +29,7 @@ import solver.ClueId
 import solver.Crossnumber
 import solver.Orientation
 import solver.RAM_THRESHOLD
+import solver.clue.ComputedPossibilitiesClue
 import solver.clue.ContextualClue
 import solver.clue.clueMap
 import solver.clue.emptyClue
@@ -194,14 +195,10 @@ class EqualsTotalCountOfDigits(crossnumber: Crossnumber, digits: List<Int>) : Co
 private fun equalsTotalCountOfDigits(vararg digits: Int): ClueConstructor =
     { crossnumber -> EqualsTotalCountOfDigits(crossnumber, digits.toList()) }
 
-/**
- *
- */
-class EqualsTwoOthersConcatenated(myClueId: ClueId, crossnumber: Crossnumber) : ContextualClue(crossnumber) {
+class EqualsTwoOthersConcatenated(myClueId: ClueId, crossnumber: Crossnumber) : ComputedPossibilitiesClue(crossnumber) {
     private val myLength = crossnumber.solutions.getValue(myClueId).squares.size
-    private val possibilities = buildPossibilities()
-
-    override fun check(value: Long) = possibilities?.contains(value) ?: true
+    
+    override val possibilities = buildPossibilities()
 
     private fun buildPossibilities(): Set<Long>? {
         val relevantLengths = (2..myLength - 2).associateWith { length ->
