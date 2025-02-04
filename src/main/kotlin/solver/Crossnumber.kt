@@ -70,14 +70,14 @@ data class Crossnumber(
             return solve(pass + 1, startTime)
         }
 
-        val reducedByGuessing = ruleOutBadGuesses()
-        if (reducedByGuessing != null) {
-            return reducedByGuessing.solve(pass + 1, startTime)
-        }
-
         val newLoopThreshold = escalateLoopThreshold()
         if (newLoopThreshold != null) {
             return copy(loopThreshold = newLoopThreshold).solve(pass + 1, startTime)
+        }
+
+        val reducedByGuessing = ruleOutBadGuesses()
+        if (reducedByGuessing != null) {
+            return reducedByGuessing.solve(pass + 1, startTime)
         }
 
         println("Made no progress this pass, exiting.".red())
@@ -149,7 +149,7 @@ data class Crossnumber(
         println("------------------------------------------")
         println(completionString())
         println("------------------------------------------")
-        solutions.filterValues { !it.isSolved() }.forEach { (id, soln) ->
+        solutions.filterValues { !it.isSolved() }.toList().sortedBy { it.first }.forEach { (id, soln) ->
             val options =
                 if (soln is PartialSolution && soln.possibilities.size < 100) " - ${soln.possibilities}" else ""
             println("$id: ${soln.status()}$options")

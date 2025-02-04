@@ -1,6 +1,15 @@
 package solver
 
-data class ClueId(val number: Int, val orientation: Orientation) {
+data class ClueId(val number: Int, val orientation: Orientation) : Comparable<ClueId> {
+    override fun compareTo(other: ClueId): Int {
+        val orientationResult = orientation.compareTo(other.orientation)
+        if (orientationResult != 0) {
+            return orientationResult
+        }
+
+        return number.compareTo(other.number)
+    }
+
     override fun toString() = "${number}$orientation"
 
     companion object {

@@ -3,6 +3,7 @@ package puzzles
 import maths.allCombinations
 import maths.bigPow
 import maths.canBeWrittenInSomeBaseAs
+import maths.digitProduct
 import maths.digitSum
 import maths.digits
 import maths.englishWordsUpTo
@@ -18,6 +19,7 @@ import maths.isPalindrome
 import maths.isPrime
 import maths.isSquare
 import maths.isTriangleNumber
+import maths.longDigits
 import maths.nthCakeNumber
 import maths.product
 import maths.sqrtWhole
@@ -100,7 +102,7 @@ private val clues = clueMap(
     *"46A".triangleNumberPair("47A"),
     "47A" to emptyClue(),
 
-    "1D" to simpleClue { fibonacciUpTo(it, it.digits().map(Int::toLong)).contains(it) },
+    "1D" to simpleClue { fibonacciUpTo(it, it.longDigits()).contains(it) },
     "2D" to divisibleBySumAndProductOfDigits(),
     *"4D".singleReference("3A", ::sqrtWhole),
     *"5D".singleReference("35D") { it.digits().take(2).product() },
@@ -131,13 +133,13 @@ private val clues = clueMap(
                 it.bigPow(3).digitSum() == it.bigPow(7).digitSum()
     },
     "38D" to simpleClue(canBeWrittenInSomeBaseAs(110001, 4)),
-    *"39D".singleReference("34D") { it.digits().product() },
-    "40D" to simpleClue { it == it.digitSum() + it.digits().product() },
+    *"39D".singleReference("34D", ::digitProduct),
+    "40D" to simpleClue { it == it.digitSum() + digitProduct(it) },
     "45D" to simpleClue(isMultipleOf(5))
 )
 
 private fun divisibleBySumAndProductOfDigits() =
-    simpleClue { isMultipleOf(it.digitSum().toLong())(it) && isMultipleOf(it.digits().product())(it) }
+    simpleClue { isMultipleOf(it.digitSum().toLong())(it) && isMultipleOf(digitProduct(it))(it) }
 
 /**
  * This number and <other> are a pair of triangle numbers whose sum and difference are also triangle numbers

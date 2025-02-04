@@ -19,6 +19,7 @@ import maths.isPalindrome
 import maths.isProductOfConsecutive
 import maths.isSumOfTwoDistinctSquares
 import maths.lastNDigits
+import maths.longDigits
 import maths.pow
 import maths.sqrtWhole
 import maths.squaresOnNByNChessboard
@@ -128,7 +129,7 @@ private fun nineAcross() = isEqualTo(6 * sqrtWhole(75 / 3))
  * The 2nd, 4th, 6th, 8th, and 10th digits of this number are the highest common factors of the digits either side of them
  */
 private fun twelveAcross() = simpleClue { value ->
-    val digits = value.digits().map(Int::toLong)
+    val digits = value.longDigits()
 
     (1..9 step 2).all {
         digits[it] == hcf(digits[it - 1], digits[it + 1])
@@ -169,7 +170,7 @@ private fun twentyThreeDown() = simpleClue { value ->
     if (digits.contains(0)) {
         false
     } else {
-        val digitWindows = value.digits().map(Int::toLong).windowed(2)
+        val digitWindows = value.longDigits().windowed(2)
         digitWindows.all { (a, b) -> isMultipleOf(a)(b) || isMultipleOf(b)(a) }
     }
 }

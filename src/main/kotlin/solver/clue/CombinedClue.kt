@@ -3,9 +3,7 @@ package solver.clue
 import solver.ClueConstructor
 import solver.Crossnumber
 
-class CombinedClue(clueOne: BaseClue, clueTwo: BaseClue) :
-    BaseClue() {
-
+class CombinedClue(clueOne: BaseClue, clueTwo: BaseClue) : BaseClue() {
     private val clueList = listOf(clueOne, clueTwo).sortedBy { it.totalCombinations(2) }
 
     override fun check(value: Long) = clueList.all { it.check(value) }

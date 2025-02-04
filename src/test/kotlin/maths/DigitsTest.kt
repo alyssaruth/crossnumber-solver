@@ -33,6 +33,21 @@ class DigitsTest {
     }
 
     @Test
+    fun `Should be able to compute digit sums and products`() {
+        digitSum(159) shouldBe 15
+        digitProduct(2413) shouldBe 24
+    }
+
+    @Test
+    fun `Should identify numbers with all digits the same except one`() {
+        digitsAllSameExceptOne(1111112) shouldBe true
+        digitsAllSameExceptOne(373333) shouldBe true
+
+        digitsAllSameExceptOne(1111) shouldBe false
+        digitsAllSameExceptOne(12121) shouldBe false
+    }
+
+    @Test
     fun `Should report whether a number contains specified digit`() {
         containsDigit(0)(1044) shouldBe true
         containsDigit(1)(1044) shouldBe true

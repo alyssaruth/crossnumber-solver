@@ -1,7 +1,13 @@
 package maths
 
+import solver.Clue
+
 fun isSumOfTwoDistinctSquares(n: Long): Boolean =
     n.toInt().distinctIntegerPartitions(2).any { partition -> partition.all { isSquare(it.toLong()) } }
+
+fun isSumOfTwoNthPowers(n: Int): Clue = { value ->
+    value.toInt().integerPartitions(2).any { partition -> partition.all { hasWholeNthRoot(n)(it.toLong()) } }
+}
 
 fun Int.distinctIntegerPartitions(ofLength: Int? = null): List<List<Int>> =
     if (ofLength == 2) computePartitionsOfTwo(true) else computeIntegerPartitions(this, true, ofLength)

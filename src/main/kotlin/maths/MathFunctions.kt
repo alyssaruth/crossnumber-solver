@@ -38,12 +38,6 @@ fun isTetrahedralNumber(value: Long): Boolean =
 
 fun isSquare(value: Long) = value == sqrtWhole(value) * sqrtWhole(value)
 
-fun hasDigitSum(n: Int): Clue = { value -> value.digitSum() == n }
-
-fun Long.digitSum() = digits().sum()
-
-fun digitSum(n: Long) = n.digitSum().toLong()
-
 fun distinctDivisors(n: Long): Set<Long> =
     (1..sqrtWhole(n)).filter { n % it == 0L }.flatMap { listOf(it, n / it) }.toSet()
 

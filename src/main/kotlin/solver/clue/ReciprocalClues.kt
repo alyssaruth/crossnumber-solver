@@ -83,6 +83,18 @@ fun String.isDifferenceBetween(a: String, b: String): Array<Pair<String, ClueCon
         b to tripleReference(this, b, a) { diff, x, y -> if (x > y) y + diff else y - diff },
     )
 
+fun String.notEqualTo(otherClue: String): Array<Pair<String, ClueConstructor>> =
+    arrayOf(
+        this to calculationWithReference(otherClue) { value, other -> value != other },
+        otherClue to calculationWithReference(this) { value, other -> value != other }
+    )
+
+fun String.greaterThan(otherClue: String): Array<Pair<String, ClueConstructor>> =
+    arrayOf(
+        this to calculationWithReference(otherClue) { value, other -> value > other },
+        otherClue to calculationWithReference(this) { value, other -> value < other }
+    )
+
 /**
  * X = f(Y) => f(Y) = X
  */
@@ -90,6 +102,12 @@ fun String.singleReference(other: String, mapper: (Long) -> Long): Array<Pair<St
     arrayOf(
         this to makeSingleReference(other, mapper),
         other to transformedEqualsRef(this, mapper)
+    )
+
+fun String.transformedEquals(other: String, mapper: (Long) -> Long): Array<Pair<String, ClueConstructor>> =
+    arrayOf(
+        other to makeSingleReference(this, mapper),
+        this to transformedEqualsRef(other, mapper)
     )
 
 

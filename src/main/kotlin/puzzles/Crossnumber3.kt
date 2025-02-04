@@ -31,10 +31,10 @@ import maths.toBinary
 import maths.vowels
 import solver.ClueConstructor
 import solver.clue.asyncEquals
-import solver.clue.calculationWithReference
 import solver.clue.clueMap
 import solver.clue.dualReference
 import solver.clue.emptyClue
+import solver.clue.greaterThan
 import solver.clue.isEqualTo
 import solver.clue.isHalfTheDifferenceBetween
 import solver.clue.isMultipleOf
@@ -111,7 +111,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "10D" to simpleClue(isMultipleOf(7)),
     "11D" to asyncEquals { countTwinPrimesUpTo(1_000_000).toLong() },
     *"17D".singleReference("26A") { distinctDivisors(it).size.toLong() },
-    "19D" to calculationWithReference("30A") { value, other -> value > other },
+    *"19D".greaterThan("30A"),
     "20D" to simpleClue { it.digitsAreStrictlyIncreasing() && it.digits().all { digit -> isPrime(digit.toLong()) } },
     *"21D".isSumOf("14A", "37A"),
     "22D" to simpleClue(isMultipleOf(27)),

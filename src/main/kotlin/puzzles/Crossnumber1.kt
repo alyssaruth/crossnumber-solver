@@ -3,8 +3,9 @@ package puzzles
 import kotlinx.datetime.Instant
 import maths.canBeWrittenInSomeBaseAs
 import maths.containsDigit
-import maths.digitCounts
+import maths.digitProduct
 import maths.digits
+import maths.digitsAllSameExceptOne
 import maths.hasDigitSum
 import maths.hasUniqueDigits
 import maths.isFibonacci
@@ -15,10 +16,10 @@ import maths.isPrime
 import maths.isSquare
 import maths.isSumOfConsecutive
 import maths.isTriangleNumber
+import maths.longDigits
 import maths.nextPrime
 import maths.primeFactors
 import maths.primesUpTo
-import maths.product
 import maths.reversed
 import maths.sorted
 import maths.toRomanNumerals
@@ -30,7 +31,6 @@ import solver.RAM_THRESHOLD
 import solver.clue.ContextualClue
 import solver.clue.calculationWithReference
 import solver.clue.clueMap
-import solver.clue.dualReference
 import solver.clue.equalToNumberOfClueWithAnswer
 import solver.clue.equalsSomeOther
 import solver.clue.isDifferenceBetween
@@ -42,7 +42,6 @@ import solver.clue.simpleClue
 import solver.clue.singleReference
 import solver.clue.tripleReference
 import solver.factoryCrossnumber
-import kotlin.math.abs
 
 /**
  * https://chalkdustmagazine.com/regulars/100-prize-crossnumber-issue-01/
@@ -85,12 +84,12 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "23A" to simpleClue { toRomanNumerals(it).sorted() == "ILXXX" },
     "24A" to isEqualTo(733626510400L.primeFactors().max()),
     "25A" to simpleClue(::isSquare),
-    *"27A".singleReference("7A") { it.digits().product() },
+    *"27A".singleReference("7A", ::digitProduct),
     "28A" to simpleClue(isMultipleOf(107)),
     "30A" to isEqualTo(Instant.parse("1970-01-02T01:29:41+00:00").epochSeconds),
     "32A" to simpleClue(canBeWrittenInSomeBaseAs(5331005655, 10)),
     "35A" to simpleClue { value -> value == 1 + (3 * value.reversed()) },
-    "36A" to simpleClue { value -> value.digitCounts().let { it.size == 2 && it.values.contains(1) } },
+    "36A" to simpleClue(::digitsAllSameExceptOne),
 
     *"1D".singleReference("3D") { it - 700 },
     "2D" to simpleClue(hasDigitSum(16)),
@@ -111,7 +110,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     *"27D".singleReference("29D") { it + 2 },
     "29D" to simpleClue { it.toString().first() == it.toString().last() },
     *"31D".isMultipleOf("24A"),
-    "33D" to simpleClue { hasUniqueDigits(3)(it) && it.digits().map(Int::toLong).all { it > 0 && isSquare(it) } },
+    "33D" to simpleClue { hasUniqueDigits(3)(it) && it.longDigits().all { it > 0 && isSquare(it) } },
     "34D" to simpleClue(::isSquare)
 )
 

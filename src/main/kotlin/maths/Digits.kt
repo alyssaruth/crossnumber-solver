@@ -9,6 +9,15 @@ fun BigInteger.digits() = collectDigits(this)
 
 fun BigInteger.digitSum() = digits().sum()
 
+fun hasDigitSum(n: Int): Clue = { value -> value.digitSum() == n }
+
+fun Long.digitSum() = digits().sum()
+
+fun digitSum(n: Long) = n.digitSum().toLong()
+
+fun digitProduct(n: Long) = n.digits().product()
+
+
 private fun collectDigits(remaining: BigInteger, digitsSoFar: List<Int> = emptyList()): List<Int> {
     if (remaining == BigInteger.ZERO) {
         return digitsSoFar
@@ -17,6 +26,8 @@ private fun collectDigits(remaining: BigInteger, digitsSoFar: List<Int> = emptyL
         return collectDigits(remaining.divide(BigInteger.TEN), listOf(lastDigit) + digitsSoFar)
     }
 }
+
+fun digitsAllSameExceptOne(n: Long): Boolean = n.digitCounts().let { it.size == 2 && it.values.contains(1) }
 
 fun middleNDigits(n: Int, value: Long) = findMiddleNDigits(n, value.digits())
 
@@ -31,7 +42,9 @@ private tailrec fun findMiddleNDigits(n: Int, digits: List<Int>): Long =
 
 fun Long.isAnagramOf(other: Long) = digits().sorted() == other.digits().sorted()
 
-fun Long.digits() = toString().toCharArray().map(Char::digitToInt)
+fun Number.digits() = toString().toCharArray().map(Char::digitToInt)
+
+fun Number.longDigits() = digits().map(Int::toLong)
 
 fun Long.nonZeroDigits() = digits().filter { it > 0 }
 
@@ -58,9 +71,9 @@ fun canBePermutedSuchThat(condition: Clue): Clue = { value ->
     permuteDigits(value).any(condition)
 }
 
-fun permuteDigits(n: Long) = n.digits().indices.flatMap { permuteDigit(n, it) }
+fun permuteDigits(n: Number) = n.digits().indices.flatMap { permuteDigit(n, it) }
 
-private fun permuteDigit(n: Long, digitIndex: Int): List<Long> {
+private fun permuteDigit(n: Number, digitIndex: Int): List<Long> {
     val digits = n.digits()
     val replacementDigits = getViableDigits(digitIndex == 0) - n.digits()[digitIndex]
 
