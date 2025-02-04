@@ -11,6 +11,23 @@ fun geometricMean(values: List<Long>): Long? {
     return nthRoot(product, values.size)
 }
 
+fun generatePowers(desiredLength: Int): (Long) -> List<Long> = { value -> generatePowersOfLength(value, desiredLength) }
+
+private tailrec fun generatePowersOfLength(
+    value: Long,
+    desiredLength: Int,
+    currentValue: BigInteger = value.toBigInteger(),
+    results: List<Long> = emptyList()
+): List<Long> {
+    val currentLength = currentValue.digits().size
+    if (currentLength > desiredLength) {
+        return results
+    } else {
+        val newResults = if (currentLength == desiredLength) results + currentValue.longValueExact() else results
+        return generatePowersOfLength(value, desiredLength, currentValue.times(value.toBigInteger()), newResults)
+    }
+}
+
 fun sqrtWhole(value: Long) = sqrt(value.toDouble()).roundToLong()
 
 fun sqrtFloor(value: Long) = sqrt(value.toDouble()).toLong()

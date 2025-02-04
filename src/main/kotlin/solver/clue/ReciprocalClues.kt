@@ -104,6 +104,12 @@ fun String.singleReference(other: String, mapper: (Long) -> Long): Array<Pair<St
         other to transformedEqualsRef(this, mapper)
     )
 
+fun String.singleReferenceFlattened(other: String, mapper: (Long) -> List<Long>): Array<Pair<String, ClueConstructor>> =
+    arrayOf(
+        this to makeSingleReferenceFlattened(other, mapper),
+        other to transformedEqualsRefFlattened(this, mapper)
+    )
+
 fun String.transformedEquals(other: String, mapper: (Long) -> Long): Array<Pair<String, ClueConstructor>> =
     arrayOf(
         other to makeSingleReference(this, mapper),

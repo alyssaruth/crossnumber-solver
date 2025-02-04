@@ -6,6 +6,7 @@ import maths.digitSum
 import maths.digits
 import maths.digitsAllSameExceptOne
 import maths.fromDigits
+import maths.generatePowers
 import maths.hasDigitSum
 import maths.isEven
 import maths.isMultipleOf
@@ -16,12 +17,12 @@ import maths.longDigits
 import maths.pow
 import solver.clue.calculationWithReference
 import solver.clue.clueMap
-import solver.clue.emptyClue
 import solver.clue.greaterThan
 import solver.clue.notEqualTo
 import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.singleReference
+import solver.clue.singleReferenceFlattened
 import solver.clue.transformedEquals
 import solver.factoryCrossnumber
 import java.math.BigInteger
@@ -78,10 +79,10 @@ private val clueMap = clueMap(
     *"5D".notEqualTo("4D"),
     *"6D".singleReference("18A", ::digitProduct),
     "7D" to simpleClue(::isTriangleNumber) + simpleClue(hasDigitSum(18)),
-    "8D" to emptyClue(), // TODO - A power of 13A
-    "10D" to emptyClue(), // TODO - A power of 22A
+    *"8D".singleReferenceFlattened("13A", generatePowers(16)),
+    *"10D".singleReferenceFlattened("22A", generatePowers(14)),
     "11D" to simpleClue { it == sumOfCubesOfDigits(it) },
-    "12D" to emptyClue(), // TODO - A power of 13A
+    *"12D".singleReferenceFlattened("13A", generatePowers(14)),
     *"15D".singleReference("28A") { it.lastNDigits(8) },
     *"16D".singleReference("3D", ::digitProduct),
     "19D" to simpleClue { !containsDigit(0)(it) && isMultipleOf(9)(digitProduct(it)) },

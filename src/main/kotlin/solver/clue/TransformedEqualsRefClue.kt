@@ -19,12 +19,17 @@ import solver.Crossnumber
 class TransformedEqualsRefClue(
     crossnumber: Crossnumber,
     other: ClueId,
-    private val mapper: (Long) -> Long
+    private val mapper: (Long) -> List<Long>
 ) : ContextualClue(crossnumber) {
     private val potentialSolutions = lookupAnswers(other)
 
-    override fun check(value: Long) = potentialSolutions?.contains(mapper(value)) ?: true
+    override fun check(value: Long) = potentialSolutions?.let {
+        mapper(value).any(potentialSolutions::contains)
+    } ?: true
 }
 
 fun transformedEqualsRef(clue: String, mapper: (Long) -> Long): ClueConstructor =
+    { crossnumber -> TransformedEqualsRefClue(crossnumber, ClueId.fromString(clue)) { value -> listOf(mapper(value)) } }
+
+fun transformedEqualsRefFlattened(clue: String, mapper: (Long) -> List<Long>): ClueConstructor =
     { crossnumber -> TransformedEqualsRefClue(crossnumber, ClueId.fromString(clue), mapper) }

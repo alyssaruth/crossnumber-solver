@@ -14,16 +14,19 @@ import solver.Crossnumber
 class SingleReferenceClue(
     crossnumber: Crossnumber,
     private val other: ClueId,
-    private val mapper: (Long) -> Long
+    private val mapper: (Long) -> List<Long>
 ) : ComputedPossibilitiesClue(crossnumber) {
     override val possibilities = computePotentialSolutions()
 
     private fun computePotentialSolutions(): Set<Long>? {
         val values = lookupAnswers(other) ?: return null
 
-        return values.map(mapper).toSet()
+        return values.flatMap(mapper).toSet()
     }
 }
 
 fun makeSingleReference(clue: String, mapper: (Long) -> Long): ClueConstructor =
+    { crossnumber -> SingleReferenceClue(crossnumber, ClueId.fromString(clue)) { l -> listOf(mapper(l)) } }
+
+fun makeSingleReferenceFlattened(clue: String, mapper: (Long) -> List<Long>): ClueConstructor =
     { crossnumber -> SingleReferenceClue(crossnumber, ClueId.fromString(clue), mapper) }
