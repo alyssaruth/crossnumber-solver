@@ -67,20 +67,20 @@ fun String.isGeometricMeanOf(a: String, b: String): Array<Pair<String, ClueConst
     )
 
 /**
- * X = |Y-Z|/2  =>  Y = 2X - Z or 2X + Z, whichever is positive. And same for X.
+ * X = |Y-Z|/2  =>  Y = Z - 2X or 2X + Z, depending on whether Y > Z or Y < Z. And same for Z.
  */
 fun String.isHalfTheDifferenceBetween(a: String, b: String): Array<Pair<String, ClueConstructor>> =
     arrayOf(
         this to dualReference(a, b) { x, y -> abs(x - y) / 2 },
-        a to dualReference(this, b) { x, y -> listOf(y - (2 * x), y + (2 * x)).first { it > 0 } },
-        b to dualReference(this, a) { x, y -> listOf(y - (2 * x), y + (2 * x)).first { it > 0 } },
+        a to tripleReference(this, a, b) { diff, x, y -> if (x > y) y + (2 * diff) else y - (2 * diff) },
+        b to tripleReference(this, b, a) { diff, x, y -> if (x > y) y + (2 * diff) else y - (2 * diff) },
     )
 
 fun String.isDifferenceBetween(a: String, b: String): Array<Pair<String, ClueConstructor>> =
     arrayOf(
         this to dualReference(a, b) { x, y -> abs(x - y) },
-        // a to dualReference(this, b) { x, y -> listOf(y - x, y + x).first { it > 0 } },
-        // b to dualReference(this, a) { x, y -> listOf(y - x, y + x).first { it > 0 } },
+        a to tripleReference(this, a, b) { diff, x, y -> if (x > y) y + diff else y - diff },
+        b to tripleReference(this, b, a) { diff, x, y -> if (x > y) y + diff else y - diff },
     )
 
 /**

@@ -1,8 +1,18 @@
 package maths
 
+import java.io.File
+
 val VOWELS = setOf('a', 'e', 'i', 'o', 'u')
 
 fun String.vowels() = filter(VOWELS::contains)
+
+/**
+ * Word list taken from https://www.mit.edu/~ecprice/wordlist.10000
+ */
+fun englishWordsUpTo(length: Int): Set<String> {
+    val words = File("src/main/resources/words.txt").readLines().filter { it.length <= length }
+    return words.toSet()
+}
 
 fun inWords(number: Long) = constructWords(number)
 

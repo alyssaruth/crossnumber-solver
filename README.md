@@ -142,3 +142,4 @@ Below are the crossnumbers this can solve so far, along with roughly how long ea
 | 3      | 12       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-03/     |
 | 4      | 12       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-04/     |
 | 5      | 12       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-05/     |
+| 6      |  8       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-06/     |

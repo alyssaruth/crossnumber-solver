@@ -70,14 +70,14 @@ data class Crossnumber(
             return solve(pass + 1, startTime)
         }
 
-        val newLoopThreshold = escalateLoopThreshold()
-        if (newLoopThreshold != null) {
-            return copy(loopThreshold = newLoopThreshold).solve(pass + 1, startTime)
-        }
-
         val reducedByGuessing = ruleOutBadGuesses()
         if (reducedByGuessing != null) {
             return reducedByGuessing.solve(pass + 1, startTime)
+        }
+
+        val newLoopThreshold = escalateLoopThreshold()
+        if (newLoopThreshold != null) {
+            return copy(loopThreshold = newLoopThreshold).solve(pass + 1, startTime)
         }
 
         println("Made no progress this pass, exiting.".red())
@@ -86,30 +86,31 @@ data class Crossnumber(
     }
 
     private fun ruleOutBadGuesses(): Crossnumber? {
-        val startTime = System.currentTimeMillis()
-        val (clueId, unsolved) = solutions.filterValues { !it.isSolved() }.minBy { it.value.possibilityCount(digitMap) }
-        return if (unsolved !is PartialSolution) {
-            null
-        } else {
-            println("Made no progress this pass, attempting to narrow down $clueId via contradiction")
-            val possibles = unsolved.possibilities
-            val badPossibles = possibles.filter { possible ->
-                val newCrossnumber = replaceSolution(clueId, listOf(possible))
-                try {
-                    newCrossnumber.iterateClues(0L, false)
-                    false
-                } catch (ex: Exception) {
-                    true
-                }
-            }
+        val cluesToTry = partialSolutions().filterValues { !it.isSolved() && it.possibilities.size < 50 }
 
-            if (badPossibles.isNotEmpty()) {
-                val newCrossnumber = replaceSolution(clueId, possibles - badPossibles)
-                logChanges(this, newCrossnumber, System.currentTimeMillis() - startTime)
-                newCrossnumber
-            } else {
-                null
+        return cluesToTry.firstNotNullOfOrNull { reduceByContradiction(it.key, it.value) }
+    }
+
+    private fun reduceByContradiction(clueId: ClueId, solution: PartialSolution): Crossnumber? {
+        val startTime = System.currentTimeMillis()
+        println("Attempting to narrow down $clueId via contradiction")
+        val possibles = solution.possibilities
+        val badPossibles = possibles.filter { possible ->
+            val newCrossnumber = replaceSolution(clueId, listOf(possible))
+            try {
+                newCrossnumber.iterateClues(0L, false)
+                false
+            } catch (ex: Exception) {
+                true
             }
+        }
+
+        return if (badPossibles.isNotEmpty()) {
+            val newCrossnumber = replaceSolution(clueId, possibles - badPossibles)
+            logChanges(this, newCrossnumber, System.currentTimeMillis() - startTime)
+            newCrossnumber
+        } else {
+            null
         }
     }
 
@@ -178,6 +179,8 @@ data class Crossnumber(
     private fun pendingSolutions(): Map<ClueId, PendingSolution> =
         solutions.filterValues { it is PendingSolution }.mapValues { it.value as PendingSolution }
 
+    private fun partialSolutions(): Map<ClueId, PartialSolution> =
+        solutions.filterValues { it is PartialSolution }.mapValues { it.value as PartialSolution }
 
     private fun isSolved() = solutions.values.all(ISolution::isSolved)
 
