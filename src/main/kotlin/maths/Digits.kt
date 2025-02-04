@@ -1,6 +1,8 @@
 package maths
 
 import solver.Clue
+import solver.ClueConstructor
+import solver.clue.knownPossibilities
 import java.math.BigInteger
 
 fun Long.digitsAreStrictlyIncreasing() = digits().windowed(2).all { it[0] < it[1] }
@@ -27,7 +29,15 @@ private fun collectDigits(remaining: BigInteger, digitsSoFar: List<Int> = emptyL
     }
 }
 
-fun digitsAllSameExceptOne(n: Long): Boolean = n.digitCounts().let { it.size == 2 && it.values.contains(1) }
+fun digitsSameExceptOne(length: Int): ClueConstructor {
+    val digits = (0..9).toList()
+    val digitPairs = listOf(digits, digits).allCombinations().filterNot { (a, b) -> a == b }
+    val numbers = digitPairs.flatMap { (a, b) ->
+        val allAs = List(length) { a }
+        allAs.indices.map { ix -> allAs.replaceAt(ix, b).fromDigits() }
+    }
+    return knownPossibilities(numbers.filter { it.digits().size == length }.toSet())
+}
 
 fun middleNDigits(n: Int, value: Long) = findMiddleNDigits(n, value.digits())
 
@@ -78,7 +88,7 @@ private fun permuteDigit(n: Number, digitIndex: Int): List<Long> {
     val replacementDigits = getViableDigits(digitIndex == 0) - n.digits()[digitIndex]
 
     return replacementDigits.map { newDigit ->
-        digits.mapIndexed { index, digit -> if (index == digitIndex) newDigit else digit }.fromDigits()
+        digits.replaceAt(digitIndex, newDigit).fromDigits()
     }
 }
 

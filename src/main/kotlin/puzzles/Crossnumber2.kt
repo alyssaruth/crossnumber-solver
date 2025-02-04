@@ -5,7 +5,7 @@ import maths.dayOfWeek
 import maths.degreesToFahrenheit
 import maths.digitSum
 import maths.digits
-import maths.digitsAllSameExceptOne
+import maths.digitsSameExceptOne
 import maths.distinctDivisors
 import maths.firstNDigits
 import maths.hasDigitSum
@@ -119,7 +119,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "18D" to simpleClue(isPowerOf(3)),
     "19D" to simpleClue(::isAbundant),
     "20D" to isEqualTo(degreesToFahrenheit(100) - degreesToFahrenheit(0)),
-    "21D" to simpleClue(::digitsAllSameExceptOne),
+    "21D" to digitsSameExceptOne(6),
     "23D" to tripleReference("15D", "17A", "34D") { d15, a17, d34 -> d15 + a17 - d34 },
     "26D" to simpleClue(hasDigitSum(3)),
     "27D" to emptyClue(),

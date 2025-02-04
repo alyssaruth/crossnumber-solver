@@ -4,7 +4,7 @@ import maths.containsDigit
 import maths.digitProduct
 import maths.digitSum
 import maths.digits
-import maths.digitsAllSameExceptOne
+import maths.digitsSameExceptOne
 import maths.fromDigits
 import maths.generatePowers
 import maths.hasDigitSum
@@ -56,10 +56,10 @@ private val clueMap = clueMap(
     *"9A".singleReference("1A", ::digitSum),
     "10A" to simpleClue { !containsDigit(0)(it) && isMultipleOf(1_000_000)(digitProduct(it)) },
     "13A" to calculationWithReference("34A") { value, other -> !containsDigit(value.digits()[1])(other) },
-    "14A" to simpleClue(::digitsAllSameExceptOne),
+    "14A" to digitsSameExceptOne(10),
     "17A" to simpleClue(isSumOfTwoNthPowers(3)),
     *"18A".singleReference("16D", ::digitProduct),
-    "21A" to simpleClue(::digitsAllSameExceptOne),
+    "21A" to digitsSameExceptOne(5),
     *"22A".greaterThan("13A"),
     *"23A".singleReference("6D", ::digitProduct),
     "25A" to simpleClue { !containsDigit(0)(it) && digitSum(it) > digitProduct(it) },
@@ -68,6 +68,7 @@ private val clueMap = clueMap(
     "28A" to simpleClue(isMultipleOf(9)),
     *"30A".singleReference("27A") { digitProduct(it - 1) },
     *"31A".transformedEquals("7D", ::digitProduct),
+    *"32A".singleReference("34A", ::digitSum),
     *"32A".singleReference("34A", ::digitSum),
     "34A" to calculationWithReference("1A") { value, other -> oneAcrossAndThirtyFourAcross(other, value) } +
             calculationWithReference("13A") { value, other -> !containsDigit(other.digits()[1])(value) },

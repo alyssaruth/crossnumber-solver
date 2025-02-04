@@ -1,9 +1,12 @@
 package maths
 
+import dummyCrossnumber
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
+import solver.clue.KnownPossibilitiesClue
 import java.math.BigInteger
 
 class DigitsTest {
@@ -39,12 +42,16 @@ class DigitsTest {
     }
 
     @Test
-    fun `Should identify numbers with all digits the same except one`() {
-        digitsAllSameExceptOne(1111112) shouldBe true
-        digitsAllSameExceptOne(373333) shouldBe true
+    fun `Should generate numbers with all digits the same except one`() {
+        val clue = digitsSameExceptOne(2)(dummyCrossnumber(emptyMap()))
+        clue.shouldBeInstanceOf<KnownPossibilitiesClue>()
 
-        digitsAllSameExceptOne(1111) shouldBe false
-        digitsAllSameExceptOne(12121) shouldBe false
+        val expected = (10..99).filterNot { setOf(11, 22, 33, 44, 55, 66, 77, 88, 99).contains(it) }.toSet()
+        clue.knownPossibilities() shouldBe expected
+
+        val biggerClue = digitsSameExceptOne(10)(dummyCrossnumber(emptyMap()))
+        biggerClue.shouldBeInstanceOf<KnownPossibilitiesClue>()
+        biggerClue.knownPossibilities()!!.size shouldBe 810
     }
 
     @Test

@@ -1,6 +1,7 @@
 package solver
 
 import logging.green
+import logging.orange
 import logging.possibleDigitsStr
 import logging.red
 import logging.timeTakenString
@@ -52,8 +53,7 @@ data class Crossnumber(
         val prioritisedKeys = solutions.entries.sortedBy { it.value.possibilityCount(digitMap) }.map { it.key }
         return prioritisedKeys.fold(this) { crossnumber, clueId ->
             try {
-                val solution = crossnumber.solutions.getValue(clueId)
-                crossnumber.iterateSolution(clueId, solution, log)
+                crossnumber.iterateSolution(clueId, log)
             } catch (e: Exception) {
                 if (log) {
                     println("Caught an exception, aborting.".red())
@@ -70,14 +70,14 @@ data class Crossnumber(
             return solve(pass + 1, startTime)
         }
 
-        val newLoopThreshold = escalateLoopThreshold()
-        if (newLoopThreshold != null) {
-            return copy(loopThreshold = newLoopThreshold).solve(pass + 1, startTime)
-        }
-
         val reducedByGuessing = ruleOutBadGuesses()
         if (reducedByGuessing != null) {
             return reducedByGuessing.solve(pass + 1, startTime)
+        }
+
+        val newLoopThreshold = escalateLoopThreshold()
+        if (newLoopThreshold != null) {
+            return copy(loopThreshold = newLoopThreshold).solve(pass + 1, startTime)
         }
 
         println("Made no progress this pass, exiting.".red())
@@ -86,14 +86,17 @@ data class Crossnumber(
     }
 
     private fun ruleOutBadGuesses(): Crossnumber? {
-        val cluesToTry = partialSolutions().filterValues { !it.isSolved() && it.possibilities.size < 50 }
+        if (loopThreshold > LOOP_THRESHOLD) {
+            return null
+        }
+        
+        val cluesToTry = partialSolutions().filterValues { !it.isSolved() && it.possibilities.size < 102 }
 
-        return cluesToTry.firstNotNullOfOrNull { reduceByContradiction(it.key, it.value) }
+        val startTime = System.currentTimeMillis()
+        return cluesToTry.firstNotNullOfOrNull { reduceByContradiction(it.key, it.value, startTime) }
     }
 
-    private fun reduceByContradiction(clueId: ClueId, solution: PartialSolution): Crossnumber? {
-        val startTime = System.currentTimeMillis()
-        println("Attempting to narrow down $clueId via contradiction")
+    private fun reduceByContradiction(clueId: ClueId, solution: PartialSolution, startTime: Long): Crossnumber? {
         val possibles = solution.possibilities
         val badPossibles = possibles.filter { possible ->
             val newCrossnumber = replaceSolution(clueId, listOf(possible))
@@ -106,8 +109,8 @@ data class Crossnumber(
         }
 
         return if (badPossibles.isNotEmpty()) {
-            val newCrossnumber = replaceSolution(clueId, possibles - badPossibles)
-            logChanges(this, newCrossnumber, System.currentTimeMillis() - startTime)
+            val newCrossnumber = replaceSolution(clueId, possibles - badPossibles).iterateSolution(clueId, false)
+            logChanges(this, newCrossnumber, System.currentTimeMillis() - startTime, " (by contradiction)".orange())
             newCrossnumber
         } else {
             null
@@ -184,10 +187,10 @@ data class Crossnumber(
 
     private fun isSolved() = solutions.values.all(ISolution::isSolved)
 
-    private fun iterateSolution(id: ClueId, solution: ISolution, log: Boolean): Crossnumber {
+    private fun iterateSolution(id: ClueId, log: Boolean): Crossnumber {
         try {
             val startTime = System.currentTimeMillis()
-            val newCrossnumber = solution.iterate(id, this)
+            val newCrossnumber = solutions.getValue(id).iterate(id, this)
             if (log) logChanges(this, newCrossnumber, System.currentTimeMillis() - startTime)
             return newCrossnumber
         } catch (ex: Exception) {
@@ -195,11 +198,16 @@ data class Crossnumber(
         }
     }
 
-    private fun logChanges(oldCrossnumber: Crossnumber, newCrossnumber: Crossnumber, timeTaken: Long) {
+    private fun logChanges(
+        oldCrossnumber: Crossnumber,
+        newCrossnumber: Crossnumber,
+        timeTaken: Long,
+        suffix: String = ""
+    ) {
         oldCrossnumber.solutions.forEach { (clueId, oldSolution) ->
             val newSolution = newCrossnumber.solutions.getValue(clueId)
             if (oldSolution != newSolution) {
-                val statusString = "$clueId: ${oldSolution.status()} -> ${newSolution.status()}"
+                val statusString = "$clueId: ${oldSolution.status()} -> ${newSolution.status()}$suffix"
                 println(statusString + timeTakenString(timeTaken))
             }
         }

@@ -5,7 +5,7 @@ import maths.canBeWrittenInSomeBaseAs
 import maths.containsDigit
 import maths.digitProduct
 import maths.digits
-import maths.digitsAllSameExceptOne
+import maths.digitsSameExceptOne
 import maths.hasDigitSum
 import maths.hasUniqueDigits
 import maths.isFibonacci
@@ -89,7 +89,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "30A" to isEqualTo(Instant.parse("1970-01-02T01:29:41+00:00").epochSeconds),
     "32A" to canBeWrittenInSomeBaseAs(5331005655, 10),
     "35A" to simpleClue { value -> value == 1 + (3 * value.reversed()) },
-    "36A" to simpleClue(::digitsAllSameExceptOne),
+    "36A" to digitsSameExceptOne(10),
 
     *"1D".singleReference("3D") { it - 700 },
     "2D" to simpleClue(hasDigitSum(16)),
