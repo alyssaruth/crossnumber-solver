@@ -28,7 +28,7 @@ class Grid(private val pointMap: Map<Point, String>) {
         (0..xMax).joinToString("") { x -> pointMap.getValue(Point(x, y)).toString() }
     }
 
-    fun validate(skipSymmetry: Boolean = true) {
+    fun validate(skipSymmetry: Boolean = false) {
         if (xMax != yMax) {
             throw IllegalArgumentException("Grid is not square, detected dimensions: ${xMax + 1}x${yMax + 1}")
         }
