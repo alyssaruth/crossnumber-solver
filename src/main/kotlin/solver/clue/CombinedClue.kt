@@ -8,12 +8,6 @@ class CombinedClue(clueOne: BaseClue, clueTwo: BaseClue) : BaseClue() {
 
     override fun check(value: Long) = clueList.all { it.check(value) }
 
-    override val onSolve: ((Long, Crossnumber) -> Crossnumber) = { solution, crossnumber ->
-        clueList.fold(crossnumber) { currentCrossnumber, clue ->
-            clue.onSolve?.invoke(solution, currentCrossnumber) ?: crossnumber
-        }
-    }
-
     override fun attemptCheck(solutionCombos: Long, crossnumber: Crossnumber, value: Long) =
         clueList.all { it.attemptCheck(solutionCombos, crossnumber, value) }
 

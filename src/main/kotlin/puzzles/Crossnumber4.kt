@@ -1,6 +1,5 @@
 package puzzles
 
-import maths.allCombinations
 import maths.appearsInPascalsTriangle
 import maths.countStraightLinesThroughGrid
 import maths.cubesUpTo
@@ -165,16 +164,4 @@ class EightAcross(crossnumber: Crossnumber) : MultiReferenceClue(
     crossnumber,
     crossnumber.solutionsOfLength(2).keys.toList(),
     { it.sorted().takeLast(3).map(Long::toInt).product() }
-) {
-    override val onSolve: ((Long, Crossnumber) -> Crossnumber) = { solution, crossnumber ->
-        val twoDigitThings = clues.associateWith { lookupAnswers(it)!! }.entries.sortedBy { it.value.max() }.takeLast(3)
-        val flattened = twoDigitThings.map { (clueId, values) -> values.map { clueId to it } }
-
-        val correctCombo =
-            flattened.allCombinations().first { (a, b, c) -> solution == a.second * b.second * c.second }
-
-        correctCombo.fold(crossnumber) { currentCrossnumber, (clueId, twoDigitSolution) ->
-            currentCrossnumber.replaceSolution(clueId, listOf(twoDigitSolution))
-        }
-    }
-}
+)

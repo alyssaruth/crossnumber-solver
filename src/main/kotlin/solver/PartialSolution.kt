@@ -21,14 +21,7 @@ data class PartialSolution(
         }
 
         val restrictedDigitMap = reduced.restrictDigitMap(crossnumber.digitMap)
-        val newCrossnumber = crossnumber.copy(digitMap = restrictedDigitMap).replaceSolution(clueId, reduced)
-
-        val finalCrossnumber = if (reduced.isSolved()) {
-            val solution = reduced.possibilities.first()
-            clue(newCrossnumber).onSolve?.invoke(solution, newCrossnumber) ?: newCrossnumber
-        } else newCrossnumber
-
-        return finalCrossnumber
+        return crossnumber.copy(digitMap = restrictedDigitMap).replaceSolution(clueId, reduced)
     }
 
     override fun status() =

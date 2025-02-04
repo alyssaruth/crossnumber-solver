@@ -15,24 +15,6 @@ class EqualsSomeOther(private val myClueId: ClueId, crossnumber: Crossnumber) : 
 
     override fun check(value: Long) = potentialSolutions?.contains(value) ?: true
 
-    override val onSolve: ((Long, Crossnumber) -> Crossnumber) = { solution, crossnumber ->
-        val clues = otherSolutions().filterValues {
-            it is PartialSolution && it.possibilities.contains(
-                solution
-            )
-        }
-
-        if (clues.size == 1) {
-            val (clueId, currentSolution) = clues.toList().first()
-            crossnumber.replaceSolution(
-                clueId,
-                PartialSolution(currentSolution.squares, currentSolution.clue, listOf(solution))
-            )
-        } else {
-            crossnumber
-        }
-    }
-
     private fun computePotentialSolutions(): Set<Long>? {
         val potentialSolutions = otherSolutions().values
         val partialSolutions = potentialSolutions.filterIsInstance<PartialSolution>()

@@ -131,29 +131,6 @@ class FourteenDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
     private val d17s = lookupAnswers(ClueId(17, Orientation.DOWN))
     private val a16s = lookupAnswers(ClueId(16, Orientation.ACROSS))
 
-    override val onSolve = { solution: Long, crossnumber: Crossnumber ->
-        val d17 = lookupAnswer(ClueId(17, Orientation.DOWN))
-        if (d17 != null) {
-            val a16id = ClueId(16, Orientation.ACROSS)
-            val a16 = findSixteenAcross(solution, d17)
-            crossnumber.replaceSolution(a16id, listOf(a16))
-        } else {
-            crossnumber
-        }
-    }
-
-    private tailrec fun findSixteenAcross(
-        currentValue: Long,
-        currentDivisor: Long
-    ): Long {
-        val divisionResult = currentValue / currentDivisor
-        return if (a16s!!.contains(divisionResult - 1)) {
-            divisionResult - 1
-        } else {
-            findSixteenAcross(divisionResult, currentDivisor - 1)
-        }
-    }
-
     override fun check(value: Long): Boolean {
         if (d17s == null || a16s == null) {
             return true

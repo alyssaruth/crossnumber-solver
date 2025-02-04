@@ -2,7 +2,6 @@ package solver.clue
 
 import maths.digits
 import solver.ClueConstructor
-import solver.ClueId
 import solver.Crossnumber
 import solver.Orientation
 import solver.PartialSolution
@@ -20,11 +19,6 @@ class EqualToNumberOfClueWithAnswer(
     private val answer: Long
 ) : ContextualClue(crossnumber) {
     private val candidates = calculatePossibilities()
-
-    override val onSolve = { solution: Long, crossnumber: Crossnumber ->
-        val clueId = ClueId(solution.toInt(), orientation)
-        crossnumber.replaceSolution(clueId, listOf(answer))
-    }
 
     private fun calculatePossibilities(): List<Long> {
         val cluesOfRightLength =
