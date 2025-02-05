@@ -31,7 +31,6 @@ import solver.Orientation
 import solver.RAM_THRESHOLD
 import solver.clue.ComputedPossibilitiesClue
 import solver.clue.ContextualClue
-import solver.clue.clueMap
 import solver.clue.emptyClue
 import solver.clue.equalToNumberOfClueWithAnswer
 import solver.clue.isEqualTo
@@ -40,6 +39,7 @@ import solver.clue.isMultipleOf
 import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.transformedEqualsRef
+import solver.clueMap
 import solver.factoryCrossnumber
 
 /**

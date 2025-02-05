@@ -7,6 +7,7 @@ import logging.red
 import logging.timeTakenString
 import solver.clue.AsyncEqualToClue
 import solver.clue.BaseClue
+import solver.digitReducer.AbstractDigitReducer
 import kotlin.math.roundToLong
 
 typealias Clue = (candidate: Long) -> Boolean
@@ -19,12 +20,15 @@ data class Crossnumber(
     val originalGrid: Grid,
     val digitMap: DigitMap,
     val solutions: Map<ClueId, ISolution>,
+    val digitReducers: Map<ClueId, AbstractDigitReducer>,
     val loopThreshold: Long = LOOP_THRESHOLD
 ) {
     fun solve(pass: Int = 1, startTime: Long = System.currentTimeMillis()): Crossnumber {
         printLoopBanner(pass)
 
-        val newCrossnumber = iterateClues(startTime)
+        val reduced = applyDigitReducers()
+
+        val newCrossnumber = reduced.iterateClues(startTime)
         if (newCrossnumber.isSolved()) {
             println("------------------------------------------")
             println(newCrossnumber.substituteKnownDigits().prettyString())
@@ -46,6 +50,22 @@ data class Crossnumber(
         println("********************")
         println("* PASS $pass ($solvedStr / ${solutions.size}) *")
         println("********************")
+    }
+
+    private fun applyDigitReducers(): Crossnumber {
+        val newDigitMap = digitReducers.entries.fold(digitMap) { currentMap, (clueId, reducer) ->
+            val newMap = reducer.apply(currentMap)
+
+            val oldSize = currentMap.values.sumOf { it.size }
+            val newSize = newMap.values.sumOf { it.size }
+            if (newSize < oldSize) {
+                println("$clueId: Reduced digits by ${oldSize - newSize}")
+            }
+
+            newMap
+        }
+
+        return copy(digitMap = newDigitMap)
     }
 
     private fun iterateClues(startTime: Long, log: Boolean = true): Crossnumber {
@@ -89,7 +109,7 @@ data class Crossnumber(
         if (loopThreshold > LOOP_THRESHOLD) {
             return null
         }
-        
+
         val cluesToTry = partialSolutions().filterValues { !it.isSolved() && it.possibilities.size < 102 }
 
         val startTime = System.currentTimeMillis()

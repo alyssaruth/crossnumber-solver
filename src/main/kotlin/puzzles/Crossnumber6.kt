@@ -29,7 +29,6 @@ import solver.Orientation
 import solver.RAM_THRESHOLD
 import solver.clue.ContextualClue
 import solver.clue.calculationWithReference
-import solver.clue.clueMap
 import solver.clue.emptyClue
 import solver.clue.isDifferenceBetween
 import solver.clue.isEqualTo
@@ -41,6 +40,7 @@ import solver.clue.largest
 import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.singleReference
+import solver.clueMap
 import solver.factoryCrossnumber
 import java.math.BigInteger
 import kotlin.math.abs

@@ -36,7 +36,6 @@ import solver.Crossnumber
 import solver.clue.ContextualClue
 import solver.clue.MultiReferenceClue
 import solver.clue.calculationWithReference
-import solver.clue.clueMap
 import solver.clue.doesNotEqualRef
 import solver.clue.dualReference
 import solver.clue.equalsSomeOther
@@ -51,6 +50,7 @@ import solver.clue.simpleClue
 import solver.clue.singleReference
 import solver.clue.smallest
 import solver.clue.transformedEqualsRef
+import solver.clueMap
 import solver.factoryCrossnumber
 
 /**

@@ -115,14 +115,3 @@ fun String.transformedEquals(other: String, mapper: (Long) -> Long): Array<Pair<
         other to makeSingleReference(this, mapper),
         this to transformedEqualsRef(other, mapper)
     )
-
-
-fun clueMap(vararg clues: Pair<String, ClueConstructor>): Map<String, ClueConstructor> =
-    clues.fold(emptyMap()) { mapSoFar, (clueId, clue) ->
-        val existing = mapSoFar[clueId]
-        if (existing == null) {
-            mapSoFar + (clueId to clue)
-        } else {
-            mapSoFar + (clueId to (existing + clue))
-        }
-    }

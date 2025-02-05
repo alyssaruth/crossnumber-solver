@@ -15,8 +15,9 @@ import maths.isTriangleNumber
 import maths.lastNDigits
 import maths.longDigits
 import maths.pow
+import solver.RawReducer
 import solver.clue.calculationWithReference
-import solver.clue.clueMap
+import solver.clue.emptyClue
 import solver.clue.greaterThan
 import solver.clue.notEqualTo
 import solver.clue.plus
@@ -24,9 +25,14 @@ import solver.clue.simpleClue
 import solver.clue.singleReference
 import solver.clue.singleReferenceFlattened
 import solver.clue.transformedEquals
+import solver.clueMap
+import solver.digitReducer.allDigits
 import solver.factoryCrossnumber
 import java.math.BigInteger
 
+/**
+ * https://chalkdustmagazine.com/blog/crossnumber-winners-issue-07/
+ */
 fun main() {
     CROSSNUMBER_7.solve()
 }
@@ -50,11 +56,18 @@ private val grid = """
     ................
 """.trimIndent()
 
+private val digitReducers: List<Pair<String, RawReducer>> = listOf(
+    "10A" to allDigits { it > 0 },
+    "31A" to allDigits { it > 0 }, // 7A is the digit product of this
+    "3D" to RawReducer({ it.take(3) }, { isEven(it.toLong()) }),
+    "3D" to allDigits { it > 0 }, // 16D is the digit product of this
+)
+
 private val clueMap = clueMap(
     "1A" to calculationWithReference("34A") { value, other -> oneAcrossAndThirtyFourAcross(value, other) },
     *"9A".singleReference("30A", ::digitProduct),
     *"9A".singleReference("1A", ::digitSum),
-    "10A" to simpleClue { !containsDigit(0)(it) && isMultipleOf(1_000_000)(digitProduct(it)) },
+    "10A" to simpleClue { isMultipleOf(1_000_000)(digitProduct(it)) },
     "13A" to calculationWithReference("34A") { value, other -> !containsDigit(value.digits()[1])(other) },
     "14A" to digitsSameExceptOne(10),
     "17A" to simpleClue(isSumOfTwoNthPowers(3)),
@@ -69,12 +82,11 @@ private val clueMap = clueMap(
     *"30A".singleReference("27A") { digitProduct(it - 1) },
     *"31A".transformedEquals("7D", ::digitProduct),
     *"32A".singleReference("34A", ::digitSum),
-    *"32A".singleReference("34A", ::digitSum),
     "34A" to calculationWithReference("1A") { value, other -> oneAcrossAndThirtyFourAcross(other, value) } +
             calculationWithReference("13A") { value, other -> !containsDigit(other.digits()[1])(value) },
 
     "2D" to simpleClue { it == sumOfCubesOfDigits(it) },
-    "3D" to simpleClue { it.longDigits().take(3).all(isEven) },
+    "3D" to emptyClue(), // Covered in digit reducers
     *"4D".singleReference("5D", ::sumOfCubesOfDigits),
     *"5D".singleReference("4D", ::sumOfCubesOfDigits),
     *"5D".notEqualTo("4D"),
@@ -101,4 +113,4 @@ private fun oneAcrossAndThirtyFourAcross(a1: Long, a34: Long) =
     a1.digits().first() == a34.digits().last() && a1.toBigInteger().times(a34.toBigInteger())
         .mod(1_000_000_000_000.toBigInteger()) == BigInteger.ZERO
 
-val CROSSNUMBER_7 = factoryCrossnumber(grid, clueMap, skipSymmetryCheck = true)
+val CROSSNUMBER_7 = factoryCrossnumber(grid, clueMap, digitReducers, skipSymmetryCheck = true)

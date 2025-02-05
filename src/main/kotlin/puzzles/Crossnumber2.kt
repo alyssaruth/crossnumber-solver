@@ -33,7 +33,6 @@ import maths.sorted
 import maths.toRomanNumerals
 import solver.ClueConstructor
 import solver.clue.asyncEquals
-import solver.clue.clueMap
 import solver.clue.dualReference
 import solver.clue.emptyClue
 import solver.clue.isEqualTo
@@ -47,6 +46,7 @@ import solver.clue.singleReference
 import solver.clue.smallest
 import solver.clue.transformedEqualsRef
 import solver.clue.tripleReference
+import solver.clueMap
 import solver.factoryCrossnumber
 import java.util.Calendar
 

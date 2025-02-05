@@ -30,7 +30,6 @@ import solver.Orientation
 import solver.RAM_THRESHOLD
 import solver.clue.ContextualClue
 import solver.clue.calculationWithReference
-import solver.clue.clueMap
 import solver.clue.equalToNumberOfClueWithAnswer
 import solver.clue.equalsSomeOther
 import solver.clue.isDifferenceBetween
@@ -41,6 +40,7 @@ import solver.clue.isProductOf
 import solver.clue.simpleClue
 import solver.clue.singleReference
 import solver.clue.tripleReference
+import solver.clueMap
 import solver.factoryCrossnumber
 
 /**

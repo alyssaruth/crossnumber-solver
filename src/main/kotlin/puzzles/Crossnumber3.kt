@@ -31,7 +31,6 @@ import maths.toBinary
 import maths.vowels
 import solver.ClueConstructor
 import solver.clue.asyncEquals
-import solver.clue.clueMap
 import solver.clue.dualReference
 import solver.clue.emptyClue
 import solver.clue.greaterThan
@@ -45,6 +44,7 @@ import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.singleReference
 import solver.clue.smallest
+import solver.clueMap
 import solver.factoryCrossnumber
 import java.math.BigInteger
 
