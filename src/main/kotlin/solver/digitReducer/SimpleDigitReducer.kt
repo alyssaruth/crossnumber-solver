@@ -3,12 +3,11 @@ package solver.digitReducer
 import solver.ClueId
 import solver.Crossnumber
 import solver.DigitMap
-import solver.Point
 
 class SimpleDigitReducer(
     private val filterFn: (Int) -> Boolean,
     clueId: ClueId,
-    squareSelector: SquareSelector,
+    squareSelector: MultiSquareSelector,
     crossnumber: Crossnumber
 ) : AbstractDigitReducer(clueId, squareSelector, crossnumber) {
     override fun apply(digitMap: DigitMap) = digitMap.mapValues { (square, digits) ->
@@ -16,7 +15,7 @@ class SimpleDigitReducer(
     }
 }
 
-fun String.simpleReducer(squareSelector: SquareSelector, filterFn: (Int) -> Boolean): DigitReducerConstructor =
+fun String.simpleReducer(squareSelector: MultiSquareSelector, filterFn: (Int) -> Boolean): DigitReducerConstructor =
     { crossnumber ->
         val clueId = ClueId.fromString(this)
         SimpleDigitReducer(filterFn, clueId, squareSelector, crossnumber)

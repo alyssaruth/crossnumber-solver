@@ -1,5 +1,6 @@
 package solver
 
+import logging.timeTakenString
 import maths.product
 import solver.clue.BaseClue
 import solver.clue.MinimumClue
@@ -35,20 +36,29 @@ data class PendingSolution(
 
         val digitMap = crossnumber.digitMap
         val newPossibilityCount = possibilityCount(digitMap)
-        if (possibilities > crossnumber.loopThreshold) {
+        if (newPossibilityCount > crossnumber.loopThreshold ||
+            (newPossibilityCount > LOOP_THRESHOLD && newPossibilityCount < crossnumber.loopThreshold)
+        ) {
             // Not narrowed down enough yet, do nothing
             return crossnumber.replaceSolution(clueId, PendingSolution(squares, clue, newPossibilityCount))
         }
 
         val digitList = squares.map(digitMap::getValue)
         val possibilities =
-            attemptToComputePossibilitiesMultithreaded(clue(crossnumber), digitList, newPossibilityCount, crossnumber)
+            attemptToComputePossibilitiesMultithreaded(
+                clueId,
+                clue(crossnumber),
+                digitList,
+                newPossibilityCount,
+                crossnumber
+            )
                 ?: return crossnumber.replaceSolution(clueId, PendingSolution(squares, clue, newPossibilityCount))
 
         return PartialSolution(squares, clue, possibilities).iterate(clueId, crossnumber)
     }
 
     private fun attemptToComputePossibilitiesMultithreaded(
+        clueId: ClueId,
         clue: BaseClue,
         digitList: List<List<Int>>,
         possibilities: Long,
@@ -58,11 +68,14 @@ data class PendingSolution(
             return attemptToComputePossibilities(clue, digitList, possibilities, crossnumber, RAM_THRESHOLD)
         }
 
+        val startTime = System.currentTimeMillis()
+
         val maxDigits = digitList.maxOf { it.size }
         val digitIndex = digitList.indexOfFirst { it.size == maxDigits }
         val digits = digitList[digitIndex]
 
         val results = mutableMapOf<Int, List<Long>?>()
+        val threadRamThreshold = RAM_THRESHOLD / digits.size
         val threads = digits.map { myDigit ->
             Thread {
                 val myDigitList =
@@ -74,7 +87,7 @@ data class PendingSolution(
                         myDigitList,
                         possibilities / digits.size,
                         crossnumber,
-                        RAM_THRESHOLD / digits.size
+                        threadRamThreshold
                     )
             }
         }
@@ -83,7 +96,12 @@ data class PendingSolution(
         threads.forEach { it.join() }
 
         val values = results.values
-        if (values.any { it == null }) return null
+        if (values.any { it == null }) {
+            val atLeast = values.sumOf { it?.size ?: threadRamThreshold }
+            val timeTaken = System.currentTimeMillis() - startTime
+            println("$clueId: Failed to reduce enough (>=$atLeast)" + timeTakenString(timeTaken))
+            return null
+        }
 
         return values.filterNotNull().flatten().sorted()
     }

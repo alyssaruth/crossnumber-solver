@@ -111,7 +111,7 @@ data class Crossnumber(
             return null
         }
 
-        val cluesToTry = partialSolutions().filterValues { !it.isSolved() && it.possibilities.size < 102 }
+        val cluesToTry = partialSolutions().filterValues { !it.isSolved() && it.possibilities.size < 50 }
 
         val startTime = System.currentTimeMillis()
         return cluesToTry.firstNotNullOfOrNull { reduceByContradiction(it.key, it.value, startTime) }

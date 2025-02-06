@@ -5,7 +5,9 @@ import solver.Crossnumber
 import solver.DigitMap
 import solver.Point
 
-typealias SquareSelector = (List<Point>) -> List<Point>
+typealias SquareSelector = (List<Point>) -> Point
+
+typealias MultiSquareSelector = (List<Point>) -> List<Point>
 
 typealias DigitReducerConstructor = (crossnumber: Crossnumber) -> AbstractDigitReducer
 
@@ -19,10 +21,14 @@ typealias DigitReducerConstructor = (crossnumber: Crossnumber) -> AbstractDigitR
  *
  * Most crossnumbers don't *require* these, but some do (like Crossnumber 7), and others can get a speed benefit too
  */
-abstract class AbstractDigitReducer(val clueId: ClueId, squareSelector: SquareSelector, crossnumber: Crossnumber) {
-    protected val squares = selectSquares(crossnumber, squareSelector)
+abstract class AbstractDigitReducer(
+    val clueId: ClueId,
+    squareSelector: MultiSquareSelector,
+    protected val crossnumber: Crossnumber
+) {
+    protected val squares = selectSquares(squareSelector)
 
-    private fun selectSquares(crossnumber: Crossnumber, squareSelector: SquareSelector): Set<Point> {
+    private fun selectSquares(squareSelector: MultiSquareSelector): Set<Point> {
         val clueSquares = crossnumber.solutions.getValue(clueId).squares
         return squareSelector(clueSquares).toSet()
     }
