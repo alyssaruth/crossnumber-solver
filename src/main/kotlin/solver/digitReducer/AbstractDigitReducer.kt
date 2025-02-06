@@ -1,6 +1,13 @@
 package solver.digitReducer
 
+import solver.ClueId
+import solver.Crossnumber
 import solver.DigitMap
+import solver.Point
+
+typealias SquareSelector = (List<Point>) -> List<Point>
+
+typealias DigitReducerConstructor = (crossnumber: Crossnumber) -> AbstractDigitReducer
 
 /**
  * For capturing direct digit implications, which can be applied straight to the digit map
@@ -12,6 +19,13 @@ import solver.DigitMap
  *
  * Most crossnumbers don't *require* these, but some do (like Crossnumber 7), and others can get a speed benefit too
  */
-abstract class AbstractDigitReducer {
+abstract class AbstractDigitReducer(val clueId: ClueId, squareSelector: SquareSelector, crossnumber: Crossnumber) {
+    protected val squares = selectSquares(crossnumber, squareSelector)
+
+    private fun selectSquares(crossnumber: Crossnumber, squareSelector: SquareSelector): Set<Point> {
+        val clueSquares = crossnumber.solutions.getValue(clueId).squares
+        return squareSelector(clueSquares).toSet()
+    }
+
     abstract fun apply(digitMap: DigitMap): DigitMap
 }

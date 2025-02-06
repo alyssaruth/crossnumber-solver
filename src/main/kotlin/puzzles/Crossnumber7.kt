@@ -15,7 +15,6 @@ import maths.isTriangleNumber
 import maths.lastNDigits
 import maths.longDigits
 import maths.pow
-import solver.RawReducer
 import solver.clue.calculationWithReference
 import solver.clue.emptyClue
 import solver.clue.greaterThan
@@ -26,7 +25,9 @@ import solver.clue.singleReference
 import solver.clue.singleReferenceFlattened
 import solver.clue.transformedEquals
 import solver.clueMap
+import solver.digitReducer.DigitReducerConstructor
 import solver.digitReducer.allDigits
+import solver.digitReducer.simpleReducer
 import solver.factoryCrossnumber
 import java.math.BigInteger
 
@@ -56,11 +57,12 @@ private val grid = """
     ................
 """.trimIndent()
 
-private val digitReducers: List<Pair<String, RawReducer>> = listOf(
-    "10A" to allDigits { it > 0 },
-    "31A" to allDigits { it > 0 }, // 7A is the digit product of this
-    "3D" to RawReducer({ it.take(3) }, { isEven(it.toLong()) }),
-    "3D" to allDigits { it > 0 }, // 16D is the digit product of this
+private val digitReducers: List<DigitReducerConstructor> = listOf(
+    "10A".simpleReducer(allDigits()) { it > 0 },
+    "31A".simpleReducer(allDigits()) { it > 0 }, // 7A is the digit product of this
+    "3D".simpleReducer({ it.take(3) }, { isEven(it.toLong()) }),
+    "3D".simpleReducer(allDigits()) { it > 0 }, // 16D is the digit product of this
+    "16D".simpleReducer(allDigits()) { it > 0 }, // 18A is the digit product of this
 )
 
 private val clueMap = clueMap(

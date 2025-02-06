@@ -7,7 +7,7 @@ import logging.red
 import logging.timeTakenString
 import solver.clue.AsyncEqualToClue
 import solver.clue.BaseClue
-import solver.digitReducer.AbstractDigitReducer
+import solver.digitReducer.DigitReducerConstructor
 import kotlin.math.roundToLong
 
 typealias Clue = (candidate: Long) -> Boolean
@@ -20,7 +20,7 @@ data class Crossnumber(
     val originalGrid: Grid,
     val digitMap: DigitMap,
     val solutions: Map<ClueId, ISolution>,
-    val digitReducers: Map<ClueId, AbstractDigitReducer>,
+    val digitReducers: List<DigitReducerConstructor>,
     val loopThreshold: Long = LOOP_THRESHOLD
 ) {
     fun solve(pass: Int = 1, startTime: Long = System.currentTimeMillis()): Crossnumber {
@@ -53,13 +53,14 @@ data class Crossnumber(
     }
 
     private fun applyDigitReducers(): Crossnumber {
-        val newDigitMap = digitReducers.entries.fold(digitMap) { currentMap, (clueId, reducer) ->
+        val newDigitMap = digitReducers.fold(digitMap) { currentMap, mkReducer ->
+            val reducer = mkReducer(this)
             val newMap = reducer.apply(currentMap)
 
             val oldSize = currentMap.values.sumOf { it.size }
             val newSize = newMap.values.sumOf { it.size }
             if (newSize < oldSize) {
-                println("$clueId: Reduced digits by ${oldSize - newSize}")
+                println("${reducer.clueId}: Reduced digits by ${oldSize - newSize}")
             }
 
             newMap
