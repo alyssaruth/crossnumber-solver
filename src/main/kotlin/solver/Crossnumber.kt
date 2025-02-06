@@ -91,14 +91,14 @@ data class Crossnumber(
             return solve(pass + 1, startTime)
         }
 
-        val reducedByGuessing = ruleOutBadGuesses()
-        if (reducedByGuessing != null) {
-            return reducedByGuessing.solve(pass + 1, startTime)
-        }
-
         val newLoopThreshold = escalateLoopThreshold()
         if (newLoopThreshold != null) {
             return copy(loopThreshold = newLoopThreshold).solve(pass + 1, startTime)
+        }
+
+        val reducedByGuessing = copy(loopThreshold = LOOP_THRESHOLD).ruleOutBadGuesses()
+        if (reducedByGuessing != null) {
+            return reducedByGuessing.solve(pass + 1, startTime)
         }
 
         println("Made no progress this pass, exiting.".red())
@@ -107,10 +107,6 @@ data class Crossnumber(
     }
 
     private fun ruleOutBadGuesses(): Crossnumber? {
-        if (loopThreshold > LOOP_THRESHOLD) {
-            return null
-        }
-
         val cluesToTry = partialSolutions().filterValues { !it.isSolved() && it.possibilities.size < 50 }
 
         val startTime = System.currentTimeMillis()

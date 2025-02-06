@@ -47,6 +47,9 @@ import solver.clue.smallest
 import solver.clue.transformedEqualsRef
 import solver.clue.tripleReference
 import solver.clueMap
+import solver.digitReducer.DigitReducerConstructor
+import solver.digitReducer.digitIndices
+import solver.digitReducer.simpleReducer
 import solver.factoryCrossnumber
 import java.util.Calendar
 
@@ -78,6 +81,10 @@ private val grid = """
 private val a19Prime = nextPrime(370262)
 
 private val a16 = (10..99).first { inPence(it).size == 5 }
+
+private val digitReducers: List<DigitReducerConstructor> = listOf(
+    "4D".simpleReducer(digitIndices(1, 3, 5, 7, 9, 11, 12, 13)) { it > 0 }
+)
 
 private val clueMap: Map<String, ClueConstructor> = clueMap(
     *"1A".isMultipleOf("24A"),
@@ -130,7 +137,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "38D" to simpleClue(isMultipleOf(10))
 )
 
-val CROSSNUMBER_2 = factoryCrossnumber(grid, clueMap)
+val CROSSNUMBER_2 = factoryCrossnumber(grid, clueMap, digitReducers)
 
 /**
  * The 2nd, 4th, 6th, 8th, 10th, 12th and 14th digits of this number are each larger than the digits either side of them. (15)

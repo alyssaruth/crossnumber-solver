@@ -41,6 +41,9 @@ import solver.clue.simpleClue
 import solver.clue.singleReference
 import solver.clue.tripleReference
 import solver.clueMap
+import solver.digitReducer.DigitReducerConstructor
+import solver.digitReducer.allDigits
+import solver.digitReducer.simpleReducer
 import solver.factoryCrossnumber
 
 /**
@@ -67,6 +70,10 @@ private val grid = """
         ...#.###.##.#.#
         ####..........#
     """.trimIndent()
+
+private val digitReducers: List<DigitReducerConstructor> = listOf(
+    "6D".simpleReducer(allDigits()) { it < 9 }
+)
 
 private val clueMap: Map<String, ClueConstructor> = clueMap(
     *"1A".isProductOf("4D", "18D"),
@@ -114,7 +121,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "34D" to simpleClue(::isSquare)
 )
 
-val CROSSNUMBER_1 = factoryCrossnumber(grid, clueMap)
+val CROSSNUMBER_1 = factoryCrossnumber(grid, clueMap, digitReducers)
 
 /**
  * This number’s first digit tells you how many 0s are in this number, the second digit how many 1s, the third digit how many 2s, and so on
