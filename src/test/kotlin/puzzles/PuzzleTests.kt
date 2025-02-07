@@ -6,36 +6,41 @@ import kotlin.test.Test
 class PuzzleTests {
     @Test
     fun `Crossnumber 1`() {
-        CROSSNUMBER_1.solve().sumAcrossClues() shouldBe 13895815379
+        CROSSNUMBER_1.solve().sumAcrossClues() shouldBe 13_895_815_379
     }
 
     @Test
     fun `Crossnumber 2`() {
-        CROSSNUMBER_2.solve().sumAcrossClues() shouldBe 277777800764962
+        CROSSNUMBER_2.solve().sumAcrossClues() shouldBe 277_777_800_764_962
     }
 
     @Test
     fun `Crossnumber 3`() {
-        CROSSNUMBER_3.solve().sumAcrossClues() shouldBe 60196499
+        CROSSNUMBER_3.solve().sumAcrossClues() shouldBe 60_196_499
     }
 
     @Test
     fun `Crossnumber 4`() {
-        CROSSNUMBER_4.solve().sumAcrossClues() shouldBe 1435302478
+        CROSSNUMBER_4.solve().sumAcrossClues() shouldBe 1_435_302_478
     }
 
     @Test
     fun `Crossnumber 5`() {
-        CROSSNUMBER_5.solve().sumAcrossClues() shouldBe 136462689389
+        CROSSNUMBER_5.solve().sumAcrossClues() shouldBe 136_462_689_389
     }
 
     @Test
     fun `Crossnumber 6`() {
-        CROSSNUMBER_6.solve().sumAcrossClues() shouldBe 6323098
+        CROSSNUMBER_6.solve().sumAcrossClues() shouldBe 6_323_098
     }
 
     @Test
     fun `Crossnumber 7`() {
         CROSSNUMBER_7.solve().sumAcrossClues() shouldBe 15_240_052_826_303_185
+    }
+
+    @Test
+    fun `Crossnumber 8`() {
+        CROSSNUMBER_8.solve().sumAcrossClues() shouldBe 43_788_970
     }
 }

@@ -5,6 +5,7 @@ import maths.digits
 import maths.distinctDivisors
 import maths.firstNDigits
 import maths.hcf
+import maths.isKnownSierpinskiNumber
 import maths.isMultipleOf
 import maths.isOdd
 import maths.isPalindrome
@@ -72,7 +73,7 @@ private val clueMap = clueMap(
     "18A" to simpleClue(isMultipleOf(3)),
     "19A" to simpleClue(::isPalindrome),
     *"20A".isCoprimeWith("17D"),
-    "21A" to simpleClue(::isPrime), // TODO - A prime number of the form nn+1 for some integer n
+    "21A" to simpleClue(::isPrime),
     *"22A".isCoprimeWith("20A"),
     *"23A".primeThatIsSixteenMoreThanThreeTimes("5D"),
     "25A" to simpleClue(isMultipleOf(10)),
@@ -82,7 +83,7 @@ private val clueMap = clueMap(
     "30A" to dualReference("17A", "20A", ::hcf),
     *"31A".isMultipleOf("32A"),
     "32A" to emptyClue(), // Covered by digit reducer
-    "34A" to emptyClue(), // TODO - A number k such that k×2^n+1 is not prime for any integer n>0
+    "34A" to simpleClue(::isKnownSierpinskiNumber),
     *"36A".primeThatIsSixteenMoreThanThreeTimes("20D"),
     "37A" to simpleClue { !isPalindrome(it) },
 
