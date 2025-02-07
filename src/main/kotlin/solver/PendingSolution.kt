@@ -26,12 +26,12 @@ data class PendingSolution(
 
     override fun possibilityCount(digitMap: DigitMap) = computePossibilities(squares, digitMap)
 
-    override fun iterate(clueId: ClueId, crossnumber: Crossnumber): Crossnumber {
+    override fun iterate(clueId: ClueId, crossnumber: Crossnumber, log: Boolean): Crossnumber {
         val actualClue = clue(crossnumber)
         val knownPossibilities = actualClue.knownPossibilities()
         if (knownPossibilities != null) {
             val correctLength = knownPossibilities.filter { it > 0 && "$it".length == squares.size }
-            return PartialSolution(squares, clue, correctLength).iterate(clueId, crossnumber)
+            return PartialSolution(squares, clue, correctLength).iterate(clueId, crossnumber, log)
         }
 
         val digitMap = crossnumber.digitMap
@@ -50,11 +50,12 @@ data class PendingSolution(
                 clue(crossnumber),
                 digitList,
                 newPossibilityCount,
-                crossnumber
+                crossnumber,
+                log
             )
                 ?: return crossnumber.replaceSolution(clueId, PendingSolution(squares, clue, newPossibilityCount))
 
-        return PartialSolution(squares, clue, possibilities).iterate(clueId, crossnumber)
+        return PartialSolution(squares, clue, possibilities).iterate(clueId, crossnumber, log)
     }
 
     private fun attemptToComputePossibilitiesMultithreaded(
@@ -63,6 +64,7 @@ data class PendingSolution(
         digitList: List<List<Int>>,
         possibilities: Long,
         crossnumber: Crossnumber,
+        log: Boolean,
     ): List<Long>? {
         if (possibilities < 1_000_000 || clue is MinimumClue) {
             return attemptToComputePossibilities(clue, digitList, possibilities, crossnumber, RAM_THRESHOLD)
@@ -99,7 +101,7 @@ data class PendingSolution(
         if (values.any { it == null }) {
             val atLeast = values.sumOf { it?.size ?: threadRamThreshold }
             val timeTaken = System.currentTimeMillis() - startTime
-            println("$clueId: Failed to reduce enough (>=$atLeast)" + timeTakenString(timeTaken))
+            if (log) println("$clueId: Failed to reduce enough (>=$atLeast)" + timeTakenString(timeTaken))
             return null
         }
 
