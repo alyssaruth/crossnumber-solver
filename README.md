@@ -110,7 +110,7 @@ Clues can also be combined using the + operator.
 Here are some examples:
 
 ```kotlin
-val clueMap: Map<String, ClueConstructor> = mapOf(
+val clueMap: Map<String, ClueConstructor> = clueMap(
     // 4D multiplied by 18D
     "1A" to dualReference("4D", "18D", Long::times),
     
@@ -120,14 +120,14 @@ val clueMap: Map<String, ClueConstructor> = mapOf(
     // A palindromic number containing at least one 0
     "9A" to simpleClue { value -> isPalindrome(value) && containsDigit(0)(value) },
     
-    // A factor of 6D
-    "19A" to isFactorOfRef("6D"),
+    // A factor of 6D - this also generates the reciprocal clue (that 6D is a multiple of 19A)
+    *"19A".isFactorOf("6D"),
     
     // This number is both square and tetrahedral.
     "39A" to simpleClue(::isSquare) + simpleClue(::isTetrahedralNumber),
     
-    // An odd number. Also, the clue for 16A is: The sum of the digits of 8D, so here we also encode the "reciprocal" relationship
-    "8D" to simpleClue(isOdd) + transformedEqualsRef("16A", ::digitSum)
+    // The sum of this number’s digits is 16A. This generates the reciprocal too
+    *"8D".transformedEquals("16A", ::digitSum)
 )
 ```
 
@@ -145,3 +145,4 @@ Below are the crossnumbers this can solve so far, along with roughly how long ea
 | 6      | 8        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-06/     |
 | 7      | 660 (!)  | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-07/     |
 | 8      | 5        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-08/     |
+| 9      | 20       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-09/     |
