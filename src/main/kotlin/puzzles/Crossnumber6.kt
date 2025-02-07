@@ -37,7 +37,7 @@ import solver.clue.isMeanOf
 import solver.clue.isMultipleOf
 import solver.clue.isProductOf
 import solver.clue.largest
-import solver.clue.notEqualTo
+import solver.clue.isNotEqualTo
 import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.singleReference
@@ -119,7 +119,7 @@ private val clues = clueMap(
     *"23D".isMultipleOf("44A"),
     *"23D".isMultipleOf("28D"),
     "24D" to simpleClue { hasWholeNthRoot(4)(((it * it) + 1) / 2) },
-    *"26D".notEqualTo("44A"),
+    *"26D".isNotEqualTo("44A"),
     "27D" to isEqualTo(((100 * 0.9) * 1.1).toLong()),
     "28D" to isEqualTo(((100 * 1.1) * 0.9).toLong()),
     "29D" to emptyClue(),

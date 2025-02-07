@@ -1,6 +1,7 @@
 package puzzles
 
 import maths.appearsInPascalsTriangle
+import maths.areAnagrams
 import maths.countStraightLinesThroughGrid
 import maths.cubesUpTo
 import maths.digitSum
@@ -13,7 +14,6 @@ import maths.hasUniqueDigits
 import maths.hasWholeNthRoot
 import maths.integerPartitions
 import maths.isAbundant
-import maths.isAnagramOf
 import maths.isCoprimeWith
 import maths.isKnownSierpinskiNumber
 import maths.isMultipleOf
@@ -45,8 +45,8 @@ import solver.clue.isHalfTheDifferenceBetween
 import solver.clue.isMultipleOf
 import solver.clue.isSumOf
 import solver.clue.largest
-import solver.clue.lessThan
-import solver.clue.notEqualTo
+import solver.clue.isLessThan
+import solver.clue.isNotEqualTo
 import solver.clue.simpleClue
 import solver.clue.singleReference
 import solver.clue.smallest
@@ -94,11 +94,11 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     *"13A".singleReference("7D") { it * 2 },
     "16A" to simpleClue(::violatesGoldbachConjecture),
     "17A" to simpleClue(::violatesGoldbachConjecture),
-    *"17A".notEqualTo("16A"),
+    *"17A".isNotEqualTo("16A"),
     "19A" to simpleClue(isMultipleOf(717)),
     "23A".equalsSomeOther(),
     "25A" to simpleClue(::isPalindrome),
-    *"26A".lessThan("15D"),
+    *"26A".isLessThan("15D"),
     *"27A".singleReference("12A") { it.reversed() },
     "30A" to simpleClue(hasDigitSum(5)),
     "32A" to simpleClue { it.digits().map(::digitToWord).windowed(2).all { (x, y) -> x.last() == y.first() } },
@@ -120,7 +120,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     }),
     "14D" to transformedEqualsRef("12A") { it.modPow(91, 18_793_739) },
     *"15D".isSumOf("1D", "26A"),
-    *"18D".calculationWithReference("31D") { value, other -> value.isAnagramOf(other) },
+    *"18D".calculationWithReference("31D", ::areAnagrams),
     "19D" to transformedEqualsRef("6D") { it.digitSum() + 1L },
     "20D" to dualReference("7D", "5A") { a, b -> lcm(a, b) },
     "21D".equalsSomeOther(),

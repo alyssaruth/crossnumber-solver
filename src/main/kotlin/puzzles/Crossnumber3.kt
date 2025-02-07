@@ -33,8 +33,8 @@ import solver.ClueConstructor
 import solver.clue.asyncEquals
 import solver.clue.dualReference
 import solver.clue.emptyClue
-import solver.clue.greaterThan
 import solver.clue.isEqualTo
+import solver.clue.isGreaterThan
 import solver.clue.isHalfTheDifferenceBetween
 import solver.clue.isMultipleOf
 import solver.clue.isProductOf
@@ -111,7 +111,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "10D" to simpleClue(isMultipleOf(7)),
     "11D" to asyncEquals { countTwinPrimesUpTo(1_000_000).toLong() },
     *"17D".singleReference("26A") { distinctDivisors(it).size.toLong() },
-    *"19D".greaterThan("30A"),
+    *"19D".isGreaterThan("30A"),
     "20D" to simpleClue { it.digitsAreStrictlyIncreasing() && it.digits().all { digit -> isPrime(digit.toLong()) } },
     *"21D".isSumOf("14A", "37A"),
     "22D" to simpleClue(isMultipleOf(27)),

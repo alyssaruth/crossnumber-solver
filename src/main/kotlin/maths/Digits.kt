@@ -13,6 +13,12 @@ fun BigInteger.digitSum() = digits().sum()
 
 fun hasDigitSum(n: Int): Clue = { value -> value.digitSum() == n }
 
+fun hasDigitProduct(n: Long): Clue = { digitProduct(it) == n }
+
+fun sumOfCubesOfDigits(value: Long) = sumOfNthPowerOfDigits(3)(value)
+
+fun sumOfNthPowerOfDigits(n: Int): (Long) -> Long = { value -> value.digits().sumOf { it.pow(n) } }
+
 fun Long.digitSum() = digits().sum()
 
 fun digitSum(n: Long) = n.digitSum().toLong()
@@ -27,6 +33,12 @@ private fun collectDigits(remaining: BigInteger, digitsSoFar: List<Int> = emptyL
         val lastDigit = remaining.mod(BigInteger.TEN).intValueExact()
         return collectDigits(remaining.divide(BigInteger.TEN), listOf(lastDigit) + digitsSoFar)
     }
+}
+
+fun digitsAllTheSame(length: Int): ClueConstructor {
+    val digits = (1..9)
+    val possibles = digits.map { digit -> List(length) { digit }.fromDigits() }
+    return knownPossibilities(possibles.toSet())
 }
 
 fun digitsSameExceptOne(length: Int): ClueConstructor {
@@ -50,7 +62,7 @@ private tailrec fun findMiddleNDigits(n: Int, digits: List<Int>): Long =
         findMiddleNDigits(n, digits.drop(1).dropLast(1))
     }
 
-fun Long.isAnagramOf(other: Long) = digits().sorted() == other.digits().sorted()
+fun areAnagrams(x: Long, y: Long) = x.digits().sorted() == y.digits().sorted()
 
 fun Number.digits() = toString().toCharArray().map(Char::digitToInt)
 

@@ -16,13 +16,15 @@ import maths.isTriangleNumber
 import maths.lastNDigits
 import maths.longDigits
 import maths.pow
+import maths.sumOfCubesOfDigits
+import maths.sumOfNthPowerOfDigits
 import solver.ClueConstructor
 import solver.ClueId
 import solver.Crossnumber
 import solver.clue.ContextualClue
 import solver.clue.emptyClue
-import solver.clue.greaterThan
-import solver.clue.notEqualTo
+import solver.clue.isGreaterThan
+import solver.clue.isNotEqualTo
 import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.singleReference
@@ -90,7 +92,7 @@ private val clueMap = clueMap(
     "17A" to simpleClue(isSumOfTwoNthPowers(3)),
     *"18A".singleReference("16D", ::digitProduct),
     "21A" to digitsSameExceptOne(5),
-    *"22A".greaterThan("13A"),
+    *"22A".isGreaterThan("13A"),
     *"23A".singleReference("6D", ::digitProduct),
     "25A" to simpleClue { !containsDigit(0)(it) && digitSum(it) > digitProduct(it) },
     "26A" to simpleClue { it == BigInteger.TWO.pow(it.toInt()).digits().takeLast(3).fromDigits() },
@@ -105,7 +107,7 @@ private val clueMap = clueMap(
     "3D" to simpleClue { digitProduct(it).digits().size == 12 },
     *"4D".singleReference("5D", ::sumOfCubesOfDigits),
     *"5D".singleReference("4D", ::sumOfCubesOfDigits),
-    *"5D".notEqualTo("4D"),
+    *"5D".isNotEqualTo("4D"),
     *"6D".singleReference("18A", ::digitProduct),
     "7D" to simpleClue(::isTriangleNumber) + simpleClue(hasDigitSum(18)),
     *"8D".singleReferenceFlattened("13A", generatePowers(16)),
@@ -122,10 +124,6 @@ private val clueMap = clueMap(
 )
 
 val CROSSNUMBER_7 = factoryCrossnumber(grid, clueMap, digitReducers, skipSymmetryCheck = true)
-
-private fun sumOfCubesOfDigits(value: Long) = sumOfNthPowerOfDigits(3)(value)
-
-private fun sumOfNthPowerOfDigits(n: Int): (Long) -> Long = { value -> value.digits().sumOf { it.pow(n) } }
 
 /**
  * 1A and 34A's product are a multiple of 1,000,000,000,000 = 2^12 * 5^12

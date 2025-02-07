@@ -16,12 +16,12 @@ import maths.squaresUpTo
 import solver.ClueConstructor
 import solver.clue.dualReference
 import solver.clue.emptyClue
-import solver.clue.greaterThan
 import solver.clue.isCoprimeWith
 import solver.clue.isFactorOf
+import solver.clue.isGreaterThan
+import solver.clue.isLessThan
 import solver.clue.isMultipleOf
 import solver.clue.isSumOf
-import solver.clue.lessThan
 import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.singleReference
@@ -67,7 +67,7 @@ private val clueMap = clueMap(
     *"12A".isSumOf("2D", "25D", "19A"),
     *"13A".isMultipleOf("1D"),
     "13A" to simpleClue { it.digits().first() == it.digits()[1] },
-    *"15A".lessThan("1A"),
+    *"15A".isLessThan("1A"),
     "16A" to simpleClue(::isPalindrome),
     *"17A".singleReference("17D") { it + 20 },
     "18A" to simpleClue(isMultipleOf(3)),
@@ -77,7 +77,7 @@ private val clueMap = clueMap(
     *"22A".isCoprimeWith("20A"),
     *"23A".primeThatIsSixteenMoreThanThreeTimes("5D"),
     "25A" to simpleClue(isMultipleOf(10)),
-    *"26A".lessThan("1A"),
+    *"26A".isLessThan("1A"),
     *"27A".isFactorOf("24D"),
     "28A" to emptyClue(),
     "30A" to dualReference("17A", "20A", ::hcf),
@@ -93,10 +93,10 @@ private val clueMap = clueMap(
     *"4D".primeThatIsSixteenMoreThanThreeTimes("22D"),
     *"5D".primeThatIsSixteenMoreThanThreeTimes("6D"),
     "6D" to simpleClue(::isPrime),
-    *"7D".greaterThan("1A"),
+    *"7D".isGreaterThan("1A"),
     *"8D".primeThatIsSixteenMoreThanThreeTimes("26D"),
     *"9D".primeThatIsSixteenMoreThanThreeTimes("36A"),
-    *"11D".lessThan("21D"),
+    *"11D".isLessThan("21D"),
     "14D" to simpleClue { distinctDivisors(it).sum() == it * 3 },
     *"16D".transformedEquals("18A", ::digitSum),
     *"17D".isCoprimeWith("22A"),

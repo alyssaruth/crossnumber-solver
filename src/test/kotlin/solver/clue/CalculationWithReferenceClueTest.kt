@@ -44,7 +44,7 @@ class CalculationWithReferenceClueTest {
     fun `Should check against possible values of referenced clue`() {
         val clueMap = clueMap(
             "1A" to simpleClue { it.digits().distinct().size == 2 },
-            *"5A".lessThan("1A"),
+            *"5A".isLessThan("1A"),
 
             "1D" to isEqualTo(111),
             "2D" to isEqualTo(222),

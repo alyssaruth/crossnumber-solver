@@ -79,11 +79,13 @@ fun String.isDifferenceBetween(a: String, b: String): Array<Pair<String, ClueCon
         b to tripleReference(this, b, a) { diff, x, y -> if (x > y) y + diff else y - diff },
     )
 
-fun String.notEqualTo(otherClue: String) = this.calculationWithReference(otherClue) { value, other -> value != other }
+fun String.isEqualTo(otherClue: String) = this.calculationWithReference(otherClue, Long::equals)
 
-fun String.greaterThan(otherClue: String) = this.calculationWithReference(otherClue) { value, other -> value > other }
+fun String.isNotEqualTo(otherClue: String) = this.calculationWithReference(otherClue) { value, other -> value != other }
 
-fun String.lessThan(other: String) = other.greaterThan(this)
+fun String.isGreaterThan(otherClue: String) = this.calculationWithReference(otherClue) { value, other -> value > other }
+
+fun String.isLessThan(other: String) = other.isGreaterThan(this)
 
 /**
  * X = f(Y) => f(Y) = X

@@ -7,6 +7,7 @@ import puzzles.CROSSNUMBER_5
 import puzzles.CROSSNUMBER_6
 import puzzles.CROSSNUMBER_7
 import puzzles.CROSSNUMBER_8
+import puzzles.CROSSNUMBER_9
 import kotlin.system.exitProcess
 
 private val puzzles = mapOf(
@@ -18,6 +19,7 @@ private val puzzles = mapOf(
     "6" to CROSSNUMBER_6,
     "7" to CROSSNUMBER_7,
     "8" to CROSSNUMBER_8,
+    "9" to CROSSNUMBER_9,
 )
 
 fun main(args: Array<String>) {
