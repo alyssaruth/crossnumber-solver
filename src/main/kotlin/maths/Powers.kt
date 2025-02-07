@@ -28,7 +28,9 @@ private tailrec fun generatePowersOfLength(
     }
 }
 
-fun sqrtWhole(value: Long) = sqrt(value.toDouble()).roundToLong()
+fun sqrtWhole(value: Long) = if (!isSquare(value)) null else sqrtRounded(value)
+
+fun sqrtRounded(value: Long) = sqrt(value.toDouble()).roundToLong()
 
 fun sqrtFloor(value: Long) = sqrt(value.toDouble()).toLong()
 

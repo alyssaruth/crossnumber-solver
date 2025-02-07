@@ -1,8 +1,6 @@
 package puzzles
 
-import maths.allCombinations
 import maths.canBeWrittenInSomeBaseAs
-import maths.concatenate
 import maths.containsDigit
 import maths.digitSum
 import maths.digits
@@ -21,18 +19,16 @@ import maths.isSumOfTwoDistinctSquares
 import maths.lastNDigits
 import maths.longDigits
 import maths.pow
-import maths.sqrtWhole
+import maths.sqrtRounded
 import maths.squaresOnNByNChessboard
 import maths.squaresUpTo
 import solver.ClueConstructor
-import solver.ClueId
 import solver.Crossnumber
 import solver.Orientation
-import solver.RAM_THRESHOLD
-import solver.clue.ComputedPossibilitiesClue
 import solver.clue.ContextualClue
 import solver.clue.emptyClue
 import solver.clue.equalToNumberOfClueWithAnswer
+import solver.clue.equalsTwoOthersConcatenated
 import solver.clue.isEqualTo
 import solver.clue.isGeometricMeanOf
 import solver.clue.isMultipleOf
@@ -109,7 +105,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "19D" to simpleClue { isPalindrome(it * it) },
     "22D" to isEqualTo(facesOfAHypercube(41, 43)),
     "23D" to twentyThreeDown(),
-    "25D" to simpleClue { squaresUpTo(it).any { square -> it - square == 2.pow(sqrtWhole(square).toInt()) } },
+    "25D" to simpleClue { squaresUpTo(it).any { square -> it - square == 2.pow(sqrtRounded(square).toInt()) } },
     "27D" to equalsTotalCountOfDigits(0, 3, 6, 9),
 )
 
@@ -124,7 +120,7 @@ val CROSSNUMBER_5 = factoryCrossnumber(grid, clueMap)
  *
  * And the quadratic becomes 3x^2 + 6nx + 75, hence a = 6n
  */
-private fun nineAcross() = isEqualTo(6 * sqrtWhole(75 / 3))
+private fun nineAcross() = isEqualTo(6 * sqrtRounded(75 / 3))
 
 /**
  * The 2nd, 4th, 6th, 8th, and 10th digits of this number are the highest common factors of the digits either side of them
@@ -194,54 +190,3 @@ class EqualsTotalCountOfDigits(crossnumber: Crossnumber, digits: List<Int>) : Co
 
 private fun equalsTotalCountOfDigits(vararg digits: Int): ClueConstructor =
     { crossnumber -> EqualsTotalCountOfDigits(crossnumber, digits.toList()) }
-
-class EqualsTwoOthersConcatenated(myClueId: ClueId, crossnumber: Crossnumber) : ComputedPossibilitiesClue(crossnumber) {
-    private val myLength = crossnumber.solutions.getValue(myClueId).squares.size
-
-    override val possibilities = buildPossibilities()
-
-    private fun buildPossibilities(): Set<Long>? {
-        val relevantLengths = (2..myLength - 2).associateWith { length ->
-            crossnumber.solutionsOfLength(length).keys.fold<ClueId, Set<Long>?>(emptySet()) { setSoFar, clueId ->
-                val newAnswers = lookupAnswers(clueId)
-                if (newAnswers == null || setSoFar == null) {
-                    null
-                } else {
-                    setSoFar + newAnswers
-                }
-            }
-        }
-
-        if (relevantLengths.values.any { it == null }) {
-            return null
-        }
-
-        val lengthMap = relevantLengths.mapValues { entry -> entry.value!! }
-
-        val lengthPairs = lengthMap.keys.map { listOf(it, myLength - it).sorted() }.distinct()
-        return lengthPairs.fold<List<Int>, Set<Long>?>(setOf()) { setSoFar, (lengthA, lengthB) ->
-            if (setSoFar == null) {
-                null
-            } else {
-                val aSolutions = relevantLengths[lengthA]
-                val bSolutions = relevantLengths[lengthB]
-
-                if (aSolutions == null || bSolutions == null) {
-                    setSoFar
-                } else {
-                    val newEntries = 2 * aSolutions.size * bSolutions.size
-                    if (newEntries + setSoFar.size > RAM_THRESHOLD) {
-                        null
-                    } else {
-                        val newPossibilities = listOf(aSolutions, bSolutions).allCombinations()
-                            .flatMap { (a, b) -> listOf(a.concatenate(b), b.concatenate(a)) }
-                        setSoFar + newPossibilities
-                    }
-                }
-            }
-        }
-    }
-}
-
-private fun String.equalsTwoOthersConcatenated(): Pair<String, ClueConstructor> =
-    this to { crossnumber -> EqualsTwoOthersConcatenated(ClueId.fromString(this), crossnumber) }

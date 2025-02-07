@@ -25,8 +25,12 @@ class SingleReferenceClue(
     }
 }
 
-fun makeSingleReference(clue: String, mapper: (Long) -> Long): ClueConstructor =
-    { crossnumber -> SingleReferenceClue(crossnumber, ClueId.fromString(clue)) { l -> listOf(mapper(l)) } }
+fun makeSingleReference(clue: String, mapper: (Long) -> Long?): ClueConstructor =
+    { crossnumber ->
+        SingleReferenceClue(crossnumber, ClueId.fromString(clue)) { l ->
+            mapper(l)?.let(::listOf) ?: emptyList()
+        }
+    }
 
 fun makeSingleReferenceFlattened(clue: String, mapper: (Long) -> List<Long>): ClueConstructor =
     { crossnumber -> SingleReferenceClue(crossnumber, ClueId.fromString(clue), mapper) }

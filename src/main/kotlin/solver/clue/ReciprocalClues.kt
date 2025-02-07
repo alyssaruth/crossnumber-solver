@@ -90,7 +90,7 @@ fun String.isLessThan(other: String) = other.isGreaterThan(this)
 /**
  * X = f(Y) => f(Y) = X
  */
-fun String.singleReference(other: String, mapper: (Long) -> Long): Array<Pair<String, ClueConstructor>> =
+fun String.singleReference(other: String, mapper: (Long) -> Long?): Array<Pair<String, ClueConstructor>> =
     arrayOf(
         this to makeSingleReference(other, mapper),
         other to transformedEqualsRef(this, mapper)

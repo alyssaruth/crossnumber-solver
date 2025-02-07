@@ -8,6 +8,7 @@ import maths.digitSum
 import maths.digits
 import maths.englishWordsUpTo
 import maths.fibonacciUpTo
+import maths.hasDigitRelationship
 import maths.hasDigitSum
 import maths.hasUniqueDigits
 import maths.hasWholeNthRoot
@@ -35,9 +36,9 @@ import solver.clue.isEqualTo
 import solver.clue.isFactorOf
 import solver.clue.isMeanOf
 import solver.clue.isMultipleOf
+import solver.clue.isNotEqualTo
 import solver.clue.isProductOf
 import solver.clue.largest
-import solver.clue.isNotEqualTo
 import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.singleReference
@@ -96,7 +97,7 @@ private val clues = clueMap(
     "33A" to simpleClue(::isFibonacci),
     "37A" to simpleClue(::isPalindrome) + simpleClue(isMultipleOf(1111)),
     "41A" to simpleClue(isOdd),
-    "42A" to simpleClue { it.digits().windowed(2).all { (a, b) -> b == a + 1 } },
+    "42A" to hasDigitRelationship { (a, b) -> b == a + 1 },
     *"43A".triangleNumberPair("29D"),
     *"44A".isMeanOf("45D", "41A"),
     *"46A".triangleNumberPair("47A"),

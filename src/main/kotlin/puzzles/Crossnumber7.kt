@@ -7,6 +7,7 @@ import maths.digits
 import maths.digitsSameExceptOne
 import maths.fromDigits
 import maths.generatePowers
+import maths.hasDigitRelationship
 import maths.hasDigitSum
 import maths.isEven
 import maths.isMultipleOf
@@ -14,7 +15,6 @@ import maths.isOdd
 import maths.isSumOfTwoNthPowers
 import maths.isTriangleNumber
 import maths.lastNDigits
-import maths.longDigits
 import maths.pow
 import maths.sumOfCubesOfDigits
 import maths.sumOfNthPowerOfDigits
@@ -117,7 +117,7 @@ private val clueMap = clueMap(
     *"15D".singleReference("28A") { it.lastNDigits(8) },
     *"16D".singleReference("3D", ::digitProduct),
     "19D" to simpleClue { !containsDigit(0)(it) && isMultipleOf(9)(digitProduct(it)) },
-    "20D" to simpleClue { it.longDigits().windowed(2).all { (a, b) -> isMultipleOf(b)(a) } },
+    "20D" to hasDigitRelationship { (a, b) -> isMultipleOf(b.toLong())(a.toLong()) },
     "24D" to simpleClue { it == sumOfNthPowerOfDigits(4)(it) },
     "29D" to simpleClue { it == sumOfNthPowerOfDigits(5)(it) },
     *"33D".singleReference("9A", ::digitProduct)

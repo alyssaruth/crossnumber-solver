@@ -171,11 +171,11 @@ class MathFunctionsTest {
     @Test
     fun `Whole square roots`() {
         // 7.483...
-        sqrtWhole(56) shouldBe 7
+        sqrtRounded(56) shouldBe 7
         sqrtFloor(56) shouldBe 7
 
         // 7.549...
-        sqrtWhole(57) shouldBe 8
+        sqrtRounded(57) shouldBe 8
         sqrtFloor(57) shouldBe 7
     }
 }

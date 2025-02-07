@@ -34,6 +34,11 @@ tailrec fun nextPrime(n: Long): Long {
     return if (isPrime(nextCandidate)) nextCandidate else nextPrime(nextCandidate)
 }
 
+tailrec fun previousPrime(n: Long): Long {
+    val previousCandidate = n - if (n % 2 == 0L) 1 else 2
+    return if (isPrime(previousCandidate)) previousCandidate else previousPrime(previousCandidate)
+}
+
 fun primesUpTo(n: Long) = numbersUpTo(n, listOf(2)) { nextPrime(it.last()) }
 
 fun countTwinPrimesUpTo(n: Long): Int {
@@ -63,7 +68,7 @@ fun isFermatPrime(p: Long) =
  *  - N - 2a^2 is not prime or 1 for all 0 <= a <= sqrt(n/2)
  */
 fun violatesGoldbachConjecture(value: Long) =
-    isOdd(value) && (0..sqrtWhole(value / 2)).none {
+    isOdd(value) && (0..sqrtRounded(value / 2)).none {
         val result = value - (2 * it * it)
         result == 1L || (result > 0 && isPrime(result))
     }

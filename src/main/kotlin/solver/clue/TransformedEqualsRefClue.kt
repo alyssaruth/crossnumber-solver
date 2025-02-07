@@ -28,8 +28,12 @@ class TransformedEqualsRefClue(
     } ?: true
 }
 
-fun transformedEqualsRef(clue: String, mapper: (Long) -> Long): ClueConstructor =
-    { crossnumber -> TransformedEqualsRefClue(crossnumber, ClueId.fromString(clue)) { value -> listOf(mapper(value)) } }
+fun transformedEqualsRef(clue: String, mapper: (Long) -> Long?): ClueConstructor =
+    { crossnumber ->
+        TransformedEqualsRefClue(crossnumber, ClueId.fromString(clue)) { l ->
+            mapper(l)?.let(::listOf) ?: emptyList()
+        }
+    }
 
 fun transformedEqualsRefFlattened(clue: String, mapper: (Long) -> List<Long>): ClueConstructor =
     { crossnumber -> TransformedEqualsRefClue(crossnumber, ClueId.fromString(clue), mapper) }

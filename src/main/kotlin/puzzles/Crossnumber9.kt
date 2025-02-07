@@ -7,22 +7,26 @@ import maths.digitSum
 import maths.digits
 import maths.digitsAllTheSame
 import maths.hasDigitProduct
+import maths.hasDigitRelationship
+import maths.isEven
 import maths.isMultipleOf
 import maths.isOdd
 import maths.isPalindrome
 import maths.isPowerOf
 import maths.isPrime
 import maths.isSquare
+import maths.nextPrime
+import maths.previousPrime
 import maths.sqrtWhole
 import maths.sumOfCubesOfDigits
 import maths.sumOfNthPowerOfDigits
 import solver.clue.calculationWithReference
-import solver.clue.emptyClue
 import solver.clue.equalsSomeOther
+import solver.clue.equalsTwoOthersConcatenated
 import solver.clue.isEqualTo
 import solver.clue.isFactorOf
-import solver.clue.isMultipleOf
 import solver.clue.isLessThan
+import solver.clue.isMultipleOf
 import solver.clue.isNotEqualTo
 import solver.clue.plus
 import solver.clue.simpleClue
@@ -64,7 +68,7 @@ private val clueMap = clueMap(
     "16A" to digitsAllTheSame(15),
     "18A" to simpleClue { it == sumOfNthPowerOfDigits(4)(it) },
     "19A".equalsSomeOther(),
-    "25A" to emptyClue(), // TODO - An anagram of a palindrome
+    "25A" to simpleClue(::isAnagramOfAPalindrome),
     "27A" to simpleClue { it == sumOfCubesOfDigits(it) },
     "28A" to simpleClue { it == sumOfCubesOfDigits(it) },
     *"30A".singleReference("12A") { 2 * it.bigPow(4).longValueExact() },
@@ -80,31 +84,44 @@ private val clueMap = clueMap(
     *"1D".isMultipleOf("12A"),
     *"2D".calculationWithReference("3D", ::areAnagrams),
     "3D" to simpleClue(isMultipleOf(3)) + simpleClue { it.digits()[1] == 4 },
-    "4D" to emptyClue(), // TODO - An anagram of a palindrome
+    "4D" to simpleClue(::isAnagramOfAPalindrome),
     *"5D".isFactorOf("10A"),
     "6D" to simpleClue(isMultipleOf(3)),
-    "7D" to simpleClue { it.digits().windowed(2).all { (a, b) -> b == a + 1 } },
+    "7D" to hasDigitRelationship { (a, b) -> b == a + 1 },
     *"9D".isEqualTo("10A"),
     *"11D".isMultipleOf("8A"),
     *"13D".singleReference("1D", ::digitSum),
-    "15D" to emptyClue(), // TODO - Each digit of this number is either one more than or one third of the previous digit
+    "15D" to hasDigitRelationship { (a, b) -> b == a + 1 || b * 3 == a },
     "17D" to simpleClue(isMultipleOf(5)),
     *"20D".isMultipleOf("2D"),
     "21D" to simpleClue { !isMultipleOf(3)(it) },
     "22D" to simpleClue(::isSquare),
-    *"23D".singleReference("30A") { sqrtWhole(it - 1) }, // TODO - not quite right, should sort this sqrt stuff out
+    *"23D".singleReference("30A") { sqrtWhole(it - 1) },
     *"24D".isEqualTo("23D"),
-    "26D" to emptyClue(), // TODO - A five-digit number that appears in this crossnumber followed by a three-digit number that appears in this crossnumber
+    "26D".equalsTwoOthersConcatenated(5 to 3),
     *"29D".isLessThan("43A"),
-    "31D" to simpleClue(::isPrime), // TODO - A prime number that is equal to the average of the previous and next prime
-    "33D" to simpleClue { it.digits().windowed(2).all { (a, b) -> b == a + 1 || b == a + 3 } },
-    "34D" to simpleClue { it.digits().windowed(2).all { (a, b) -> b == a - 1 || b == a * 3 } },
+    "31D" to simpleClue(::isPrime) + simpleClue { 2 * it == previousPrime(it) + nextPrime(it) },
+    "33D" to hasDigitRelationship { (a, b) -> b == a + 1 || b == a + 3 },
+    "34D" to hasDigitRelationship { (a, b) -> b == a - 1 || b == a * 3 },
     "36D" to simpleClue { it.digitCounts().values.any { count -> isOdd(count.toLong()) } },
-    "37D" to emptyClue(), // TODO - A three-digit number that appears in this crossnumber followed by a different three-digit number that appears in this crossnumber
+    "37D".equalsTwoOthersConcatenated(3 to 3),
     "39D" to simpleClue { it == sumOfCubesOfDigits(it) },
-    "40D" to emptyClue(),  // TODO - An anagram of a palindrome
+    "40D" to simpleClue(::isAnagramOfAPalindrome),
     *"41D".isFactorOf("43A"),
     *"45D".singleReference("6D", ::digitSum)
 )
+
+private fun isAnagramOfAPalindrome(n: Long): Boolean {
+    val length = n.digits().size.toLong()
+    val digitCounts = n.digitCounts().values.map(Int::toLong)
+
+    val canMakePalindrome = if (isEven(length)) {
+        digitCounts.none(isOdd)
+    } else {
+        digitCounts.count(isOdd) == 1
+    }
+
+    return !isPalindrome(n) && canMakePalindrome
+}
 
 val CROSSNUMBER_9 = factoryCrossnumber(grid, clueMap)

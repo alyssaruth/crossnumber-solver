@@ -36,10 +36,10 @@ fun isTetrahedralNumber(value: Long): Boolean =
         value
     ) { it.times(it.plus(1.toBigInteger())).times(it.plus(2.toBigInteger())).divide(6.toBigInteger()) }
 
-fun isSquare(value: Long) = value == sqrtWhole(value) * sqrtWhole(value)
+fun isSquare(value: Long) = value == sqrtRounded(value) * sqrtRounded(value)
 
 fun distinctDivisors(n: Long): Set<Long> =
-    (1..sqrtWhole(n)).filter { n % it == 0L }.flatMap { listOf(it, n / it) }.toSet()
+    (1..sqrtRounded(n)).filter { n % it == 0L }.flatMap { listOf(it, n / it) }.toSet()
 
 fun properFactors(n: Long): Set<Long> = distinctDivisors(n) - n
 

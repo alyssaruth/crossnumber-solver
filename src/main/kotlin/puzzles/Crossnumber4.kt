@@ -11,7 +11,6 @@ import maths.factorial
 import maths.fibonacciUpTo
 import maths.hasDigitSum
 import maths.hasUniqueDigits
-import maths.hasWholeNthRoot
 import maths.integerPartitions
 import maths.isAbundant
 import maths.isCoprimeWith
@@ -42,11 +41,11 @@ import solver.clue.equalsSomeOther
 import solver.clue.isEqualTo
 import solver.clue.isFactorOf
 import solver.clue.isHalfTheDifferenceBetween
+import solver.clue.isLessThan
 import solver.clue.isMultipleOf
+import solver.clue.isNotEqualTo
 import solver.clue.isSumOf
 import solver.clue.largest
-import solver.clue.isLessThan
-import solver.clue.isNotEqualTo
 import solver.clue.simpleClue
 import solver.clue.singleReference
 import solver.clue.smallest
@@ -131,7 +130,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "29D" to simpleClue { isPalindrome(it + 5) },
     *"30D".isSumOf("18D", "31D"),
     "31D" to emptyClue(), // Covered by 18D
-    "34D" to simpleClue { hasWholeNthRoot(2)(it) && it.digitSum().toLong() == sqrtWhole(it) }
+    "34D" to simpleClue { it.digitSum().toLong() == sqrtWhole(it) }
 )
 
 val CROSSNUMBER_4 = factoryCrossnumber(grid, clueMap)
