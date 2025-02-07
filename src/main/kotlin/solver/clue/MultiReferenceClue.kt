@@ -1,11 +1,9 @@
 package solver.clue
 
-import maths.allCombinations
+import maths.tryAllCombinations
 import solver.ClueConstructor
 import solver.ClueId
 import solver.Crossnumber
-import solver.RAM_THRESHOLD
-import java.math.BigInteger
 
 /**
  * For clues like:
@@ -25,15 +23,8 @@ open class MultiReferenceClue(
             return null
         }
 
-        val nonNullAnswers = answers.filterNotNull()
-        val totalSize =
-            nonNullAnswers.map { it.size.toBigInteger() }.fold(BigInteger.ONE) { product, n -> product.times(n) }
-
-        if (totalSize > RAM_THRESHOLD.toBigInteger()) {
-            return null
-        }
-
-        return nonNullAnswers.allCombinations().mapNotNull(combiner).toSet()
+        val allCombinations = answers.filterNotNull().tryAllCombinations() ?: return null
+        return allCombinations.mapNotNull(combiner).toSet()
     }
 }
 

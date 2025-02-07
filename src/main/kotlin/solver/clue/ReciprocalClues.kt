@@ -114,3 +114,20 @@ fun String.calculationWithReference(
         this to makeCalculationWithReference(otherClue, checker),
         otherClue to makeCalculationWithReference(this) { value, other -> checker(other, value) },
     )
+
+/**
+ * Only sound if the checker doesn't care about the order of the clues!
+ */
+fun String.calculationWithReferences(
+    vararg otherClues: String,
+    checker: (List<Long>) -> Boolean
+): Array<Pair<String, ClueConstructor>> {
+    val reciprocals = otherClues.map { other ->
+        val othersNotMe = otherClues.toList() - other
+        other to makeCalculationWithReferences(this, *othersNotMe.toTypedArray(), checker = checker)
+    }.toTypedArray()
+
+    return reciprocals + arrayOf(
+        this to makeCalculationWithReferences(*otherClues, checker = checker)
+    )
+}

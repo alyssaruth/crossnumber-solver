@@ -1,5 +1,6 @@
 package maths
 
+import solver.RAM_THRESHOLD
 import java.math.BigInteger
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -14,6 +15,15 @@ fun Double.longOrNull() = if (floor(this) == ceil(this)) this.toLong() else null
 fun String.sorted() = toCharArray().sorted().joinToString("")
 
 fun String.isPalindrome() = reversed() == this
+
+fun <E> List<Collection<E>>.tryAllCombinations(): List<List<E>>? {
+    val size = map { it.size.toBigInteger() }.fold(BigInteger.ONE) { product, n -> product.times(n) }
+    if (size > RAM_THRESHOLD.toBigInteger()) {
+        return null
+    }
+
+    return allCombinations()
+}
 
 fun <E> List<Collection<E>>.allCombinations(): List<List<E>> =
     fold(listOf(emptyList())) { listsSoFar, newSolutions ->
