@@ -72,11 +72,8 @@ private val digitReducers: List<DigitReducerConstructor> = listOf(
     "16D".simpleReducer(allDigits()) { it > 0 }, // 18A is the digit product of this
 
     "1A".digitReference(firstNDigits(1), "34A", lastDigit()) { myDigit, otherDigits -> otherDigits.contains(myDigit) },
-    "1A".digitReference(
-        { it.takeLast(2).take(1) },
-        "34A",
-        lastDigit()
-    ) { myDigit, otherDigits -> if (!otherDigits.contains(5)) listOf(0, 2, 5, 7).contains(myDigit) else true },
+    "1A".mightBeMultipleOf25("34A"),
+    "34A".mightBeMultipleOf25("1A"),
     "34A".digitReference(
         allDigits(),
         "13A",
@@ -158,3 +155,13 @@ private class ProductWithOtherIsMultipleOfOneTrillion(private val other: ClueId,
 private fun productWithOtherIsMultipleOfOneTrillion(other: String): ClueConstructor = { crossnumber ->
     ProductWithOtherIsMultipleOfOneTrillion(ClueId.fromString(other), crossnumber)
 }
+
+/**
+ * Similar to above, if we find one of 1A/34A aren't a multiple of 5, then the other must be a multiple of 5^12.
+ * In particular this means it's a multiple of 25, so its second-to-last digit has to be one of 0, 2, 5 or 7.
+ */
+private fun String.mightBeMultipleOf25(other: String) = digitReference(
+    { it.takeLast(2).take(1) },
+    other,
+    lastDigit()
+) { myDigit, otherDigits -> if (!otherDigits.contains(5)) listOf(0, 2, 5, 7).contains(myDigit) else true }
