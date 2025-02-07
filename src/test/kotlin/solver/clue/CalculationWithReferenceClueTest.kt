@@ -7,6 +7,7 @@ import maths.digits
 import solver.ClueId
 import solver.Orientation
 import solver.PartialSolution
+import solver.clueMap
 import solver.factoryCrossnumber
 import kotlin.test.Test
 
@@ -25,9 +26,9 @@ class CalculationWithReferenceClueTest {
 
     @Test
     fun `Should do no filtering if referenced clue is pending`() {
-        val clueMap = mapOf(
+        val clueMap = clueMap(
             "1A" to emptyClue(),
-            "5A" to calculationWithReference("1A") { value, other -> value == other },
+            *"5A".calculationWithReference("1A") { value, other -> value == other },
 
             "3D" to isEqualTo(111),
             "4D" to isEqualTo(111)
@@ -41,9 +42,9 @@ class CalculationWithReferenceClueTest {
 
     @Test
     fun `Should check against possible values of referenced clue`() {
-        val clueMap = mapOf(
+        val clueMap = clueMap(
             "1A" to simpleClue { it.digits().distinct().size == 2 },
-            "5A" to calculationWithReference("1A") { value, other -> value < other },
+            *"5A".lessThan("1A"),
 
             "1D" to isEqualTo(111),
             "2D" to isEqualTo(222),

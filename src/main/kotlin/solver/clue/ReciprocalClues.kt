@@ -1,5 +1,6 @@
 package solver.clue
 
+import maths.areCoprime
 import maths.geometricMean
 import maths.longOrNull
 import maths.wholeDiv
@@ -9,15 +10,10 @@ import kotlin.math.abs
 /**
  * X is multiple of Y <=> Y is factor of X
  */
-fun String.isMultipleOf(other: String) = arrayOf(
-    this to isMultipleOfRef(other),
-    other to isFactorOfRef(this)
-)
+fun String.isMultipleOf(otherClue: String) =
+    calculationWithReference(otherClue) { value, other -> maths.isMultipleOf(other)(value) }
 
-fun String.isFactorOf(other: String) = arrayOf(
-    this to isFactorOfRef(other),
-    other to isMultipleOfRef(this)
-)
+fun String.isFactorOf(other: String) = other.isMultipleOf(this)
 
 /**
  * a = b * c => b = a/c and c = a/b
@@ -83,17 +79,11 @@ fun String.isDifferenceBetween(a: String, b: String): Array<Pair<String, ClueCon
         b to tripleReference(this, b, a) { diff, x, y -> if (x > y) y + diff else y - diff },
     )
 
-fun String.notEqualTo(otherClue: String): Array<Pair<String, ClueConstructor>> =
-    arrayOf(
-        this to calculationWithReference(otherClue) { value, other -> value != other },
-        otherClue to calculationWithReference(this) { value, other -> value != other }
-    )
+fun String.notEqualTo(otherClue: String) = this.calculationWithReference(otherClue) { value, other -> value != other }
 
-fun String.greaterThan(otherClue: String): Array<Pair<String, ClueConstructor>> =
-    arrayOf(
-        this to calculationWithReference(otherClue) { value, other -> value > other },
-        otherClue to calculationWithReference(this) { value, other -> value < other }
-    )
+fun String.greaterThan(otherClue: String) = this.calculationWithReference(otherClue) { value, other -> value > other }
+
+fun String.lessThan(other: String) = other.greaterThan(this)
 
 /**
  * X = f(Y) => f(Y) = X
@@ -110,8 +100,15 @@ fun String.singleReferenceFlattened(other: String, mapper: (Long) -> List<Long>)
         other to transformedEqualsRefFlattened(this, mapper)
     )
 
-fun String.transformedEquals(other: String, mapper: (Long) -> Long): Array<Pair<String, ClueConstructor>> =
+fun String.transformedEquals(other: String, mapper: (Long) -> Long) = other.singleReference(this, mapper)
+
+fun String.isCoprimeWith(otherClue: String) = calculationWithReference(otherClue, ::areCoprime)
+
+fun String.calculationWithReference(
+    otherClue: String,
+    checker: (Long, Long) -> Boolean
+): Array<Pair<String, ClueConstructor>> =
     arrayOf(
-        other to makeSingleReference(this, mapper),
-        this to transformedEqualsRef(other, mapper)
+        this to makeCalculationWithReference(otherClue, checker),
+        otherClue to makeCalculationWithReference(this) { value, other -> checker(other, value) },
     )

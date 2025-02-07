@@ -37,6 +37,7 @@ import solver.clue.isMeanOf
 import solver.clue.isMultipleOf
 import solver.clue.isProductOf
 import solver.clue.largest
+import solver.clue.notEqualTo
 import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.singleReference
@@ -82,14 +83,13 @@ private val clues = clueMap(
     "12A" to simpleClue(::isSquare),
     "13A" to isEqualTo(nthCakeNumber(36)),
     *"15A".isFactorOf("7D"),
-    "15A" to calculationWithReference("34D") { value, other -> isMultipleOf(value + 1)(other) },
     "17A" to simpleClue { englishWords.contains(it.toString(16)) },
     *"18A".triangleNumberPair("19D"),
     "20A" to simpleClue(::isPalindrome),
     "23A" to simpleClue(hasDigitSum(7)) + simpleClue(isMultipleOf(7)),
     *"24A".isFactorOf("33D"),
     "25A" to largest(simpleClue { (it * it).digits().size == 12 }),
-    "29A" to calculationWithReference("22D") { value, other -> isMultipleOf(value)(other + 12) },
+    *"29A".calculationWithReference("22D") { value, other -> isMultipleOf(value)(other + 12) },
     *"30A".isMultipleOf("26D"),
     *"31A".singleReference("29A", ::digitSum),
     *"32A".isProductOf("36D", "12A"),
@@ -116,16 +116,15 @@ private val clues = clueMap(
     "19D" to emptyClue(),
     *"21D".isFactorOf("20A"),
     *"22D".isMultipleOf("36D"),
-    "22D" to calculationWithReference("29A") { value, other -> isMultipleOf(other)(value + 12) },
     *"23D".isMultipleOf("44A"),
     *"23D".isMultipleOf("28D"),
     "24D" to simpleClue { hasWholeNthRoot(4)(((it * it) + 1) / 2) },
-    "26D" to calculationWithReference("44A") { value, other -> value != other },
+    *"26D".notEqualTo("44A"),
     "27D" to isEqualTo(((100 * 0.9) * 1.1).toLong()),
     "28D" to isEqualTo(((100 * 1.1) * 0.9).toLong()),
     "29D" to emptyClue(),
     *"33D".isMultipleOf("17A"),
-    "34D" to calculationWithReference("15A") { value, other -> isMultipleOf(other + 1)(value) },
+    *"34D".calculationWithReference("15A") { value, other -> isMultipleOf(other + 1)(value) },
     "35D" to simpleClue(isEven),
     *"36D".isMeanOf("11A", "12A", "36D"),
     "37D" to simpleClue {
@@ -147,9 +146,9 @@ private fun divisibleBySumAndProductOfDigits() =
 private fun String.triangleNumberPair(other: String): Array<Pair<String, ClueConstructor>> {
     val calcLambda: (Long, Long) -> Boolean = { x, y -> isTriangleNumber(x + y) && isTriangleNumber(abs(x - y)) }
     return arrayOf(
-        this to simpleClue(::isTriangleNumber) + calculationWithReference(other, calcLambda),
-        other to simpleClue(::isTriangleNumber) + calculationWithReference(this, calcLambda)
-    )
+        this to simpleClue(::isTriangleNumber),
+        other to simpleClue(::isTriangleNumber)
+    ) + this.calculationWithReference(other, calcLambda)
 }
 
 /**

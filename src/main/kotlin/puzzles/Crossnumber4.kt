@@ -36,8 +36,8 @@ import solver.Crossnumber
 import solver.clue.ContextualClue
 import solver.clue.MultiReferenceClue
 import solver.clue.calculationWithReference
-import solver.clue.doesNotEqualRef
 import solver.clue.dualReference
+import solver.clue.emptyClue
 import solver.clue.equalsSomeOther
 import solver.clue.isEqualTo
 import solver.clue.isFactorOf
@@ -45,7 +45,8 @@ import solver.clue.isHalfTheDifferenceBetween
 import solver.clue.isMultipleOf
 import solver.clue.isSumOf
 import solver.clue.largest
-import solver.clue.plus
+import solver.clue.lessThan
+import solver.clue.notEqualTo
 import solver.clue.simpleClue
 import solver.clue.singleReference
 import solver.clue.smallest
@@ -91,12 +92,13 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "11A" to simpleClue(::isKnownSierpinskiNumber),
     "12A" to simpleClue { reciprocalSum(it.nonZeroDigits()) == 1.0 },
     *"13A".singleReference("7D") { it * 2 },
-    "16A" to simpleClue(::violatesGoldbachConjecture) + doesNotEqualRef("17A"),
-    "17A" to simpleClue(::violatesGoldbachConjecture) + doesNotEqualRef("16A"),
+    "16A" to simpleClue(::violatesGoldbachConjecture),
+    "17A" to simpleClue(::violatesGoldbachConjecture),
+    *"17A".notEqualTo("16A"),
     "19A" to simpleClue(isMultipleOf(717)),
     "23A".equalsSomeOther(),
     "25A" to simpleClue(::isPalindrome),
-    "26A" to calculationWithReference("15D") { value, other -> value < other },
+    *"26A".lessThan("15D"),
     *"27A".singleReference("12A") { it.reversed() },
     "30A" to simpleClue(hasDigitSum(5)),
     "32A" to simpleClue { it.digits().map(::digitToWord).windowed(2).all { (x, y) -> x.last() == y.first() } },
@@ -104,7 +106,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "34A" to simpleClue { value -> fibonacciUpTo((value + 1) * (value + 1)).map(::sqrtFloor).contains(value) },
     *"35A".isSumOf("9A", "27A", "27D", "28D"),
     *"36A".singleReference("29D") { (it * 1.5).toLong() },
-    "37A" to calculationWithReference("30A") { value, other -> isMultipleOf(other)(value + 1) },
+    *"37A".calculationWithReference("30A") { value, other -> isMultipleOf(other)(value + 1) },
 
     *"1D".isMultipleOf("1A"),
     *"2D".isFactorOf("1A"),
@@ -118,7 +120,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     }),
     "14D" to transformedEqualsRef("12A") { it.modPow(91, 18_793_739) },
     *"15D".isSumOf("1D", "26A"),
-    "18D" to calculationWithReference("31D") { value, other -> value.isAnagramOf(other) },
+    *"18D".calculationWithReference("31D") { value, other -> value.isAnagramOf(other) },
     "19D" to transformedEqualsRef("6D") { it.digitSum() + 1L },
     "20D" to dualReference("7D", "5A") { a, b -> lcm(a, b) },
     "21D".equalsSomeOther(),
@@ -128,7 +130,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "28D" to simpleClue(isSumOfConsecutive(4, digits = 4, ::cubesUpTo)),
     "29D" to simpleClue { isPalindrome(it + 5) },
     *"30D".isSumOf("18D", "31D"),
-    "31D" to calculationWithReference("18D") { value, other -> value.isAnagramOf(other) },
+    "31D" to emptyClue(), // Covered by 18D
     "34D" to simpleClue { hasWholeNthRoot(2)(it) && it.digitSum().toLong() == sqrtWhole(it) }
 )
 

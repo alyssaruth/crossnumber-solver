@@ -21,26 +21,27 @@ data class Crossnumber(
     val digitMap: DigitMap,
     val solutions: Map<ClueId, ISolution>,
     val digitReducers: List<DigitReducerConstructor>,
-    val loopThreshold: Long = LOOP_THRESHOLD
+    val loopThreshold: Long = LOOP_THRESHOLD,
+    val creationTime: Long = System.currentTimeMillis()
 ) {
-    fun solve(pass: Int = 1, startTime: Long = System.currentTimeMillis()): Crossnumber {
+    fun solve(pass: Int = 1): Crossnumber {
         printLoopBanner(pass)
 
         val reduced = applyDigitReducers()
 
-        val newCrossnumber = reduced.iterateClues(startTime)
+        val newCrossnumber = reduced.iterateClues()
         if (newCrossnumber.isSolved()) {
             println("------------------------------------------")
             println(newCrossnumber.substituteKnownDigits().prettyString())
             println("------------------------------------------")
-            println("Time elapsed: ${(System.currentTimeMillis() - startTime) / 1000}s")
+            println("Time elapsed: ${(System.currentTimeMillis() - creationTime) / 1000}s")
             return newCrossnumber
         }
 
         return if (newCrossnumber == this) {
-            newCrossnumber.handleLackOfProgress(pass, startTime)
+            newCrossnumber.handleLackOfProgress(pass)
         } else {
-            newCrossnumber.copy(loopThreshold = LOOP_THRESHOLD).solve(pass + 1, startTime)
+            newCrossnumber.copy(loopThreshold = LOOP_THRESHOLD).solve(pass + 1)
         }
     }
 
@@ -69,40 +70,42 @@ data class Crossnumber(
         return copy(digitMap = newDigitMap)
     }
 
-    private fun iterateClues(startTime: Long, log: Boolean = true): Crossnumber {
-        // Always try smallest stuff first, because narrowing those down may reduce the search space for bigger stuff
-        val prioritisedKeys = solutions.entries.sortedBy { it.value.possibilityCount(digitMap) }.map { it.key }
-        return prioritisedKeys.fold(this) { crossnumber, clueId ->
-            try {
-                crossnumber.iterateSolution(clueId, log)
-            } catch (e: Exception) {
-                if (log) {
-                    println("Caught an exception, aborting.".red())
-                    crossnumber.dumpFailureInfo(startTime)
-                }
-
-                throw e
-            }
+    private tailrec fun iterateClues(
+        log: Boolean = true,
+        currentCrossnumber: Crossnumber = this,
+        remainingClues: List<Map.Entry<ClueId, ISolution>> = prioritiseSolutions(solutions.entries.toList())
+    ): Crossnumber {
+        if (remainingClues.isEmpty()) {
+            return currentCrossnumber
+        } else {
+            val nextSolution = remainingClues.first()
+            val newCrossnumber = currentCrossnumber.iterateSolution(nextSolution.key, log)
+            val newClues = newCrossnumber.prioritiseSolutions(remainingClues.drop(1))
+            return iterateClues(log, newCrossnumber, newClues)
         }
     }
 
-    private fun handleLackOfProgress(pass: Int, startTime: Long): Crossnumber {
+    private fun prioritiseSolutions(solutions: List<Map.Entry<ClueId, ISolution>>) = solutions.sortedBy {
+        it.value.possibilityCount(digitMap)
+    }
+
+    private fun handleLackOfProgress(pass: Int): Crossnumber {
         if (awaitAsyncWork()) {
-            return solve(pass + 1, startTime)
+            return solve(pass + 1)
         }
 
         val newLoopThreshold = escalateLoopThreshold()
         if (newLoopThreshold != null) {
-            return copy(loopThreshold = newLoopThreshold).solve(pass + 1, startTime)
+            return copy(loopThreshold = newLoopThreshold).solve(pass + 1)
         }
 
         val reducedByGuessing = copy(loopThreshold = LOOP_THRESHOLD).ruleOutBadGuesses()
         if (reducedByGuessing != null) {
-            return reducedByGuessing.solve(pass + 1, startTime)
+            return reducedByGuessing.solve(pass + 1)
         }
 
         println("Made no progress this pass, exiting.".red())
-        dumpFailureInfo(startTime)
+        dumpFailureInfo()
         return this
     }
 
@@ -118,7 +121,7 @@ data class Crossnumber(
         val badPossibles = possibles.filter { possible ->
             val newCrossnumber = replaceSolution(clueId, listOf(possible))
             try {
-                newCrossnumber.iterateClues(0L, false)
+                newCrossnumber.iterateClues(false)
                 false
             } catch (ex: Exception) {
                 true
@@ -126,8 +129,9 @@ data class Crossnumber(
         }
 
         return if (badPossibles.isNotEmpty()) {
-            val newCrossnumber = replaceSolution(clueId, possibles - badPossibles).iterateSolution(clueId, false)
-            logChanges(this, newCrossnumber, System.currentTimeMillis() - startTime, " (by contradiction)".orange())
+            val newCrossnumber =
+                replaceSolution(clueId, possibles - badPossibles).iterateSolution(clueId, false)
+            logChanges(clueId, this, newCrossnumber, startTime, " (by contradiction)".orange())
             newCrossnumber
         } else {
             null
@@ -165,7 +169,7 @@ data class Crossnumber(
         return false
     }
 
-    private fun dumpFailureInfo(startTime: Long) {
+    private fun dumpFailureInfo() {
         println("------------------------------------------")
         println(completionString())
         println("------------------------------------------")
@@ -177,7 +181,7 @@ data class Crossnumber(
         println("------------------------------------------")
         println(substituteKnownDigits().prettyString())
         println("------------------------------------------")
-        println("Time elapsed: ${(System.currentTimeMillis() - startTime) / 1000}s")
+        println("Time elapsed: ${(System.currentTimeMillis() - creationTime) / 1000}s")
     }
 
     private fun completionString(): String {
@@ -208,25 +212,37 @@ data class Crossnumber(
         try {
             val startTime = System.currentTimeMillis()
             val newCrossnumber = solutions.getValue(id).iterate(id, this, log)
-            if (log) logChanges(this, newCrossnumber, System.currentTimeMillis() - startTime)
+            if (log) logChanges(id, this, newCrossnumber, startTime)
             return newCrossnumber
         } catch (ex: Exception) {
+            if (log) {
+                println("Caught an exception, aborting.".red())
+                dumpFailureInfo()
+            }
+
             throw Exception("Caught error iterating $id: ${ex.message}", ex)
         }
     }
 
     private fun logChanges(
+        id: ClueId,
         oldCrossnumber: Crossnumber,
         newCrossnumber: Crossnumber,
-        timeTaken: Long,
+        startTime: Long,
         suffix: String = ""
     ) {
+        val timeTaken = System.currentTimeMillis() - startTime
         oldCrossnumber.solutions.forEach { (clueId, oldSolution) ->
             val newSolution = newCrossnumber.solutions.getValue(clueId)
             if (oldSolution != newSolution) {
                 val statusString = "$clueId: ${oldSolution.status()} -> ${newSolution.status()}$suffix"
                 println(statusString + timeTakenString(timeTaken))
             }
+        }
+
+        if (oldCrossnumber.solutions == newCrossnumber.solutions && timeTaken > 1000) {
+            val solution = newCrossnumber.solutions.getValue(id)
+            println("$id: ${solution.status()} -> ${"unchanged".orange()}${timeTakenString(timeTaken)}")
         }
     }
 
@@ -240,7 +256,7 @@ data class Crossnumber(
         }
     }
 
-    fun replaceSolution(clueId: ClueId, possibilities: List<Long>): Crossnumber {
+    private fun replaceSolution(clueId: ClueId, possibilities: List<Long>): Crossnumber {
         val existing = solutions.getValue(clueId)
         return replaceSolution(clueId, PartialSolution(existing.squares, existing.clue, possibilities))
     }

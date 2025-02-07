@@ -30,11 +30,12 @@ import solver.Orientation
 import solver.RAM_THRESHOLD
 import solver.clue.ContextualClue
 import solver.clue.calculationWithReference
+import solver.clue.emptyClue
 import solver.clue.equalToNumberOfClueWithAnswer
 import solver.clue.equalsSomeOther
 import solver.clue.isDifferenceBetween
 import solver.clue.isEqualTo
-import solver.clue.isFactorOfRef
+import solver.clue.isFactorOf
 import solver.clue.isMultipleOf
 import solver.clue.isProductOf
 import solver.clue.simpleClue
@@ -82,10 +83,10 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "9A" to simpleClue { value -> isPalindrome(value) && containsDigit(0)(value) },
     *"10A".singleReference("24A") { other -> 100000 - (other * other.reversed()) },
     "13A" to tripleReference("35A", "8D", "17A") { a35, d8, a17 -> (a35 - d8) * a17 },
-    "15A" to calculationWithReference("13D") { value, other -> isPerfect(value * other) },
+    *"15A".calculationWithReference("13D") { value, other -> isPerfect(value * other) },
     "16A" to simpleClue { n: Long -> n.primeFactors().size == 2 },
     "17A" to simpleClue(::isTriangleNumber),
-    "19A" to isFactorOfRef("6D"),
+    *"19A".isFactorOf("6D"),
     *"20A".singleReference("30A") { it + 5134240 },
     "22A" to simpleClue(isSumOfConsecutive(7, digits = 3, ::primesUpTo)),
     "23A" to simpleClue { toRomanNumerals(it).sorted() == "ILXXX" },
@@ -108,7 +109,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "10D" to simpleClue { n -> n > 9990000000 && isPrime(n) && nextPrime(n).toString().length > 10 },
     "11D" to simpleClue(isMultipleOf(396533)),
     "12D" to simpleClue { 3 * "1$it".toLong() == "${it}1".toLong() },
-    "13D" to calculationWithReference("15A") { value, other -> isPerfect(value * other) },
+    "13D" to emptyClue(), // Covered by 15A
     "14D" to ::FourteenDown,
     "17D" to isEqualTo(42),
     "18D" to simpleClue(isMultipleOf(5)),

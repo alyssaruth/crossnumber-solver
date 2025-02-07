@@ -3,7 +3,9 @@ package maths
 import solver.Clue
 import kotlin.math.log2
 
-fun isCoprimeWith(other: Long): Clue = { hcf(it, other) == 1L }
+fun isCoprimeWith(other: Long): Clue = { areCoprime(it, other) }
+
+fun areCoprime(x: Long, y: Long) = hcf(x, y) == 1L
 
 fun isPrime(value: Long): Boolean {
     if (value == 1L) return false
