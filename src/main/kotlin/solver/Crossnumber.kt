@@ -256,7 +256,7 @@ data class Crossnumber(
         }
     }
 
-    private fun replaceSolution(clueId: ClueId, possibilities: List<Long>): Crossnumber {
+    fun replaceSolution(clueId: ClueId, possibilities: List<Long>): Crossnumber {
         val existing = solutions.getValue(clueId)
         return replaceSolution(clueId, PartialSolution(existing.squares, existing.clue, possibilities))
     }
@@ -273,5 +273,14 @@ data class Crossnumber(
         }
 
         return acrossSolutions.sumOf { (it as PartialSolution).possibilities.first() }
+    }
+
+    fun sumRow(rowNumber: Int): Int? {
+        val squares = digitMap.filter { it.key.y == rowNumber }.values
+        if (squares.any { it.size > 1 }) {
+            return null
+        }
+
+        return squares.sumOf { it.first() }
     }
 }
