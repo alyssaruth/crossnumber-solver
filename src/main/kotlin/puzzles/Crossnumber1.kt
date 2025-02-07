@@ -6,6 +6,7 @@ import maths.containsDigit
 import maths.digitProduct
 import maths.digits
 import maths.digitsSameExceptOne
+import maths.factorial
 import maths.hasDigitSum
 import maths.hasUniqueDigits
 import maths.isFibonacci
@@ -17,6 +18,7 @@ import maths.isSquare
 import maths.isSumOfConsecutive
 import maths.isTriangleNumber
 import maths.longDigits
+import maths.longOrNull
 import maths.nextPrime
 import maths.primeFactors
 import maths.primesUpTo
@@ -24,12 +26,9 @@ import maths.reversed
 import maths.sorted
 import maths.toRomanNumerals
 import solver.ClueConstructor
-import solver.ClueId
-import solver.Crossnumber
 import solver.Orientation
-import solver.RAM_THRESHOLD
-import solver.clue.ContextualClue
 import solver.clue.calculationWithReference
+import solver.clue.dualReference
 import solver.clue.emptyClue
 import solver.clue.equalToNumberOfClueWithAnswer
 import solver.clue.equalsSomeOther
@@ -110,7 +109,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "11D" to simpleClue(isMultipleOf(396533)),
     "12D" to simpleClue { 3 * "1$it".toLong() == "${it}1".toLong() },
     "13D" to emptyClue(), // Covered by 15A
-    "14D" to ::FourteenDown,
+    "14D" to dualReference("17D", "16A") { d17, a16 -> factorial(d17, downTo = a16 + 1).longOrNull() },
     "17D" to isEqualTo(42),
     "18D" to simpleClue(isMultipleOf(5)),
     "21D" to equalToNumberOfClueWithAnswer(Orientation.DOWN, 91199),
@@ -130,32 +129,4 @@ val CROSSNUMBER_1 = factoryCrossnumber(grid, clueMap, digitReducers)
 private fun sixDown(value: Long): Boolean {
     val digits = value.digits()
     return digits.indices.all { i -> digits.count { it == i } == digits[i] }
-}
-
-/**
- * The factorial of 17D divided by the factorial of 16A
- */
-class FourteenDown(crossnumber: Crossnumber) : ContextualClue(crossnumber) {
-    private val d17s = lookupAnswers(ClueId(17, Orientation.DOWN))
-    private val a16s = lookupAnswers(ClueId(16, Orientation.ACROSS))
-
-    override fun check(value: Long): Boolean {
-        if (d17s == null || a16s == null) {
-            return true
-        }
-
-        val size = d17s.size * a16s.size
-        if (size > RAM_THRESHOLD) {
-            return true
-        }
-
-        val possibles =
-            d17s.flatMap { d17 ->
-                a16s.mapNotNull { a16 ->
-                    if (d17 <= a16) null else ((a16 + 1)..d17).fold(1L, Long::times)
-                }
-            }.toSet()
-
-        return possibles.contains(value)
-    }
 }

@@ -1,5 +1,6 @@
 package maths
 
+import java.math.BigInteger
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -19,9 +20,8 @@ fun <E> List<Collection<E>>.allCombinations(): List<List<E>> =
         listsSoFar.flatMap { list -> newSolutions.map { x -> list + x } }
     }
 
-/**
- * There are n^2 1x1 squares, (n-1)^2 2x2 squares and so on.
- *
- * The sum of squares from 1..n can also be expressed as n(n+1)(2n + 1)/6
- */
-fun squaresOnNByNChessboard(n: Long) = (n * (n + 1) * ((2 * n) + 1)) / 6
+fun BigInteger.longOrNull() = try {
+    longValueExact()
+} catch (e: ArithmeticException) {
+    null
+}
