@@ -74,9 +74,13 @@ fun String.isHalfTheDifferenceBetween(a: String, b: String): Array<Pair<String, 
         b to tripleReference(this, b, a) { diff, x, y -> if (x > y) y + (2 * diff) else y - (2 * diff) },
     )
 
-/**
- * X is HCF(a, b) =>  a is multiple of X and b is multiple of X
- */
+fun String.isDifferenceBetween(a: String, b: String): Array<Pair<String, ClueConstructor>> =
+    arrayOf(
+        this to dualReference(a, b) { x, y -> abs(x - y) },
+        a to tripleReference(this, a, b) { diff, x, y -> if (x > y) y + diff else y - diff },
+        b to tripleReference(this, b, a) { diff, x, y -> if (x > y) y + diff else y - diff },
+    )
+
 fun String.isHcfOf(a: String, b: String): Array<Pair<String, ClueConstructor>> =
     arrayOf(
         this to dualReference(a, b, ::hcf),
@@ -84,21 +88,11 @@ fun String.isHcfOf(a: String, b: String): Array<Pair<String, ClueConstructor>> =
         b to makeCalculationWithReferences(this, a) { (b, hcf, a) -> hcf(a, b) == hcf },
     )
 
-/**
- * X is LCM(a, b) => a is a factor of x, b is a factor of x
- */
 fun String.isLcmOf(a: String, b: String): Array<Pair<String, ClueConstructor>> =
     arrayOf(
         this to dualReference(a, b, ::lcm),
-        a to makeCalculationWithReference(this) { value, other -> maths.isMultipleOf(value)(other) },
-        b to makeCalculationWithReference(this) { value, other -> maths.isMultipleOf(value)(other) },
-    )
-
-fun String.isDifferenceBetween(a: String, b: String): Array<Pair<String, ClueConstructor>> =
-    arrayOf(
-        this to dualReference(a, b) { x, y -> abs(x - y) },
-        a to tripleReference(this, a, b) { diff, x, y -> if (x > y) y + diff else y - diff },
-        b to tripleReference(this, b, a) { diff, x, y -> if (x > y) y + diff else y - diff },
+        a to makeCalculationWithReferences(this, b) { (a, lcm, b) -> lcm(a, b) == lcm },
+        b to makeCalculationWithReferences(this, a) { (b, lcm, a) -> lcm(a, b) == lcm },
     )
 
 fun String.isEqualTo(otherClue: String) = this.calculationWithReference(otherClue, Long::equals)

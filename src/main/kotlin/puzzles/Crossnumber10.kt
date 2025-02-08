@@ -1,5 +1,6 @@
 package puzzles
 
+import maths.allCombinations
 import maths.areAnagrams
 import maths.digitCounts
 import maths.digitSum
@@ -15,6 +16,10 @@ import maths.lastNDigits
 import maths.pow
 import maths.primeFactors
 import maths.reversed
+import solver.ClueId
+import solver.Crossnumber
+import solver.DigitMap
+import solver.Orientation
 import solver.clue.calculationWithReference
 import solver.clue.calculationWithReferences
 import solver.clue.isDifferenceBetween
@@ -31,6 +36,9 @@ import solver.clue.makeCalculationWithReferences
 import solver.clue.simpleClue
 import solver.clue.singleReference
 import solver.clueMap
+import solver.digitReducer.AbstractDigitReducer
+import solver.digitReducer.DigitReducerConstructor
+import solver.digitReducer.allDigits
 import solver.factoryCrossnumber
 import kotlin.math.abs
 
@@ -58,6 +66,8 @@ private val grid = """
     ...##..##.#.##.
     .........#.....
 """.trimIndent()
+
+private val digitReducers: List<DigitReducerConstructor> = listOf(::TwentySevenAcross)
 
 private val clueMap = clueMap(
     "1A" to simpleClue { areAnagrams(it, it * 9) },
@@ -137,6 +147,35 @@ private val clueMap = clueMap(
     *"50D".isGreaterThan("8D")
 )
 
+val CROSSNUMBER_10 = factoryCrossnumber(grid, clueMap, digitReducers = digitReducers)
+
+/**
+ * Pure optimisation, it's not needed but helps to reduce 27A to something more manageable
+ */
+private class TwentySevenAcross(crossnumber: Crossnumber) :
+    AbstractDigitReducer(ClueId(27, Orientation.ACROSS), allDigits(), crossnumber) {
+
+    override fun apply(digitMap: DigitMap): DigitMap {
+        val lambda: (Int, Int, Int) -> Boolean = { a, b, c -> b == a + c || b == abs(a - c) }
+
+        return squares.windowed(3).fold(digitMap) { currentMap, (ptA, ptB, ptC) ->
+            val neighbourDigits = listOf(currentMap.getValue(ptA), currentMap.getValue(ptC))
+            val neighbourCombos = neighbourDigits.allCombinations()
+
+            val middleDigits = digitMap.getValue(ptB)
+            val newMiddleDigits =
+                middleDigits.filter { b -> neighbourCombos.any { (a, c) -> lambda(a, b, c) } }
+
+            val newCombos = neighbourCombos.filter { (a, c) -> newMiddleDigits.any { b -> lambda(a, b, c) } }
+            val newAValues = newCombos.map { it.first() }.distinct().sorted()
+            val newCValues = newCombos.map { it.last() }.distinct().sorted()
+
+            currentMap + (ptA to newAValues) + (ptB to newMiddleDigits) + (ptC to newCValues)
+        }
+    }
+
+}
+
 /**
  * 7D: A solution of x^2-(50D)x+(11A)=0
  * 8D: A solution of x^2-(50D)x+(11A)=0
@@ -146,5 +185,3 @@ private val clueMap = clueMap(
  * So D50 = 7D + 8D and 11A = 7D*8D
  */
 private fun quadraticStuff(d7: Long, d8: Long, d50: Long, a11: Long) = d50 - d7 == d8 && d7 * d8 == a11
-
-val CROSSNUMBER_10 = factoryCrossnumber(grid, clueMap)

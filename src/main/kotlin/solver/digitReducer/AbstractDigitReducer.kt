@@ -28,9 +28,9 @@ abstract class AbstractDigitReducer(
 ) {
     protected val squares = selectSquares(squareSelector)
 
-    private fun selectSquares(squareSelector: MultiSquareSelector): Set<Point> {
+    private fun selectSquares(squareSelector: MultiSquareSelector): List<Point> {
         val clueSquares = crossnumber.solutions.getValue(clueId).squares
-        return squareSelector(clueSquares).toSet()
+        return squareSelector(clueSquares)
     }
 
     abstract fun apply(digitMap: DigitMap): DigitMap
