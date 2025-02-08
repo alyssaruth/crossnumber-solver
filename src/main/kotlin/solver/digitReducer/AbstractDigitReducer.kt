@@ -26,9 +26,9 @@ abstract class AbstractDigitReducer(
     squareSelector: MultiSquareSelector,
     protected val crossnumber: Crossnumber
 ) {
-    protected val squares = selectSquares(squareSelector)
+    protected val squares = selectSquares(clueId, squareSelector)
 
-    private fun selectSquares(squareSelector: MultiSquareSelector): List<Point> {
+    protected fun selectSquares(clueId: ClueId, squareSelector: MultiSquareSelector): List<Point> {
         val clueSquares = crossnumber.solutions.getValue(clueId).squares
         return squareSelector(clueSquares)
     }

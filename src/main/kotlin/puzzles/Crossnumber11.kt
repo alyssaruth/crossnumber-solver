@@ -105,9 +105,10 @@ private val clueMap = clueMap(
     *"37D".isEqualTo("35A")
 )
 
+val CROSSNUMBER_11 = factoryCrossnumber(grid, clueMap)
+
 private fun String.isGreaterThanAndMultipleOfAndReverseOf(otherClue: String) =
     this.calculationWithReference(otherClue) { value, other ->
         value > other && isMultipleOf(other)(value) && value == other.reversed()
-    }
-
-val CROSSNUMBER_11 = factoryCrossnumber(grid, clueMap)
+    } + arrayOf(this to simpleClue { it > it.reversed() && isMultipleOf(it.reversed())(it) },
+        otherClue to simpleClue { it < it.reversed() && isMultipleOf(it)(it.reversed()) })

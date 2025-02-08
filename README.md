@@ -135,15 +135,16 @@ val clueMap: Map<String, ClueConstructor> = clueMap(
 
 Below are the crossnumbers this can solve so far, along with roughly how long each solve takes:
 
-| Number | Time (s) | URL                                                                                |
-|--------|----------|------------------------------------------------------------------------------------|
-| 1      | 15       | https://chalkdustmagazine.com/regulars/100-prize-crossnumber-issue-01/             |
-| 2      | 75       | https://chalkdustmagazine.com/regulars/crossnumber/100-prize-crossnumber-issue-02/ |
-| 3      | 20       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-03/     |
-| 4      | 15       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-04/     |
-| 5      | 15       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-05/     |
-| 6      | 8        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-06/     |
-| 7      | 660 (!)  | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-07/     |
-| 8      | 5        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-08/     |
-| 9      | 20       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-09/     |
-| 10     | 40       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-10/     |
+| #  | Time (s) | URL                                                                                |
+|----|----------|------------------------------------------------------------------------------------|
+| 1  | 15       | https://chalkdustmagazine.com/regulars/100-prize-crossnumber-issue-01/             |
+| 2  | 75       | https://chalkdustmagazine.com/regulars/crossnumber/100-prize-crossnumber-issue-02/ |
+| 3  | 20       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-03/     |
+| 4  | 15       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-04/     |
+| 5  | 15       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-05/     |
+| 6  | 8        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-06/     |
+| 7  | 660 (!)  | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-07/     |
+| 8  | 5        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-08/     |
+| 9  | 20       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-09/     |
+| 10 | 40       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-10/     |
+| 11 | 20       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-11/     |
