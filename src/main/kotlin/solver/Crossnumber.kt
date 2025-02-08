@@ -48,9 +48,10 @@ data class Crossnumber(
     private fun printLoopBanner(pass: Int) {
         val solved = solutions.values.count(ISolution::isSolved)
         val solvedStr = if (solved < 10) " $solved" else solved.toString()
-        println("********************")
+        val extraStar = if (solved < 10) "" else "*"
+        println("********************$extraStar")
         println("* PASS $pass ($solvedStr / ${solutions.size}) *")
-        println("********************")
+        println("********************$extraStar")
     }
 
     private fun applyDigitReducers(): Crossnumber {

@@ -1,5 +1,6 @@
 import logging.red
 import puzzles.CROSSNUMBER_1
+import puzzles.CROSSNUMBER_10
 import puzzles.CROSSNUMBER_2
 import puzzles.CROSSNUMBER_3
 import puzzles.CROSSNUMBER_4
@@ -20,6 +21,7 @@ private val puzzles = mapOf(
     "7" to CROSSNUMBER_7,
     "8" to CROSSNUMBER_8,
     "9" to CROSSNUMBER_9,
+    "10" to CROSSNUMBER_10,
 )
 
 fun main(args: Array<String>) {

@@ -146,3 +146,4 @@ Below are the crossnumbers this can solve so far, along with roughly how long ea
 | 7      | 660 (!)  | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-07/     |
 | 8      | 5        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-08/     |
 | 9      | 20       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-09/     |
+| 10     | 120      | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-10/     |

@@ -80,8 +80,8 @@ fun String.isHalfTheDifferenceBetween(a: String, b: String): Array<Pair<String, 
 fun String.isHcfOf(a: String, b: String): Array<Pair<String, ClueConstructor>> =
     arrayOf(
         this to dualReference(a, b, ::hcf),
-        a to makeCalculationWithReference(this) { value, other -> maths.isMultipleOf(other)(value) },
-        b to makeCalculationWithReference(this) { value, other -> maths.isMultipleOf(other)(value) },
+        a to makeCalculationWithReferences(this, b) { (a, hcf, b) -> hcf(a, b) == hcf },
+        b to makeCalculationWithReferences(this, a) { (b, hcf, a) -> hcf(a, b) == hcf },
     )
 
 /**

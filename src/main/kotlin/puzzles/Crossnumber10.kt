@@ -101,23 +101,17 @@ private val clueMap = clueMap(
     },
     *"5D".calculationWithReferences("23A", "30D") { it.sum() > 1_000_000_000 },
     "6D" to simpleClue { isSquare(2665.pow(2) - (it * it)) },
-    "7D" to makeCalculationWithReferences("11A", "50D") { (d7, a11, d50) ->
-        quadraticStuff(d7, d50, a11)
+    "7D" to makeCalculationWithReferences("8D", "11A", "50D") { (d7, d8, a11, d50) ->
+        quadraticStuff(d7, d8, d50, a11)
     },
-    "8D" to makeCalculationWithReferences("11A", "50D") { (d8, a11, d50) ->
-        quadraticStuff(d8, d50, a11)
+    "8D" to makeCalculationWithReferences("7D", "11A", "50D") { (d8, d7, a11, d50) ->
+        quadraticStuff(d7, d8, d50, a11)
     },
-    "11A" to makeCalculationWithReferences("50D", "7D") { (a11, d50, d7) ->
-        quadraticStuff(d7, d50, a11)
+    "11A" to makeCalculationWithReferences("50D", "7D", "8D") { (a11, d50, d7, d8) ->
+        quadraticStuff(d7, d8, d50, a11)
     },
-    "11A" to makeCalculationWithReferences("50D", "8D") { (a11, d50, d8) ->
-        quadraticStuff(d8, d50, a11)
-    },
-    "50D" to makeCalculationWithReferences("11A", "7D") { (d50, a11, d7) ->
-        quadraticStuff(d7, d50, a11)
-    },
-    "50D" to makeCalculationWithReferences("11A", "8D") { (d50, a11, d8) ->
-        quadraticStuff(d8, d50, a11)
+    "50D" to makeCalculationWithReferences("11A", "7D", "8D") { (d50, a11, d7, d8) ->
+        quadraticStuff(d7, d8, d50, a11)
     },
     "9D" to simpleClue(::isPalindrome),
     "13D" to simpleClue(::isPrime),
@@ -148,7 +142,9 @@ private val clueMap = clueMap(
  * 8D: A solution of x^2-(50D)x+(11A)=0
  *
  * (x-a)(x-b) = 0 where 11A = a*b, 50D = a + b, and 7D/8D are one of a or b
+ *
+ * So D50 = 7D + 8D and 11A = 7D*8D
  */
-private fun quadraticStuff(a: Long, d50: Long, a11: Long) = (d50 - a) * a == a11
+private fun quadraticStuff(d7: Long, d8: Long, d50: Long, a11: Long) = d50 - d7 == d8 && d7 * d8 == a11
 
 val CROSSNUMBER_10 = factoryCrossnumber(grid, clueMap)
