@@ -92,6 +92,8 @@ fun Long.concatenate(other: Long) = "$this$other".toLong()
 
 fun containsDigit(digit: Int): Clue = { value -> value.digits().contains(digit) }
 
+fun containsDigits(vararg digits: Int): Clue = { value -> digits.all { digit -> containsDigit(digit)(value) } }
+
 fun canBePermutedSuchThat(condition: Clue): Clue = { value ->
     permuteDigits(value).any(condition)
 }
