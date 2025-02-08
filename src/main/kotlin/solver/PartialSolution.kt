@@ -13,7 +13,7 @@ data class PartialSolution(
 
     override fun possibilityCount(digitMap: DigitMap) = possibilities.size.toLong()
 
-    override fun iterate(clueId: ClueId, crossnumber: Crossnumber, log: Boolean): Crossnumber {
+    override fun iterate(clueId: ClueId, crossnumber: Crossnumber): Crossnumber {
         val reduced = applyDigitMap(crossnumber.digitMap).applyClue(crossnumber)
 
         if (reduced.possibilities.isEmpty()) {

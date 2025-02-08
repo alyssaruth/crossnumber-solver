@@ -6,7 +6,7 @@ sealed interface ISolution {
 
     fun possibilityCount(digitMap: DigitMap): Long
 
-    fun iterate(clueId: ClueId, crossnumber: Crossnumber, log: Boolean = true): Crossnumber
+    fun iterate(clueId: ClueId, crossnumber: Crossnumber): Crossnumber
 
     fun status(): String
 

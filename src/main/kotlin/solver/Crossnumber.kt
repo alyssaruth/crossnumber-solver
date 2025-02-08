@@ -211,7 +211,7 @@ data class Crossnumber(
     private fun iterateSolution(id: ClueId, log: Boolean): Crossnumber {
         try {
             val startTime = System.currentTimeMillis()
-            val newCrossnumber = solutions.getValue(id).iterate(id, this, log)
+            val newCrossnumber = solutions.getValue(id).iterate(id, this)
             if (log) logChanges(id, this, newCrossnumber, startTime)
             return newCrossnumber
         } catch (ex: Exception) {

@@ -2,6 +2,8 @@ package solver.clue
 
 import maths.areCoprime
 import maths.geometricMean
+import maths.hcf
+import maths.lcm
 import maths.longOrNull
 import maths.wholeDiv
 import solver.ClueConstructor
@@ -70,6 +72,26 @@ fun String.isHalfTheDifferenceBetween(a: String, b: String): Array<Pair<String, 
         this to dualReference(a, b) { x, y -> abs(x - y) / 2 },
         a to tripleReference(this, a, b) { diff, x, y -> if (x > y) y + (2 * diff) else y - (2 * diff) },
         b to tripleReference(this, b, a) { diff, x, y -> if (x > y) y + (2 * diff) else y - (2 * diff) },
+    )
+
+/**
+ * X is HCF(a, b) =>  a is multiple of X and b is multiple of X
+ */
+fun String.isHcfOf(a: String, b: String): Array<Pair<String, ClueConstructor>> =
+    arrayOf(
+        this to dualReference(a, b, ::hcf),
+        a to makeCalculationWithReference(this) { value, other -> maths.isMultipleOf(other)(value) },
+        b to makeCalculationWithReference(this) { value, other -> maths.isMultipleOf(other)(value) },
+    )
+
+/**
+ * X is LCM(a, b) => a is a factor of x, b is a factor of x
+ */
+fun String.isLcmOf(a: String, b: String): Array<Pair<String, ClueConstructor>> =
+    arrayOf(
+        this to dualReference(a, b, ::lcm),
+        a to makeCalculationWithReference(this) { value, other -> maths.isMultipleOf(value)(other) },
+        b to makeCalculationWithReference(this) { value, other -> maths.isMultipleOf(value)(other) },
     )
 
 fun String.isDifferenceBetween(a: String, b: String): Array<Pair<String, ClueConstructor>> =

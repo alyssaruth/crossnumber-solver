@@ -7,26 +7,22 @@ import maths.digits
 import maths.digitsAllTheSame
 import maths.hasDigitRelationship
 import maths.hasDigitSum
-import maths.hcf
-import maths.integerPartitions
 import maths.isMultipleOf
 import maths.isPalindrome
 import maths.isPrime
 import maths.isSquare
 import maths.lastNDigits
-import maths.lcm
 import maths.pow
 import maths.primeFactors
-import maths.product
 import maths.reversed
 import solver.clue.calculationWithReference
 import solver.clue.calculationWithReferences
-import solver.clue.dualReference
-import solver.clue.emptyClue
 import solver.clue.isDifferenceBetween
 import solver.clue.isEqualTo
 import solver.clue.isFactorOf
 import solver.clue.isGreaterThan
+import solver.clue.isHcfOf
+import solver.clue.isLcmOf
 import solver.clue.isLessThan
 import solver.clue.isMultipleOf
 import solver.clue.isNotEqualTo
@@ -74,20 +70,20 @@ private val clueMap = clueMap(
     "14A" to hasDigitRelationship { (a, b) -> b == a - 1 || b == a - 2 },
     *"15A".singleReference("31D") { it.reversed() },
     "18A" to simpleClue { isPalindrome(it - 5) },
-    "21A" to dualReference("26A", "34A", ::hcf),
+    *"21A".isHcfOf("26A", "34A"),
     "22A" to simpleClue { isPalindrome(it - 6) },
     "23A" to hasDigitRelationship { (a, b) -> b == a + 1 || b == a - 3 },
     *"24A".isNotEqualTo("32A"),
     *"24A".isNotEqualTo("40A"),
     *"25A".isDifferenceBetween("31D", "15A"),
-    "26A" to dualReference("21A", "34A", ::hcf),
+    *"26A".isHcfOf("21A", "34A"),
     "27A" to hasDigitRelationship(3) { (a, b, c) -> b == a + c || b == abs(a - c) },
-    "32A" to dualReference("10A", "24A", ::hcf),
+    *"32A".isHcfOf("10A", "24A"),
     "33A" to simpleClue { isPalindrome(it - 3) },
-    "34A" to dualReference("21A", "26A", ::hcf),
+    *"34A".isHcfOf("21A", "26A"),
     "35A" to hasDigitRelationship { (a, b) -> b == a + 1 || b == a - 3 },
     *"37A".isDifferenceBetween("49A", "13A"),
-    "40A" to dualReference("10A", "24A", ::lcm),
+    *"40A".isLcmOf("10A", "24A"),
     "41A" to simpleClue { isPalindrome(it - 4) },
     *"43A".singleReference("25A") { it.reversed() },
     "45A" to simpleClue { isPalindrome(it - 7) },
@@ -101,21 +97,32 @@ private val clueMap = clueMap(
     *"1D".isMultipleOf("9D"),
     *"2D".isMultipleOf("1D"),
     *"4D".calculationWithReference("33A") { value, other ->
-        other.digits().count { digit -> (value.digitCounts()[digit] ?: 0) > 1 } == 1 },
+        other.digits().count { digit -> (value.digitCounts()[digit] ?: 0) > 1 } == 1
+    },
     *"5D".calculationWithReferences("23A", "30D") { it.sum() > 1_000_000_000 },
     "6D" to simpleClue { isSquare(2665.pow(2) - (it * it)) },
-    "7D" to emptyClue(), // TODO - A solution of x^2-(50D)x+(11A)=0
-    "8D" to emptyClue(), // TODO - A solution of x^2-(50D)x+(11A)=0
+    "7D" to makeCalculationWithReferences("11A", "50D") { (d7, a11, d50) ->
+        quadraticStuff(d7, d50, a11)
+    },
+    "8D" to makeCalculationWithReferences("11A", "50D") { (d8, a11, d50) ->
+        quadraticStuff(d8, d50, a11)
+    },
+    "11A" to makeCalculationWithReferences("50D", "7D") { (a11, d50, d7) ->
+        quadraticStuff(d7, d50, a11)
+    },
+    "11A" to makeCalculationWithReferences("50D", "8D") { (a11, d50, d8) ->
+        quadraticStuff(d8, d50, a11)
+    },
     "50D" to makeCalculationWithReferences("11A", "7D") { (d50, a11, d7) ->
-        d50.toInt().integerPartitions(2).any { partition -> partition.product() == a11 && partition.contains(d7.toInt()) }
+        quadraticStuff(d7, d50, a11)
     },
     "50D" to makeCalculationWithReferences("11A", "8D") { (d50, a11, d8) ->
-        d50.toInt().integerPartitions(2).any { partition -> partition.product() == a11 && partition.contains(d8.toInt()) }
+        quadraticStuff(d8, d50, a11)
     },
     "9D" to simpleClue(::isPalindrome),
     "13D" to simpleClue(::isPrime),
     "16D" to hasDigitRelationship(3) { (a, b, c) -> b == a + c || b == abs(a - c) },
-    "17D" to simpleClue { it.digitSum().toLong() == it.digits()[0].pow(2 ) },
+    "17D" to simpleClue { it.digitSum().toLong() == it.digits()[0].pow(2) },
     "19D" to simpleClue { isPalindrome(it - 2) },
     *"20D".calculationWithReference("33A") { x, y -> x + y > 10000 },
     "22D" to simpleClue { !isPrime(it) && it.primeFactors().distinct().size == 1 },
@@ -135,5 +142,13 @@ private val clueMap = clueMap(
     *"49D".calculationWithReference("45A") { value, other -> other.digits().contains(value.digits().first()) },
     *"50D".isGreaterThan("8D")
 )
+
+/**
+ * 7D: A solution of x^2-(50D)x+(11A)=0
+ * 8D: A solution of x^2-(50D)x+(11A)=0
+ *
+ * (x-a)(x-b) = 0 where 11A = a*b, 50D = a + b, and 7D/8D are one of a or b
+ */
+private fun quadraticStuff(a: Long, d50: Long, a11: Long) = (d50 - a) * a == a11
 
 val CROSSNUMBER_10 = factoryCrossnumber(grid, clueMap)
