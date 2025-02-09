@@ -28,6 +28,9 @@ open class MultiReferenceClue(
     }
 }
 
+fun dualReference(clueA: String, clueB: String, combiner: (Long, Long) -> Long?) =
+    multiReference(clueA, clueB) { (a, b) -> combiner(a, b) }
+
 fun multiReference(
     vararg clues: String,
     combiner: (List<Long>) -> Long?

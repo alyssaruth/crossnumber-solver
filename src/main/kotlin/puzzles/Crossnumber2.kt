@@ -40,12 +40,12 @@ import solver.clue.isMultipleOf
 import solver.clue.isProductOf
 import solver.clue.isSumOf
 import solver.clue.makeSingleReference
+import solver.clue.multiReference
 import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.singleReference
 import solver.clue.smallest
 import solver.clue.transformedEqualsRef
-import solver.clue.tripleReference
 import solver.clueMap
 import solver.digitReducer.DigitReducerConstructor
 import solver.digitReducer.digitIndices
@@ -127,7 +127,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "19D" to simpleClue(::isAbundant),
     "20D" to isEqualTo(degreesToFahrenheit(100) - degreesToFahrenheit(0)),
     "21D" to digitsSameExceptOne(6),
-    "23D" to tripleReference("15D", "17A", "34D") { d15, a17, d34 -> d15 + a17 - d34 },
+    "23D" to multiReference("15D", "17A", "34D") { (d15, a17, d34) -> d15 + a17 - d34 },
     "26D" to simpleClue(hasDigitSum(3)),
     "27D" to emptyClue(),
     "30D" to simpleClue { !isPalindrome(it) },

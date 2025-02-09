@@ -70,15 +70,15 @@ fun String.isGeometricMeanOf(a: String, b: String): Array<Pair<String, ClueConst
 fun String.isHalfTheDifferenceBetween(a: String, b: String): Array<Pair<String, ClueConstructor>> =
     arrayOf(
         this to dualReference(a, b) { x, y -> abs(x - y) / 2 },
-        a to tripleReference(this, a, b) { diff, x, y -> if (x > y) y + (2 * diff) else y - (2 * diff) },
-        b to tripleReference(this, b, a) { diff, x, y -> if (x > y) y + (2 * diff) else y - (2 * diff) },
+        a to multiReference(this, a, b) { (diff, x, y) -> if (x > y) y + (2 * diff) else y - (2 * diff) },
+        b to multiReference(this, b, a) { (diff, x, y) -> if (x > y) y + (2 * diff) else y - (2 * diff) },
     )
 
 fun String.isDifferenceBetween(a: String, b: String): Array<Pair<String, ClueConstructor>> =
     arrayOf(
         this to dualReference(a, b) { x, y -> abs(x - y) },
-        a to tripleReference(this, a, b) { diff, x, y -> if (x > y) y + diff else y - diff },
-        b to tripleReference(this, b, a) { diff, x, y -> if (x > y) y + diff else y - diff },
+        a to multiReference(this, a, b) { (diff, x, y) -> if (x > y) y + diff else y - diff },
+        b to multiReference(this, b, a) { (diff, x, y) -> if (x > y) y + diff else y - diff },
     )
 
 fun String.isHcfOf(a: String, b: String): Array<Pair<String, ClueConstructor>> =

@@ -37,9 +37,9 @@ import solver.clue.isEqualTo
 import solver.clue.isFactorOf
 import solver.clue.isMultipleOf
 import solver.clue.isProductOf
+import solver.clue.multiReference
 import solver.clue.simpleClue
 import solver.clue.singleReference
-import solver.clue.tripleReference
 import solver.clueMap
 import solver.digitReducer.DigitReducerConstructor
 import solver.digitReducer.allDigits
@@ -81,7 +81,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     *"7A".isDifferenceBetween("10D", "11D"),
     "9A" to simpleClue { value -> isPalindrome(value) && containsDigit(0)(value) },
     *"10A".singleReference("24A") { other -> 100000 - (other * other.reversed()) },
-    "13A" to tripleReference("35A", "8D", "17A") { a35, d8, a17 -> (a35 - d8) * a17 },
+    "13A" to multiReference("35A", "8D", "17A") { (a35, d8, a17) -> (a35 - d8) * a17 },
     *"15A".calculationWithReference("13D") { value, other -> isPerfect(value * other) },
     "16A" to simpleClue { n: Long -> n.primeFactors().size == 2 },
     "17A" to simpleClue(::isTriangleNumber),
