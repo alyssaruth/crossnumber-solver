@@ -1,5 +1,6 @@
 package solver.clue
 
+import maths.areAnagrams
 import maths.areCoprime
 import maths.geometricMean
 import maths.hcf
@@ -122,6 +123,8 @@ fun String.transformedEquals(other: String, mapper: (Long) -> Long) = other.sing
 
 fun String.isCoprimeWith(otherClue: String) = calculationWithReference(otherClue, ::areCoprime)
 
+fun String.isAnagramOf(otherClue: String) = calculationWithReference(otherClue) { x, y -> areAnagrams(x, y) }
+
 fun String.calculationWithReference(
     otherClue: String,
     checker: (Long, Long) -> Boolean
@@ -129,6 +132,17 @@ fun String.calculationWithReference(
     arrayOf(
         this to makeCalculationWithReference(otherClue, checker),
         otherClue to makeCalculationWithReference(this) { value, other -> checker(other, value) },
+    )
+
+fun String.calculationWithDualReference(
+    clueB: String,
+    clueC: String,
+    checker: (Long, Long, Long) -> Boolean
+): Array<Pair<String, ClueConstructor>> =
+    arrayOf(
+        this to makeCalculationWithReferences(clueB, clueC) { (a, b, c) -> checker(a, b, c) },
+        clueB to makeCalculationWithReferences(this, clueC) { (b, a, c) -> checker(a, b, c) },
+        clueC to makeCalculationWithReferences(this, clueB) { (c, a, b) -> checker(a, b, c) },
     )
 
 /**

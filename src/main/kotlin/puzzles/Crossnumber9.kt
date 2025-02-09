@@ -1,6 +1,5 @@
 package puzzles
 
-import maths.areAnagrams
 import maths.bigPow
 import maths.digitCounts
 import maths.digitSum
@@ -20,9 +19,9 @@ import maths.previousPrime
 import maths.sqrtWhole
 import maths.sumOfCubesOfDigits
 import maths.sumOfNthPowerOfDigits
-import solver.clue.calculationWithReference
 import solver.clue.equalsSomeOther
 import solver.clue.equalsTwoOthersConcatenated
+import solver.clue.isAnagramOf
 import solver.clue.isEqualTo
 import solver.clue.isFactorOf
 import solver.clue.isLessThan
@@ -82,7 +81,7 @@ private val clueMap = clueMap(
     "46A" to digitsAllTheSame(15),
 
     *"1D".isMultipleOf("12A"),
-    *"2D".calculationWithReference("3D", ::areAnagrams),
+    *"2D".isAnagramOf("3D"),
     "3D" to simpleClue(isMultipleOf(3)) + simpleClue { it.digits()[1] == 4 },
     "4D" to simpleClue(::isAnagramOfAPalindrome),
     *"5D".isFactorOf("10A"),

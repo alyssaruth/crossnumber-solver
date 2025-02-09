@@ -1,7 +1,6 @@
 package puzzles
 
 import maths.appearsInPascalsTriangle
-import maths.areAnagrams
 import maths.countStraightLinesThroughGrid
 import maths.cubesUpTo
 import maths.digitSum
@@ -38,6 +37,7 @@ import solver.clue.calculationWithReference
 import solver.clue.dualReference
 import solver.clue.emptyClue
 import solver.clue.equalsSomeOther
+import solver.clue.isAnagramOf
 import solver.clue.isEqualTo
 import solver.clue.isFactorOf
 import solver.clue.isHalfTheDifferenceBetween
@@ -119,7 +119,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     }),
     "14D" to transformedEqualsRef("12A") { it.modPow(91, 18_793_739) },
     *"15D".isSumOf("1D", "26A"),
-    *"18D".calculationWithReference("31D", ::areAnagrams),
+    *"18D".isAnagramOf("31D"),
     "19D" to transformedEqualsRef("6D") { it.digitSum() + 1L },
     "20D" to dualReference("7D", "5A") { a, b -> lcm(a, b) },
     "21D".equalsSomeOther(),
