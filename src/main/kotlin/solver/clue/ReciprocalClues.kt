@@ -134,7 +134,7 @@ fun String.calculationWithReference(
 /**
  * Only sound if the checker doesn't care about the order of the clues!
  */
-fun String.calculationWithReferences(
+fun String.unorderedCalculationWithReferences(
     vararg otherClues: String,
     checker: (List<Long>) -> Boolean
 ): Array<Pair<String, ClueConstructor>> {

@@ -131,9 +131,9 @@ data class Crossnumber(
 
         return if (badPossibles.isNotEmpty()) {
             val newCrossnumber =
-                replaceSolution(clueId, possibles - badPossibles).iterateSolution(clueId, false)
+                replaceSolution(clueId, possibles - badPossibles)
             logChanges(clueId, this, newCrossnumber, startTime, " (by contradiction)".orange())
-            newCrossnumber
+            newCrossnumber.iterateSolution(clueId, false)
         } else {
             null
         }

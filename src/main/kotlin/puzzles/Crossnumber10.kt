@@ -21,7 +21,6 @@ import solver.Crossnumber
 import solver.DigitMap
 import solver.Orientation
 import solver.clue.calculationWithReference
-import solver.clue.calculationWithReferences
 import solver.clue.isDifferenceBetween
 import solver.clue.isEqualTo
 import solver.clue.isFactorOf
@@ -35,6 +34,7 @@ import solver.clue.isSumOf
 import solver.clue.makeCalculationWithReferences
 import solver.clue.simpleClue
 import solver.clue.singleReference
+import solver.clue.unorderedCalculationWithReferences
 import solver.clueMap
 import solver.digitReducer.AbstractDigitReducer
 import solver.digitReducer.DigitReducerConstructor
@@ -109,7 +109,7 @@ private val clueMap = clueMap(
     *"4D".calculationWithReference("33A") { value, other ->
         other.digits().count { digit -> (value.digitCounts()[digit] ?: 0) > 1 } == 1
     },
-    *"5D".calculationWithReferences("23A", "30D") { it.sum() > 1_000_000_000 },
+    *"5D".unorderedCalculationWithReferences("23A", "30D") { it.sum() > 1_000_000_000 },
     "6D" to simpleClue { isSquare(2665.pow(2) - (it * it)) },
     "7D" to makeCalculationWithReferences("8D", "11A", "50D") { (d7, d8, a11, d50) ->
         quadraticStuff(d7, d8, d50, a11)

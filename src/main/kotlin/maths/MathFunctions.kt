@@ -38,6 +38,8 @@ fun isTetrahedralNumber(value: Long): Boolean =
 
 fun isSquare(value: Long) = value > 0 && value == sqrtRounded(value) * sqrtRounded(value)
 
+fun isCube(value: Long) = hasWholeNthRoot(3)(value)
+
 fun distinctDivisors(n: Long): Set<Long> =
     (1..sqrtRounded(n)).filter { n % it == 0L }.flatMap { listOf(it, n / it) }.toSet()
 
