@@ -123,7 +123,7 @@ fun String.transformedEquals(other: String, mapper: (Long) -> Long) = other.sing
 
 fun String.isCoprimeWith(otherClue: String) = calculationWithReference(otherClue, ::areCoprime)
 
-fun String.isAnagramOf(otherClue: String) = calculationWithReference(otherClue) { x, y -> areAnagrams(x, y) }
+fun String.isAnagramOf(otherClue: String) = calculationWithReference(otherClue) { x, y -> x != y && areAnagrams(x, y) }
 
 fun String.calculationWithReference(
     otherClue: String,

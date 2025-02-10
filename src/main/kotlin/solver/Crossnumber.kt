@@ -204,10 +204,10 @@ data class Crossnumber(
     private fun pendingSolutions(): Map<ClueId, PendingSolution> =
         solutions.filterValues { it is PendingSolution }.mapValues { it.value as PendingSolution }
 
-    private fun partialSolutions(): Map<ClueId, PartialSolution> =
+    fun partialSolutions(): Map<ClueId, PartialSolution> =
         solutions.filterValues { it is PartialSolution }.mapValues { it.value as PartialSolution }
 
-    private fun isSolved() = solutions.values.all(ISolution::isSolved)
+    fun isSolved() = solutions.values.all(ISolution::isSolved)
 
     private fun iterateSolution(id: ClueId, log: Boolean): Crossnumber {
         try {
