@@ -1,5 +1,6 @@
 package puzzles
 
+import logging.completionString
 import logging.green
 import logging.printLoopBanner
 import logging.red
@@ -21,6 +22,7 @@ import solver.PartialSolution
 import solver.clue.isAnagramOf
 import solver.clue.isEqualTo
 import solver.clue.isLessThan
+import solver.clue.isNTimes
 import solver.clue.makeCalculationWithReference
 import solver.clue.makeSingleReference
 import solver.clue.plus
@@ -52,7 +54,7 @@ private val grid = """
     ..###...###..
 """.trimIndent()
 
-private val isSquare = simpleClue(::isSquare)
+private val isSquareClue = simpleClue(::isSquare)
 
 private val acrossClues: List<ClueConstructor> = listOf(
     isEqualTo(217),
@@ -64,8 +66,8 @@ private val acrossClues: List<ClueConstructor> = listOf(
     makeCalculationWithReference("2D") { value, other -> isMultipleOf(value)(other) },
     simpleClue(isMultipleOf(51)),
     simpleClue(isPowerOf(2)),
-    isSquare,
-    isSquare,
+    isSquareClue,
+    isSquareClue,
     makeCalculationWithReference("25D") { x, y -> x != y && areAnagrams(x, y) },
     makeSingleReference("18D") { it },
     makeSingleReference("34D") { it },
@@ -85,24 +87,24 @@ private val clueMap = clueMap(
     *"4D".isLessThan("38D"),
     "5D" to simpleClue(isEven),
     "6D" to simpleClue(isMultipleOf(3)),
-    *"6D".singleReference("12D") { it * 2 },
+    *"6D".isNTimes(2, "12D"),
     *"7D".isEqualTo("5D"),
     "9D" to simpleClue(::isSquare),
     "11D" to simpleClue(::isSquare),
-    *"12D".singleReference("18D") { it * 2 },
+    *"12D".isNTimes(2, "18D"),
     *"13D".isEqualTo("5D"),
     *"14D".isLessThan("18D"),
     "15D" to simpleClue(isMultipleOf(23)) + simpleClue { it.longDigits().all(isOdd) },
     *"16D".singleReference("17A") { it - 1 },
-    *"18D".singleReference("14D") { it * 2 },
+    *"18D".isNTimes(2, "14D"),
     "20D" to simpleClue(::isPalindrome) + simpleClue(::isPrime),
     "22D" to simpleClue(isMultipleOf(23)) + simpleClue { it.longDigits().all(isOdd) },
     "23D" to simpleClue(isMultipleOf(23)) + simpleClue { it.longDigits().all(isOdd) },
-    *"24D".singleReference("30D") { it * 3 },
+    *"24D".isNTimes(3, "30D"),
     "25D" to simpleClue(isMultipleOf(23)) + simpleClue { it.longDigits().all(isOdd) },
     *"27D".singleReference("21A") { it * it },
     "29D" to simpleClue(isMultipleOf(25)) + simpleClue { it.longDigits().all(isOdd) },
-    *"30D".singleReference("32D") { it * 3 },
+    *"30D".isNTimes(3, "32D"),
     *"31D".singleReference("3A") { it + 1 },
     *"32D".isLessThan("30D"),
     "33D" to simpleClue(isMultipleOf(23)) + simpleClue { it.longDigits().all(isOdd) },

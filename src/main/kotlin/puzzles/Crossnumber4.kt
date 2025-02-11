@@ -43,6 +43,7 @@ import solver.clue.isFactorOf
 import solver.clue.isHalfTheDifferenceBetween
 import solver.clue.isLessThan
 import solver.clue.isMultipleOf
+import solver.clue.isNTimes
 import solver.clue.isNotEqualTo
 import solver.clue.isSumOf
 import solver.clue.largest
@@ -90,7 +91,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "9A" to simpleClue { factorial(it).digits().size.toLong() == it },
     "11A" to simpleClue(::isKnownSierpinskiNumber),
     "12A" to simpleClue { reciprocalSum(it.nonZeroDigits()) == 1.0 },
-    *"13A".singleReference("7D") { it * 2 },
+    *"13A".isNTimes(2, "7D") ,
     "16A" to simpleClue(::violatesGoldbachConjecture),
     "17A" to simpleClue(::violatesGoldbachConjecture),
     *"17A".isNotEqualTo("16A"),

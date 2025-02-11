@@ -104,6 +104,8 @@ fun String.isGreaterThan(otherClue: String) = this.calculationWithReference(othe
 
 fun String.isLessThan(other: String) = other.isGreaterThan(this)
 
+fun String.isNTimes(n: Int, other: String) = singleReference(other) { it * n }
+
 /**
  * X = f(Y) => f(Y) = X
  */

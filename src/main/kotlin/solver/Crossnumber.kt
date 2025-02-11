@@ -1,5 +1,6 @@
 package solver
 
+import logging.dumpFailureInfo
 import logging.green
 import logging.orange
 import logging.possibleDigitsStr
@@ -9,7 +10,6 @@ import logging.timeTakenString
 import solver.clue.AsyncEqualToClue
 import solver.clue.BaseClue
 import solver.digitReducer.DigitReducerConstructor
-import kotlin.math.roundToLong
 
 typealias Clue = (candidate: Long) -> Boolean
 
@@ -167,37 +167,6 @@ data class Crossnumber(
         }
 
         return false
-    }
-
-    private fun dumpFailureInfo() {
-        println("------------------------------------------")
-        println(completionString())
-        println("------------------------------------------")
-        solutions.filterValues { !it.isSolved() }.toList().sortedBy { it.first }.forEach { (id, soln) ->
-            val options =
-                if (soln is PartialSolution && soln.possibilities.size < 100) " - ${soln.possibilities}" else ""
-            println("$id: ${soln.status()}$options")
-        }
-        println("------------------------------------------")
-        println(substituteKnownDigits().prettyString())
-        println("------------------------------------------")
-        println("Time elapsed: ${(System.currentTimeMillis() - creationTime) / 1000}s")
-    }
-
-    fun completionString(): String {
-        val solved = solutions.values.filter(ISolution::isSolved).size
-        val partial = solutions.values.filter { it is PartialSolution && !it.isSolved() }.size
-        val pending = solutions.values.filterIsInstance<PendingSolution>().size
-        return """
-            Solved: ${progressLine(solved)}
-            Partial: ${progressLine(partial)}
-            Pending: ${progressLine(pending)}
-        """.trimIndent()
-    }
-
-    private fun progressLine(solutionCount: Int): String {
-        val percent = (1000 * solutionCount.toDouble() / solutions.size.toDouble()).roundToLong().toDouble() / 10
-        return "$solutionCount / ${solutions.size} ($percent%)"
     }
 
     private fun pendingSolutions(): Map<ClueId, PendingSolution> =

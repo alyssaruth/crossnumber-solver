@@ -16,6 +16,7 @@ import solver.clue.calculationWithReference
 import solver.clue.isAnagramOf
 import solver.clue.isEqualTo
 import solver.clue.isMultipleOf
+import solver.clue.isNTimes
 import solver.clue.isNotEqualTo
 import solver.clue.makeCalculationWithReferences
 import solver.clue.plus
@@ -86,7 +87,7 @@ private val clueMap = clueMap(
     *"22A".calculationWithDualReference("1D", "48A") { a22, d1, a48 ->
         isMultipleOf(5)(a22) == (a22 == d1 * a48)
     },
-    *"23A".singleReference("27A") { it * 6 },
+    *"23A".isNTimes(6, "27A"),
     *"28D".isEqualTo("19D"),
     "24A" to simpleClue(isMultipleOf(8)),
     *"45D".isMultipleOf("24A"),

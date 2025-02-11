@@ -2,6 +2,9 @@ package logging
 
 import solver.Crossnumber
 import solver.ISolution
+import solver.PartialSolution
+import solver.PendingSolution
+import kotlin.math.roundToLong
 
 fun String.green() = coloured(32)
 fun String.orange() = coloured(33)
@@ -38,4 +41,35 @@ fun Crossnumber.printLoopBanner(pass: Int) {
     println("********************$extraStar")
     println("* PASS $pass ($solvedStr / ${solutions.size}) *")
     println("********************$extraStar")
+}
+
+fun Crossnumber.dumpFailureInfo() {
+    println("------------------------------------------")
+    println(completionString())
+    println("------------------------------------------")
+    solutions.filterValues { !it.isSolved() }.toList().sortedBy { it.first }.forEach { (id, soln) ->
+        val options =
+            if (soln is PartialSolution && soln.possibilities.size < 100) " - ${soln.possibilities}" else ""
+        println("$id: ${soln.status()}$options")
+    }
+    println("------------------------------------------")
+    println(substituteKnownDigits().prettyString())
+    println("------------------------------------------")
+    println("Time elapsed: ${(System.currentTimeMillis() - creationTime) / 1000}s")
+}
+
+fun Crossnumber.completionString(): String {
+    val solved = solutions.values.filter(ISolution::isSolved).size
+    val partial = solutions.values.filter { it is PartialSolution && !it.isSolved() }.size
+    val pending = solutions.values.filterIsInstance<PendingSolution>().size
+    return """
+            Solved: ${progressLine(solved)}
+            Partial: ${progressLine(partial)}
+            Pending: ${progressLine(pending)}
+        """.trimIndent()
+}
+
+private fun Crossnumber.progressLine(solutionCount: Int): String {
+    val percent = (1000 * solutionCount.toDouble() / solutions.size.toDouble()).roundToLong().toDouble() / 10
+    return "$solutionCount / ${solutions.size} ($percent%)"
 }
