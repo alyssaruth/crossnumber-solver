@@ -3,6 +3,7 @@ package solver
 import logging.green
 import logging.orange
 import logging.possibleDigitsStr
+import logging.printLoopBanner
 import logging.red
 import logging.timeTakenString
 import solver.clue.AsyncEqualToClue
@@ -24,12 +25,14 @@ data class Crossnumber(
     val loopThreshold: Long = LOOP_THRESHOLD,
     val creationTime: Long = System.currentTimeMillis()
 ) {
-    fun solve(pass: Int = 1): Crossnumber {
-        printLoopBanner(pass)
+    fun solve(): Crossnumber = solve(1)
 
-        val reduced = applyDigitReducers()
+    fun solve(pass: Int = 1, log: Boolean = true): Crossnumber {
+        if (log) printLoopBanner(pass)
 
-        val newCrossnumber = reduced.iterateClues()
+        val reduced = applyDigitReducers(log)
+
+        val newCrossnumber = reduced.iterateClues(log)
         if (newCrossnumber.isSolved()) {
             println("------------------------------------------")
             println(newCrossnumber.substituteKnownDigits().prettyString())
@@ -39,22 +42,13 @@ data class Crossnumber(
         }
 
         return if (newCrossnumber == this) {
-            newCrossnumber.handleLackOfProgress(pass)
+            newCrossnumber.handleLackOfProgress(pass, log)
         } else {
-            newCrossnumber.copy(loopThreshold = LOOP_THRESHOLD).solve(pass + 1)
+            newCrossnumber.copy(loopThreshold = LOOP_THRESHOLD).solve(pass + 1, log)
         }
     }
 
-    private fun printLoopBanner(pass: Int) {
-        val solved = solutions.values.count(ISolution::isSolved)
-        val solvedStr = if (solved < 10) " $solved" else solved.toString()
-        val extraStar = if (solved < 10) "" else "*"
-        println("********************$extraStar")
-        println("* PASS $pass ($solvedStr / ${solutions.size}) *")
-        println("********************$extraStar")
-    }
-
-    private fun applyDigitReducers(): Crossnumber {
+    private fun applyDigitReducers(log: Boolean): Crossnumber {
         val newDigitMap = digitReducers.fold(digitMap) { currentMap, mkReducer ->
             val reducer = mkReducer(this)
             val newMap = reducer.apply(currentMap)
@@ -62,7 +56,7 @@ data class Crossnumber(
             val oldSize = currentMap.values.sumOf { it.size }
             val newSize = newMap.values.sumOf { it.size }
             if (newSize < oldSize) {
-                println("${reducer.clueId}: Reduced digits by ${oldSize - newSize}")
+                if (log) println("${reducer.clueId}: Reduced digits by ${oldSize - newSize}")
             }
 
             newMap
@@ -90,7 +84,7 @@ data class Crossnumber(
         it.value.possibilityCount(digitMap)
     }
 
-    private fun handleLackOfProgress(pass: Int): Crossnumber {
+    private fun handleLackOfProgress(pass: Int, log: Boolean): Crossnumber {
         if (awaitAsyncWork()) {
             return solve(pass + 1)
         }
@@ -100,24 +94,29 @@ data class Crossnumber(
             return copy(loopThreshold = newLoopThreshold).solve(pass + 1)
         }
 
-        val reducedByGuessing = copy(loopThreshold = LOOP_THRESHOLD).ruleOutBadGuesses()
+        val reducedByGuessing = copy(loopThreshold = LOOP_THRESHOLD).ruleOutBadGuesses(log)
         if (reducedByGuessing != null) {
-            return reducedByGuessing.solve(pass + 1)
+            return reducedByGuessing.solve(pass + 1, log)
         }
 
-        println("Made no progress this pass, exiting.".red())
-        dumpFailureInfo()
+        if (log) println("Made no progress this pass, exiting.".red())
+        if (log) dumpFailureInfo()
         return this
     }
 
-    private fun ruleOutBadGuesses(): Crossnumber? {
+    private fun ruleOutBadGuesses(log: Boolean): Crossnumber? {
         val cluesToTry = partialSolutions().filterValues { !it.isSolved() && it.possibilities.size < 50 }
 
         val startTime = System.currentTimeMillis()
-        return cluesToTry.firstNotNullOfOrNull { reduceByContradiction(it.key, it.value, startTime) }
+        return cluesToTry.firstNotNullOfOrNull { reduceByContradiction(it.key, it.value, startTime, log) }
     }
 
-    private fun reduceByContradiction(clueId: ClueId, solution: PartialSolution, startTime: Long): Crossnumber? {
+    private fun reduceByContradiction(
+        clueId: ClueId,
+        solution: PartialSolution,
+        startTime: Long,
+        log: Boolean
+    ): Crossnumber? {
         val possibles = solution.possibilities
         val badPossibles = possibles.filter { possible ->
             val newCrossnumber = replaceSolution(clueId, listOf(possible))
@@ -132,7 +131,7 @@ data class Crossnumber(
         return if (badPossibles.isNotEmpty()) {
             val newCrossnumber =
                 replaceSolution(clueId, possibles - badPossibles)
-            logChanges(clueId, this, newCrossnumber, startTime, " (by contradiction)".orange())
+            if (log) logChanges(clueId, this, newCrossnumber, startTime, " (by contradiction)".orange())
             newCrossnumber.iterateSolution(clueId, false)
         } else {
             null
@@ -185,7 +184,7 @@ data class Crossnumber(
         println("Time elapsed: ${(System.currentTimeMillis() - creationTime) / 1000}s")
     }
 
-    private fun completionString(): String {
+    fun completionString(): String {
         val solved = solutions.values.filter(ISolution::isSolved).size
         val partial = solutions.values.filter { it is PartialSolution && !it.isSolved() }.size
         val pending = solutions.values.filterIsInstance<PendingSolution>().size
@@ -247,7 +246,7 @@ data class Crossnumber(
         }
     }
 
-    private fun substituteKnownDigits(): Grid {
+    fun substituteKnownDigits(): Grid {
         return digitMap.entries.fold(originalGrid) { grid, (pt, digits) ->
             if (digits.size > 1) {
                 grid.updateValue(pt, possibleDigitsStr(digits.size))

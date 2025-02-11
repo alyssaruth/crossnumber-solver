@@ -1,5 +1,8 @@
 package logging
 
+import solver.Crossnumber
+import solver.ISolution
+
 fun String.green() = coloured(32)
 fun String.orange() = coloured(33)
 fun String.red() = coloured(31)
@@ -27,3 +30,12 @@ fun possibleDigitsStr(possibilities: Int) = when (possibilities) {
     9 -> "⁹"
     else -> "⁺"
 }.red()
+
+fun Crossnumber.printLoopBanner(pass: Int) {
+    val solved = solutions.values.count(ISolution::isSolved)
+    val solvedStr = if (solved < 10) " $solved" else solved.toString()
+    val extraStar = if (solved < 10) "" else "*"
+    println("********************$extraStar")
+    println("* PASS $pass ($solvedStr / ${solutions.size}) *")
+    println("********************$extraStar")
+}

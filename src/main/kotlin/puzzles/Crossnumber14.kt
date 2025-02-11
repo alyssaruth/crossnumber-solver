@@ -1,6 +1,7 @@
 package puzzles
 
 import logging.green
+import logging.printLoopBanner
 import logging.red
 import maths.areAnagrams
 import maths.isCube
@@ -16,6 +17,7 @@ import solver.ClueConstructor
 import solver.ClueId
 import solver.Crossnumber
 import solver.Orientation
+import solver.PartialSolution
 import solver.clue.isAnagramOf
 import solver.clue.isEqualTo
 import solver.clue.isLessThan
@@ -31,7 +33,7 @@ import solver.factoryCrossnumber
  * https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-12/
  */
 fun main() {
-    solve()
+    solveCrossnumber14()
 }
 
 private val grid = """
@@ -50,6 +52,8 @@ private val grid = """
     ..###...###..
 """.trimIndent()
 
+private val isSquare = simpleClue(::isSquare)
+
 private val acrossClues: List<ClueConstructor> = listOf(
     isEqualTo(217),
     isEqualTo(394),
@@ -60,8 +64,8 @@ private val acrossClues: List<ClueConstructor> = listOf(
     makeCalculationWithReference("2D") { value, other -> isMultipleOf(value)(other) },
     simpleClue(isMultipleOf(51)),
     simpleClue(isPowerOf(2)),
-    simpleClue(::isSquare),
-    simpleClue(::isSquare),
+    isSquare,
+    isSquare,
     makeCalculationWithReference("25D") { x, y -> x != y && areAnagrams(x, y) },
     makeSingleReference("18D") { it },
     makeSingleReference("34D") { it },
@@ -115,35 +119,70 @@ data class SolveState(
     val matchedSolutions: List<ClueId>
 )
 
-private tailrec fun solve(solveState: SolveState = SolveState(CROSSNUMBER_14, acrossClues, emptyList())): Crossnumber {
-    val newSolveState = solveState.copy(crossnumber = solveState.crossnumber.solve())
+fun solveCrossnumber14() = solve()
+
+private tailrec fun solve(
+    solveState: SolveState = SolveState(CROSSNUMBER_14, acrossClues, emptyList()),
+    pass: Int = 1
+): Crossnumber {
+    solveState.crossnumber.printLoopBanner(pass)
+    val newSolveState = solveState.copy(crossnumber = solveState.crossnumber.solve(log = false))
     if (newSolveState.crossnumber.isSolved()) {
         return newSolveState.crossnumber
     }
 
-    val nextSolveState = newSolveState.unplacedAcrossClues.fold(newSolveState) { currentState, clueConstructor ->
-        val currentCrossnumber = currentState.crossnumber
-        val clue = clueConstructor(currentCrossnumber)
-        val viableSolutions = getAcrossSolutionsWithNoClues(currentState).filter { it.value.possibilities.any(clue::check) }
-        if (viableSolutions.size > 1) {
-            println("${clue.javaClass.simpleName} -> ${viableSolutions.size}")
-            currentState
-        } else {
-            val (clueId, cluelessSolution) = viableSolutions.entries.first()
-            val newCrossnumber = currentCrossnumber.replaceSolution(clueId, cluelessSolution.copy(clue = clueConstructor))
-            val newUnplacedClues = currentState.unplacedAcrossClues - clueConstructor
-            val newMatchedClueIds = currentState.matchedSolutions + clueId
-            println("${clue.javaClass.simpleName} -> $clueId".green())
-            SolveState(newCrossnumber, newUnplacedClues, newMatchedClueIds)
-        }
-    }
+    println(newSolveState.crossnumber.completionString())
+    println("----------------------")
+    println(newSolveState.crossnumber.substituteKnownDigits().prettyString())
+    println("----------------------")
+    println("Attempting to match up across clues...")
 
+    val nextSolveState = newSolveState.placeCluesWithOnlyOneSolution().placeSolutionsWithOnlyOneClue()
     if (newSolveState == nextSolveState) {
         println("Failed to place any across clues, ${newSolveState.unplacedAcrossClues.size} still left :(".red())
         return newSolveState.crossnumber
     }
 
-    return solve(nextSolveState)
+    return solve(nextSolveState, pass + 1)
+}
+
+private fun SolveState.placeCluesWithOnlyOneSolution(): SolveState =
+    unplacedAcrossClues.fold(this) { currentState, clueConstructor ->
+        val currentCrossnumber = currentState.crossnumber
+        val clue = clueConstructor(currentCrossnumber)
+        val viableSolutions =
+            getAcrossSolutionsWithNoClues(currentState).filter { it.value.possibilities.any(clue::check) }
+        if (viableSolutions.size > 1) {
+            currentState
+        } else {
+            val (clueId, cluelessSolution) = viableSolutions.entries.first()
+            currentState.matchClueWithSolution(clueId, cluelessSolution, clueConstructor)
+        }
+    }
+
+private fun SolveState.placeSolutionsWithOnlyOneClue(): SolveState =
+    getAcrossSolutionsWithNoClues(this).entries.fold(this) { currentState, (clueId, soln) ->
+        val viableClues =
+            currentState.unplacedAcrossClues.filter { soln.possibilities.any(it(currentState.crossnumber)::check) }
+                .distinct()
+        if (viableClues.size > 1) {
+            currentState
+        } else {
+            val clue = viableClues.first()
+            currentState.matchClueWithSolution(clueId, soln, clue)
+        }
+    }
+
+private fun SolveState.matchClueWithSolution(
+    clueId: ClueId,
+    solution: PartialSolution,
+    clueConstructor: ClueConstructor
+): SolveState {
+    val newCrossnumber = crossnumber.replaceSolution(clueId, solution.copy(clue = clueConstructor))
+    val newUnplacedClues = unplacedAcrossClues - clueConstructor
+    val newMatchedClueIds = matchedSolutions + clueId
+    println("${clueConstructor(newCrossnumber).javaClass.simpleName} -> $clueId".green())
+    return SolveState(newCrossnumber, newUnplacedClues, newMatchedClueIds)
 }
 
 private fun getAcrossSolutionsWithNoClues(state: SolveState) =

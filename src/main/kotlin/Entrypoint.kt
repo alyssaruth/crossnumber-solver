@@ -12,22 +12,25 @@ import puzzles.CROSSNUMBER_6
 import puzzles.CROSSNUMBER_7
 import puzzles.CROSSNUMBER_8
 import puzzles.CROSSNUMBER_9
+import puzzles.solveCrossnumber14
+import solver.Crossnumber
 import kotlin.system.exitProcess
 
-private val puzzles = mapOf(
-    "1" to CROSSNUMBER_1,
-    "2" to CROSSNUMBER_2,
-    "3" to CROSSNUMBER_3,
-    "4" to CROSSNUMBER_4,
-    "5" to CROSSNUMBER_5,
-    "6" to CROSSNUMBER_6,
-    "7" to CROSSNUMBER_7,
-    "8" to CROSSNUMBER_8,
-    "9" to CROSSNUMBER_9,
-    "10" to CROSSNUMBER_10,
-    "11" to CROSSNUMBER_11,
-    "12" to CROSSNUMBER_12,
-    "13" to CROSSNUMBER_13,
+private val puzzles = mapOf<String, () -> Crossnumber>(
+    "1" to CROSSNUMBER_1::solve,
+    "2" to CROSSNUMBER_2::solve,
+    "3" to CROSSNUMBER_3::solve,
+    "4" to CROSSNUMBER_4::solve,
+    "5" to CROSSNUMBER_5::solve,
+    "6" to CROSSNUMBER_6::solve,
+    "7" to CROSSNUMBER_7::solve,
+    "8" to CROSSNUMBER_8::solve,
+    "9" to CROSSNUMBER_9::solve,
+    "10" to CROSSNUMBER_10::solve,
+    "11" to CROSSNUMBER_11::solve,
+    "12" to CROSSNUMBER_12::solve,
+    "13" to CROSSNUMBER_13::solve,
+    "14" to ::solveCrossnumber14,
 )
 
 fun main(args: Array<String>) {
@@ -43,6 +46,6 @@ fun main(args: Array<String>) {
         exitProcess(1)
     }
 
-    puzzle.solve()
+    puzzle()
     exitProcess(0)
 }
