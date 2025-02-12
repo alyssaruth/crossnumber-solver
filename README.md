@@ -143,11 +143,11 @@ Below are the crossnumbers this can solve so far, along with roughly how long ea
 | 4   | 15       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-04/     |
 | 5   | 15       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-05/     |
 | 6   | 8        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-06/     |
-| 7   | 660 (!)  | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-07/     |
+| 7   | 240 (!)  | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-07/     |
 | 8   | 5        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-08/     |
 | 9   | 20       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-09/     |
-| 10  | 40       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-10/     |
-| 11  | 20       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-11/     |
+| 10  | 30       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-10/     |
+| 11  | 15       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-11/     |
 | 12  | 0        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-12/     |
 | 13  | 0        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-13/     |
 | 14  | 0        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-14/     |

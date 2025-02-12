@@ -1,7 +1,6 @@
 package solver
 
 import logging.dumpFailureInfo
-import logging.green
 import logging.orange
 import logging.possibleDigitsStr
 import logging.printLoopBanner
@@ -140,11 +139,15 @@ data class Crossnumber(
 
     private fun escalateLoopThreshold(): Long? {
         val smallestPending = pendingSolutions()
-            .filter { it.value.possibilities in (loopThreshold + 1)..MAX_LOOP_THRESHOLD }
+            .filter {
+                it.value.possibilities in (loopThreshold + 1)..MAX_LOOP_THRESHOLD
+                        && it.value.possibilities < it.value.longestAttempted
+            }
             .minByOrNull { it.value.possibilities } ?: return null
 
         val newThreshold = smallestPending.value.possibilities
-        println("Made no progress this pass: kicking up threshold to $newThreshold to crack ${smallestPending.key}")
+        val digitStr = smallestPending.value.squares.joinToString("") { possibleDigitsStr(digitMap.getValue(it)) }
+        println("Made no progress this pass - kicking up threshold to $newThreshold to crack ${smallestPending.key}: $digitStr")
         return newThreshold
     }
 
@@ -217,11 +220,7 @@ data class Crossnumber(
 
     fun substituteKnownDigits(): Grid {
         return digitMap.entries.fold(originalGrid) { grid, (pt, digits) ->
-            if (digits.size > 1) {
-                grid.updateValue(pt, possibleDigitsStr(digits.size))
-            } else {
-                grid.updateValue(pt, digits.first().toString().green())
-            }
+            grid.updateValue(pt, possibleDigitsStr(digits))
         }
     }
 

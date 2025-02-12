@@ -16,15 +16,18 @@ import maths.isSumOfTwoNthPowers
 import maths.isTriangleNumber
 import maths.lastNDigits
 import maths.pow
+import maths.product
 import maths.sumOfCubesOfDigits
 import maths.sumOfNthPowerOfDigits
 import solver.ClueConstructor
 import solver.ClueId
 import solver.Crossnumber
+import solver.DigitMap
 import solver.clue.ContextualClue
 import solver.clue.emptyClue
 import solver.clue.isGreaterThan
 import solver.clue.isNotEqualTo
+import solver.clue.lookupAnswers
 import solver.clue.plus
 import solver.clue.simpleClue
 import solver.clue.simplyNot
@@ -32,6 +35,7 @@ import solver.clue.singleReference
 import solver.clue.singleReferenceFlattened
 import solver.clue.transformedEquals
 import solver.clueMap
+import solver.digitReducer.AbstractDigitReducer
 import solver.digitReducer.DigitReducerConstructor
 import solver.digitReducer.allDigits
 import solver.digitReducer.digitReference
@@ -70,13 +74,16 @@ private val grid = """
 private val digitReducers: List<DigitReducerConstructor> = listOf(
     "10A".simpleReducer(allDigits()) { it > 0 },
     "31A".simpleReducer(allDigits()) { it > 0 }, // 7D is the digit product of this
+    "31A".digitProductIs("7D"),
     "3D".simpleReducer(firstNDigits(3)) { isEven(it.toLong()) },
     "3D".simpleReducer(allDigits()) { it > 0 }, // 16D is the digit product of this
     "16D".simpleReducer(allDigits()) { it > 0 }, // 18A is the digit product of this
 
+    "1A".digitSumIs("9A"),
     "1A".digitReference(firstNDigits(1), "34A", lastDigit()) { myDigit, otherDigits -> otherDigits.contains(myDigit) },
     "1A".mightBeMultipleOf25("34A"),
     "34A".mightBeMultipleOf25("1A"),
+    "34A".digitSumIs("32A"),
     "34A".digitReference(
         allDigits(),
         "13A",
@@ -164,3 +171,66 @@ private fun String.mightBeMultipleOf25(other: String) = digitReference(
     other,
     lastDigit()
 ) { myDigit, otherDigits -> if (!otherDigits.contains(5)) listOf(0, 2, 5, 7).contains(myDigit) else true }
+
+/**
+ * The digit product of 31A gives 7D. When some digits of 31A are known and 7D is narrowed, we can rule out lots of
+ * digit options for 31A
+ */
+private class DigitProductIs(clueId: ClueId, otherClue: ClueId, crossnumber: Crossnumber) :
+    AbstractDigitReducer(clueId, allDigits(), crossnumber) {
+    private val otherAnswers = crossnumber.lookupAnswers(otherClue)
+
+    override fun apply(digitMap: DigitMap): DigitMap {
+        if (otherAnswers == null) {
+            return digitMap
+        }
+
+        val (knownSquares, unknownSquares) = squares.partition { digitMap.getValue(it).size == 1 }
+        val knownDivisor = knownSquares.map { digitMap.getValue(it).first() }.product()
+        val relevantAnswers = otherAnswers.filter(isMultipleOf(knownDivisor)).map { it / knownDivisor }
+
+        val updatedPairs = unknownSquares.map { unknownSquare ->
+            val newOptions = digitMap.getValue(unknownSquare)
+                .filter { relevantAnswers.any { answer -> isMultipleOf(it.toLong())(answer) } }
+            unknownSquare to newOptions
+        }
+
+        return digitMap + updatedPairs
+    }
+}
+
+private fun String.digitProductIs(other: String): DigitReducerConstructor = { crossnumber ->
+    DigitProductIs(ClueId.fromString(this), ClueId.fromString(other), crossnumber)
+}
+
+/**
+ * The digit sum of 34A gives 32A. Take the max possible value of 32A and subtract off all known digits - what's left is
+ * the maximum any remaining digit of 34A can be
+ */
+private class DigitSumIs(clueId: ClueId, otherClue: ClueId, crossnumber: Crossnumber) :
+    AbstractDigitReducer(clueId, allDigits(), crossnumber) {
+    private val otherAnswers = crossnumber.lookupAnswers(otherClue)
+
+    override fun apply(digitMap: DigitMap): DigitMap {
+        if (otherAnswers == null) {
+            return digitMap
+        }
+
+        val maxSum = otherAnswers.max()
+
+        val (knownSquares, unknownSquares) = squares.partition { digitMap.getValue(it).size == 1 }
+        val knownTotal = knownSquares.map { digitMap.getValue(it).first() }.sum()
+        val maxDigit = maxSum - knownTotal
+
+        val updatedPairs = unknownSquares.map { unknownSquare ->
+            val newOptions = digitMap.getValue(unknownSquare).filter { it <= maxDigit }
+            unknownSquare to newOptions
+        }
+
+        return digitMap + updatedPairs
+    }
+}
+
+private fun String.digitSumIs(other: String): DigitReducerConstructor = { crossnumber ->
+    DigitSumIs(ClueId.fromString(this), ClueId.fromString(other), crossnumber)
+}

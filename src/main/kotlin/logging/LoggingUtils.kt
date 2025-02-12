@@ -22,7 +22,10 @@ fun timeTakenString(timeTaken: Long): String {
     return if (timeTaken < 5000) timeStr.orange() else timeStr.red()
 }
 
-fun possibleDigitsStr(possibilities: Int) = when (possibilities) {
+fun possibleDigitsStr(digits: List<Int>) =
+    if (digits.size == 1) digits.first().toString().green() else unknownDigitsStr(digits.size)
+
+private fun unknownDigitsStr(possibilities: Int) = when (possibilities) {
     2 -> "²"
     3 -> "³"
     4 -> "⁴"

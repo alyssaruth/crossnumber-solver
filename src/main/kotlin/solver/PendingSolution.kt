@@ -1,6 +1,5 @@
 package solver
 
-import logging.timeTakenString
 import maths.product
 import solver.clue.BaseClue
 import solver.clue.MinimumClue
@@ -16,7 +15,8 @@ const val RAM_THRESHOLD = 6_000_000
 data class PendingSolution(
     override val squares: List<Point>,
     override val clue: ClueConstructor,
-    val possibilities: Long
+    val possibilities: Long,
+    val longestAttempted: Long = Long.MAX_VALUE
 ) : ISolution {
     constructor(squares: List<Point>, clue: ClueConstructor, digitMap: DigitMap) : this(
         squares,
@@ -36,24 +36,23 @@ data class PendingSolution(
 
         val digitMap = crossnumber.digitMap
         val newPossibilityCount = possibilityCount(digitMap)
-        if (newPossibilityCount > crossnumber.loopThreshold ||
-            (newPossibilityCount > LOOP_THRESHOLD && newPossibilityCount < crossnumber.loopThreshold)
-        ) {
+        if (newPossibilityCount > crossnumber.loopThreshold || newPossibilityCount == longestAttempted) {
             // Not narrowed down enough yet, do nothing
-            return crossnumber.replaceSolution(clueId, PendingSolution(squares, clue, newPossibilityCount))
+            return crossnumber.replaceSolution(clueId, copy(possibilities = newPossibilityCount))
         }
 
         val digitList = squares.map(digitMap::getValue)
         val possibilities =
-            attemptToComputePossibilitiesMultithreaded(
-                clue(crossnumber),
-                digitList,
-                newPossibilityCount,
-                crossnumber,
-            )
-                ?: return crossnumber.replaceSolution(clueId, PendingSolution(squares, clue, newPossibilityCount))
+            attemptToComputePossibilitiesMultithreaded(clue(crossnumber), digitList, newPossibilityCount, crossnumber)
 
-        return PartialSolution(squares, clue, possibilities).iterate(clueId, crossnumber)
+        return if (possibilities == null) {
+            crossnumber.replaceSolution(
+                clueId,
+                copy(possibilities = newPossibilityCount, longestAttempted = newPossibilityCount)
+            )
+        } else {
+            PartialSolution(squares, clue, possibilities).iterate(clueId, crossnumber)
+        }
     }
 
     private fun attemptToComputePossibilitiesMultithreaded(
