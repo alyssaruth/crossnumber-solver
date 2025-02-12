@@ -40,6 +40,21 @@ fun isSquare(value: Long) = value > 0 && value == sqrtRounded(value) * sqrtRound
 
 fun isCube(value: Long) = hasWholeNthRoot(3)(value)
 
+fun List<Long>.mean() = average().longOrNull()
+
+fun meanOf(vararg values: Long) = values.toList().mean()
+
+fun geometricMeanOf(vararg values: Long) = values.toList().geometricMean()
+
+fun List<Long>.geometricMean(): Long? {
+    val product = longProduct()
+    return if (!hasWholeNthRoot(size)(product)) {
+        null
+    } else {
+        nthRoot(product, size)
+    }
+}
+
 fun distinctDivisors(n: Long): Set<Long> =
     (1..sqrtRounded(n)).filter { n % it == 0L }.flatMap { listOf(it, n / it) }.toSet()
 

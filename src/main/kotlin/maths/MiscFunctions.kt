@@ -35,3 +35,5 @@ fun BigInteger.longOrNull() = try {
 } catch (e: ArithmeticException) {
     null
 }
+
+fun List<Long>.longProduct() = fold(1L) { product, n -> product * n }
