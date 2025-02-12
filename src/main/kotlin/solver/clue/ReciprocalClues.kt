@@ -96,7 +96,7 @@ fun String.isLcmOf(a: String, b: String): Array<Pair<String, ClueConstructor>> =
         b to makeCalculationWithReferences(this, a) { (b, lcm, a) -> lcm(a, b) == lcm },
     )
 
-fun String.isEqualTo(otherClue: String) = this.calculationWithReference(otherClue, Long::equals)
+fun String.isEqualTo(otherClue: String) = this.singleReference(otherClue) { it }
 
 fun String.isNotEqualTo(otherClue: String) = this.calculationWithReference(otherClue) { value, other -> value != other }
 

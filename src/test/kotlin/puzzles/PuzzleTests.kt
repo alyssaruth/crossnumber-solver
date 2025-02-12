@@ -83,4 +83,9 @@ class PuzzleTests {
     fun `Crossnumber 18`() {
         CROSSNUMBER_18.solve().digitsFromRow(6)?.average() shouldBe 6.0
     }
+
+    @Test
+    fun `Crossnumber 19`() {
+        CROSSNUMBER_19.solve().digitsFromRow(1)?.sum() shouldBe 43
+    }
 }
