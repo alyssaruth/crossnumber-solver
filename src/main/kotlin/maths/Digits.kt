@@ -8,7 +8,10 @@ import java.math.BigInteger
 
 fun Long.digitsAreStrictlyIncreasing() = digits().windowed(2).all { it[0] < it[1] }
 
-fun hasDigitRelationship(windowSize: Int = 2, fn: (List<Int>) -> Boolean) = simpleClue { it.digits().windowed(windowSize).all(fn) }
+fun digitsAreMeanOfEitherSide() = hasDigitRelationship(3) { (a, b, c) -> 2 * b == a + c }
+
+fun hasDigitRelationship(windowSize: Int = 2, fn: (List<Int>) -> Boolean) =
+    simpleClue { it.digits().windowed(windowSize).all(fn) }
 
 fun BigInteger.digits() = collectDigits(this)
 

@@ -2,7 +2,7 @@ package puzzles
 
 import maths.digitSum
 import maths.digits
-import maths.hasDigitRelationship
+import maths.digitsAreMeanOfEitherSide
 import maths.hasDigitSum
 import maths.isEven
 import maths.isMultipleOf
@@ -20,6 +20,7 @@ import solver.clue.isMultipleOf
 import solver.clue.isNotEqualTo
 import solver.clue.makeCalculationWithReference
 import solver.clue.simpleClue
+import solver.clue.simplyNot
 import solver.clue.singleReference
 import solver.clueMap
 import solver.digitReducer.DigitReducerConstructor
@@ -58,7 +59,7 @@ private val clueMap = clueMap(
     "5A" to simpleClue { it < 30 },
     "7A" to simpleClue(isEven),
     "10A" to simpleClue { isMultipleOf(it)(270) },
-    "11A" to simpleClue { !isMultipleOf(3)(it) },
+    "11A" to simplyNot(isMultipleOf(3)),
     "13A" to simpleClue(isMultipleOf(3)),
     "14A" to simpleClue(isMultipleOf(8)),
     *"16A".singleReference("12D", ::digitSum),
@@ -69,15 +70,15 @@ private val clueMap = clueMap(
     "26A" to simpleClue { isMultipleOf(3)(it) && !isMultipleOf(9)(it) },
     *"27A".singleReference("7A", ::digitSum),
     "28A" to simpleClue { it < 1170000 },
-    "31A" to hasDigitRelationship(3) { (a, b, c) -> 2 * b == a + c },
+    "31A" to digitsAreMeanOfEitherSide(),
     "33A" to simpleClue { it < 222 },
     "34A" to simpleClue { it > 2222222 },
     "37A" to simpleClue { isPrime(it - 1) },
     "38A" to simpleClue { it > 380 },
     "40A" to simpleClue { isMultipleOf(it)(132) },
-    "41A" to simpleClue { !isPrime(it) },
+    "41A" to simplyNot(::isPrime),
     "42A" to simpleClue(hasDigitSum(14)),
-    "46A" to simpleClue { !isPrime(it) },
+    "46A" to simplyNot(::isPrime),
     "47A" to simpleClue(isMultipleOf(9)),
     "48A" to simpleClue { it < 1234 },
     *"51A".isMultipleOf("52D"),
@@ -103,11 +104,11 @@ private val clueMap = clueMap(
     "19D" to simpleClue { it > 600 },
     "20D" to simpleClue { isMultipleOf(3)(it) && !isMultipleOf(9)(it) },
     "21D" to simpleClue(::isPalindrome),
-    "22D" to simpleClue { !isMultipleOf(5)(it) },
+    "22D" to simplyNot(isMultipleOf(5)),
     *"23D".calculationWithReference("28A") { d23, a28 -> d23 != a28.digitSum().toLong() },
     "24D" to simpleClue(isOdd),
     "29D" to simpleClue(hasDigitSum(17)),
-    "30D" to hasDigitRelationship(3) { (a, b, c) -> 2 * b == a + c },
+    "30D" to digitsAreMeanOfEitherSide(),
     *"32D".singleReference("5D", ::digitSum),
     "35D" to simpleClue { it < 300 },
     "36D" to simpleClue(hasDigitSum(5)),
@@ -115,11 +116,11 @@ private val clueMap = clueMap(
     "39D" to simpleClue(isOdd),
     "43D" to simpleClue(isMultipleOf(1111)),
     "44D" to simpleClue { it < 222 },
-    "45D" to simpleClue { !isPrime(it) },
+    "45D" to simplyNot(::isPrime),
     *"49D".isNotEqualTo("50D"),
-    "50D" to simpleClue { !isMultipleOf(3)(it) },
+    "50D" to simplyNot(isMultipleOf(3)),
     "51D" to simpleClue(::isPrime),
-    "52D" to simpleClue { !isPrime(it) },
+    "52D" to simplyNot(::isPrime),
     "53D" to simpleClue(isMultipleOf(9)),
     "54D" to simpleClue { isMultipleOf(it)(1612) }
 ).mapValues { alsoTrueOfReverse(it.value) }

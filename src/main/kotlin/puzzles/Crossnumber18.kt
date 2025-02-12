@@ -3,8 +3,8 @@ package puzzles
 import maths.containsDigit
 import maths.cubesUpTo
 import maths.digits
+import maths.digitsAreMeanOfEitherSide
 import maths.geometricMean
-import maths.hasDigitRelationship
 import maths.integerPartitions
 import maths.isCube
 import maths.isMultipleOf
@@ -116,8 +116,6 @@ private fun meanOfPrimeAndCube() = simpleClue { value ->
     val diffs = cubes.map { (2 * value) - it }
     diffs.any { diff -> isPrime(diff) && diff.digits().size == 2 }
 }
-
-private fun digitsAreMeanOfEitherSide() = hasDigitRelationship(3) { (a, b, c) -> 2 * b == a + c }
 
 private fun digitsAreMeanOfFirstAndLast() = simpleClue {
     val digits = it.longDigits()

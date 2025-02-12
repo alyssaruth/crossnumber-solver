@@ -27,6 +27,7 @@ import solver.clue.isGreaterThan
 import solver.clue.isNotEqualTo
 import solver.clue.plus
 import solver.clue.simpleClue
+import solver.clue.simplyNot
 import solver.clue.singleReference
 import solver.clue.singleReferenceFlattened
 import solver.clue.transformedEquals
@@ -94,7 +95,7 @@ private val clueMap = clueMap(
     "21A" to digitsSameExceptOne(5),
     *"22A".isGreaterThan("13A"),
     *"23A".singleReference("6D", ::digitProduct),
-    "25A" to simpleClue { !containsDigit(0)(it) && digitSum(it) > digitProduct(it) },
+    "25A" to simplyNot(containsDigit(0)) + simpleClue { digitSum(it) > digitProduct(it) },
     "26A" to simpleClue { it == BigInteger.TWO.pow(it.toInt()).digits().takeLast(3).fromDigits() },
     *"27A".singleReference("23A") { digitProduct(it) + 1 },
     "28A" to simpleClue(isMultipleOf(9)),

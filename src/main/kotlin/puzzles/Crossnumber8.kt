@@ -24,6 +24,7 @@ import solver.clue.isMultipleOf
 import solver.clue.isSumOf
 import solver.clue.plus
 import solver.clue.simpleClue
+import solver.clue.simplyNot
 import solver.clue.singleReference
 import solver.clue.transformedEquals
 import solver.clueMap
@@ -85,7 +86,7 @@ private val clueMap = clueMap(
     "32A" to emptyClue(), // Covered by digit reducer
     "34A" to simpleClue(::isKnownSierpinskiNumber),
     *"36A".primeThatIsSixteenMoreThanThreeTimes("20D"),
-    "37A" to simpleClue { !isPalindrome(it) },
+    "37A" to simplyNot(::isPalindrome),
 
     *"1D".singleReference("11D") { it.firstNDigits(2) },
     "2D" to simpleClue(::isPalindrome),

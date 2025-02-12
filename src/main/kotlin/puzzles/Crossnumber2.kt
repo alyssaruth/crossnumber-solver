@@ -43,6 +43,7 @@ import solver.clue.makeSingleReference
 import solver.clue.multiReference
 import solver.clue.plus
 import solver.clue.simpleClue
+import solver.clue.simplyNot
 import solver.clue.singleReference
 import solver.clue.smallest
 import solver.clue.transformedEqualsRef
@@ -130,7 +131,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "23D" to multiReference("15D", "17A", "34D") { (d15, a17, d34) -> d15 + a17 - d34 },
     "26D" to simpleClue(hasDigitSum(3)),
     "27D" to emptyClue(),
-    "30D" to simpleClue { !isPalindrome(it) },
+    "30D" to simplyNot(::isPalindrome),
     *"32D".singleReference("1D") { other -> properFactors(other).sum() },
     "34D" to simpleClue(::isSquare),
     *"37D".isProductOf("27D", "38D"),

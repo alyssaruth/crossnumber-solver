@@ -41,6 +41,7 @@ import solver.clue.isProductOf
 import solver.clue.largest
 import solver.clue.plus
 import solver.clue.simpleClue
+import solver.clue.simplyNot
 import solver.clue.singleReference
 import solver.clueMap
 import solver.factoryCrossnumber
@@ -107,7 +108,7 @@ private val clues = clueMap(
     "2D" to divisibleBySumAndProductOfDigits(),
     *"4D".singleReference("3A", ::sqrtWhole),
     *"5D".singleReference("35D") { it.digits().take(2).product() },
-    "7D" to simpleClue { !isPrime(it) },
+    "7D" to simplyNot(::isPrime),
     "8D" to simpleClue(isMultipleOf(10)) + ::EightDown,
     *"9D".isFactorOf("45D"),
     *"10D".isProductOf("11A", "12A"),

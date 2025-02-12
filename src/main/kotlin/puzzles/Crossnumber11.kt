@@ -19,7 +19,9 @@ import solver.clue.emptyClue
 import solver.clue.isDifferenceBetween
 import solver.clue.isEqualTo
 import solver.clue.isProductOf
+import solver.clue.plus
 import solver.clue.simpleClue
+import solver.clue.simplyNot
 import solver.clue.singleReference
 import solver.clueMap
 import solver.factoryCrossnumber
@@ -84,7 +86,7 @@ private val clueMap = clueMap(
     *"4D".isGreaterThanAndMultipleOfAndReverseOf("28D"),
     "6D" to simpleClue { it.digitCounts().all { (key, value) -> key == value } },
     "7D" to simpleClue { it == sumOfNthPowerOfDigits(5)(it) },
-    "11D" to simpleClue { !isSquare(it) && isMultipleOf(6)(it) },
+    "11D" to simplyNot(::isSquare) + simpleClue(isMultipleOf(6)),
     *"11D".singleReference("15A") { it.digitSum() + 3L },
     "12D" to simpleClue(::isSquare),
     *"12D".calculationWithReference("15A") { x, y -> x.firstNDigits(1) == y.firstNDigits(1) },
@@ -96,7 +98,7 @@ private val clueMap = clueMap(
     "28D" to emptyClue(),
     "29D" to simpleClue(::isSquare),
     *"29D".calculationWithReference("29A") { x, y -> x.firstNDigits(1) == y.firstNDigits(1) },
-    "30D" to simpleClue { !isSquare(it) && isMultipleOf(6)(it) },
+    "30D" to simplyNot(::isSquare) + simpleClue(isMultipleOf(6)),
     *"30D".singleReference("29A") { it.digitSum() + 3L },
     "31D" to simpleClue { it == sumOfNthPowerOfDigits(5)(it) },
     *"34D".calculationWithReference("2D") { value, other -> isMultipleOf(other)(value - 1) },

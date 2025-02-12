@@ -29,6 +29,7 @@ import solver.clue.isMultipleOf
 import solver.clue.isNotEqualTo
 import solver.clue.plus
 import solver.clue.simpleClue
+import solver.clue.simplyNot
 import solver.clue.singleReference
 import solver.clueMap
 import solver.factoryCrossnumber
@@ -93,7 +94,7 @@ private val clueMap = clueMap(
     "15D" to hasDigitRelationship { (a, b) -> b == a + 1 || b * 3 == a },
     "17D" to simpleClue(isMultipleOf(5)),
     *"20D".isMultipleOf("2D"),
-    "21D" to simpleClue { !isMultipleOf(3)(it) },
+    "21D" to simplyNot(isMultipleOf(3)),
     "22D" to simpleClue(::isSquare),
     *"23D".singleReference("30A") { sqrtWhole(it - 1) },
     *"24D".isEqualTo("23D"),

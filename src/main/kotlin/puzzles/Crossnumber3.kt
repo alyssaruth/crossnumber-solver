@@ -42,6 +42,7 @@ import solver.clue.isSumOf
 import solver.clue.largest
 import solver.clue.plus
 import solver.clue.simpleClue
+import solver.clue.simplyNot
 import solver.clue.singleReference
 import solver.clue.smallest
 import solver.clueMap
@@ -88,7 +89,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     *"24A".singleReference("29D", ::digitSum),
     "25A" to simpleClue(isProductOfConsecutive(4, digits = 6, ::fibonacciUpTo)),
     *"26A".isProductOf("14A", "21D"),
-    "29A" to largest(simpleClue { !BigInteger.TWO.pow(it.toInt()).digits().contains(0) }),
+    "29A" to largest(simplyNot { BigInteger.TWO.pow(it.toInt()).digits().contains(0) }),
     "30A" to isEqualTo(418), // I am a teapot
     "32A" to simpleClue(::isPrime) + simpleClue(isSumOfConsecutive(25, digits = 5, ::primesUpTo)),
     "35A" to isEqualTo(11), // The number of different nets of a cube (with reflections and rotations being considered as the same net)
@@ -116,7 +117,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     *"21D".isSumOf("14A", "37A"),
     "22D" to simpleClue(isMultipleOf(27)),
     "23D" to simpleClue { factorialMod(it - 1, it * it) == (it * it) - 1 },
-    "24D" to smallest(simpleClue { !canBePermutedSuchThat(::isPrime)(it) }),
+    "24D" to smallest(simplyNot(canBePermutedSuchThat(::isPrime))),
     "27D" to dualReference("5D", "6D") { d5, d6 -> (d6 / d5) + 1 },
     *"28D".isMultipleOf("34D"),
     "29D" to simpleClue(isMultipleOf(7)),
