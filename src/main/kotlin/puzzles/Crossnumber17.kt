@@ -13,10 +13,15 @@ import maths.isPalindrome
 import maths.isSquare
 import maths.lastNDigits
 import maths.longDigits
+import solver.ClueConstructor
+import solver.ClueId
+import solver.Crossnumber
 import solver.Orientation
+import solver.PartialSolution
+import solver.PendingSolution
+import solver.clue.ComputedPossibilitiesClue
 import solver.clue.calculationWithDualReference
 import solver.clue.calculationWithReference
-import solver.clue.emptyClue
 import solver.clue.equalToNumberOfClueWithAnswer
 import solver.clue.isAnagramOf
 import solver.clue.isEqualTo
@@ -113,7 +118,7 @@ private val clueMap = clueMap(
     "38D" to simpleClue(isOdd),
     "39D" to simpleClue(isOdd),
     *"40D".calculationWithDualReference("50D", "26D") { d40, d50, d26 -> d40 + d50 == d26 },
-    "41D" to emptyClue(), // TODO - The number of the down clue that is equal to 48A squared
+    "41D" to equalToNumberOfClueWithRef(Orientation.DOWN, "48A") { it * it },
     "42D" to simpleClue(hasDigitSum(11)),
     "44D" to simpleClue(isMultipleOf(1111)),
     "46D" to equalToNumberOfClueWithAnswer(Orientation.ACROSS, 1089),
@@ -121,3 +126,31 @@ private val clueMap = clueMap(
 )
 
 val CROSSNUMBER_17 = factoryCrossnumber(grid, clueMap, skipSymmetryCheck = true)
+
+class EqualToNumberOfClueWithRef(
+    crossnumber: Crossnumber,
+    private val orientation: Orientation,
+    otherClue: ClueId,
+    mapper: (Long) -> Long
+) : ComputedPossibilitiesClue(crossnumber) {
+    private val answers = lookupAnswers(otherClue)?.map(mapper)
+
+    override val possibilities = calculatePossibilities()
+
+    private fun calculatePossibilities(): Set<Long>? {
+        if (answers == null) {
+            return null
+        }
+
+        val clues = crossnumber.solutions.filterKeys { it.orientation == orientation }
+        val viableClues =
+            clues.filter { (_, value) ->
+                (value is PartialSolution && value.possibilities.intersect(answers)
+                    .isNotEmpty()) || value is PendingSolution
+            }
+        return viableClues.keys.map { it.number.toLong() }.toSet()
+    }
+}
+
+fun equalToNumberOfClueWithRef(orientation: Orientation, otherClue: String, mapper: (Long) -> Long): ClueConstructor =
+    { crossnumber -> EqualToNumberOfClueWithRef(crossnumber, orientation, ClueId.fromString(otherClue), mapper) }
