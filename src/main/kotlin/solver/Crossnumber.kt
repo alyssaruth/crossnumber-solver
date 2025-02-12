@@ -244,12 +244,12 @@ data class Crossnumber(
         return acrossSolutions.sumOf { (it as PartialSolution).possibilities.first() }
     }
 
-    fun sumRow(rowNumber: Int): Int? {
+    fun digitsFromRow(rowNumber: Int): List<Int>? {
         val squares = digitMap.filter { it.key.y == rowNumber }.values
         if (squares.any { it.size > 1 }) {
             return null
         }
 
-        return squares.sumOf { it.first() }
+        return squares.map { it.first() }
     }
 }

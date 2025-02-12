@@ -151,3 +151,5 @@ Below are the crossnumbers this can solve so far, along with roughly how long ea
 | 12 | 0        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-12/     |
 | 13 | 2        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-13/     |
 | 14 | 3        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-14/     |
+| 17 | 10       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-17/     |
+| 18 | 20       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-18/     |
