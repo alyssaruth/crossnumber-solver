@@ -20,4 +20,6 @@ class EqualToClue(val value: Long) : BaseClue() {
     override fun knownPossibilities() = listOf(value)
 }
 
+fun isEqualTo(answer: Int): ClueConstructor = { _ -> EqualToClue(answer.toLong()) }
+
 fun isEqualTo(answer: Long): ClueConstructor = { _ -> EqualToClue(answer) }
