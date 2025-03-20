@@ -47,9 +47,7 @@ fun Crossnumber.printLoopBanner(pass: Int) {
 }
 
 fun Crossnumber.dumpFailureInfo() {
-    println("------------------------------------------")
     println(completionString())
-    println("------------------------------------------")
     solutions.filterValues { !it.isSolved() }.toList().sortedBy { it.first }.forEach { (id, soln) ->
         val options =
             if (soln is PartialSolution && soln.possibilities.size < 100) " - ${soln.possibilities}" else ""
@@ -66,9 +64,11 @@ fun Crossnumber.completionString(): String {
     val partial = solutions.values.filter { it is PartialSolution && !it.isSolved() }.size
     val pending = solutions.values.filterIsInstance<PendingSolution>().size
     return """
+            ------------------------------------------
             Solved: ${progressLine(solved)}
             Partial: ${progressLine(partial)}
             Pending: ${progressLine(pending)}
+            ------------------------------------------
         """.trimIndent()
 }
 
