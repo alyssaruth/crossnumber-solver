@@ -14,7 +14,6 @@ import maths.isPrime
 import maths.isSquare
 import solver.GlobalClue
 import solver.ISolution
-import solver.PartialSolution
 import solver.clue.calculationWithReference
 import solver.clue.emptyClue
 import solver.clue.simpleClue
@@ -119,7 +118,7 @@ private val globalClues = listOf(
 )
 
 private fun numberOfCluesOfTypeIsAlsoOfType(predicate: (Long) -> Boolean): GlobalClue = { crossnumber ->
-    val solutions = crossnumber.solutions.values.filterIsInstance<PartialSolution>()
+    val solutions = crossnumber.partialSolutions().values
     val knownAnswers = solutions.filter(ISolution::isSolved).flatMap { it.possibilities }
     val unknowns = solutions.filterNot(ISolution::isSolved).map { it.possibilities }
     val knownMatches = knownAnswers.count(predicate)
