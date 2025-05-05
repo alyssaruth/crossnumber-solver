@@ -24,4 +24,4 @@ val VALID_GRID = """
 val CLUE_ID = ClueId(1, Orientation.ACROSS)
 
 fun dummyCrossnumber(digitMap: DigitMap): Crossnumber =
-    Crossnumber(parseGrid(VALID_GRID), digitMap, emptyMap(), emptyList())
+    Crossnumber(parseGrid(VALID_GRID), digitMap, emptyMap(), emptyList(), emptyList())

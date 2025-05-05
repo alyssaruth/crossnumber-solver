@@ -14,6 +14,8 @@ typealias Clue = (candidate: Long) -> Boolean
 
 typealias ClueConstructor = (crossnumber: Crossnumber) -> BaseClue
 
+typealias GlobalClue = (crossnumber: Crossnumber) -> Boolean
+
 typealias DigitMap = Map<Point, List<Int>>
 
 data class Crossnumber(
@@ -21,6 +23,7 @@ data class Crossnumber(
     val digitMap: DigitMap,
     val solutions: Map<ClueId, ISolution>,
     val digitReducers: List<DigitReducerConstructor>,
+    val globalClues: List<GlobalClue>,
     val loopThreshold: Long = LOOP_THRESHOLD,
     val creationTime: Long = System.currentTimeMillis()
 ) {
@@ -31,7 +34,7 @@ data class Crossnumber(
 
         val reduced = applyDigitReducers(log)
 
-        val newCrossnumber = reduced.iterateClues(log)
+        val newCrossnumber = reduced.iterateAllClues(log)
         if (newCrossnumber.isSolved()) {
             println("------------------------------------------")
             println(newCrossnumber.substituteKnownDigits().prettyString())
@@ -64,10 +67,23 @@ data class Crossnumber(
         return copy(digitMap = newDigitMap)
     }
 
+    private fun iterateAllClues(
+        log: Boolean = true,
+    ): Crossnumber {
+        val prioritised = prioritiseSolutions(solutions.entries.toList())
+        val updatedCrossnumber = iterateClues(log, this, prioritised)
+
+        if (!globalClues.all { it(updatedCrossnumber) }) {
+            throw Exception("Global rule violated!")
+        }
+
+        return updatedCrossnumber
+    }
+
     private tailrec fun iterateClues(
         log: Boolean = true,
         currentCrossnumber: Crossnumber = this,
-        remainingClues: List<Map.Entry<ClueId, ISolution>> = prioritiseSolutions(solutions.entries.toList())
+        remainingClues: List<Map.Entry<ClueId, ISolution>>,
     ): Crossnumber {
         if (remainingClues.isEmpty()) {
             return currentCrossnumber
@@ -120,7 +136,7 @@ data class Crossnumber(
         val badPossibles = possibles.filter { possible ->
             val newCrossnumber = replaceSolution(clueId, listOf(possible))
             try {
-                newCrossnumber.iterateClues(false)
+                newCrossnumber.iterateAllClues(false)
                 false
             } catch (ex: Exception) {
                 true

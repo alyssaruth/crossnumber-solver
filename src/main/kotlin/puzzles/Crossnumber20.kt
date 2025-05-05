@@ -12,10 +12,8 @@ import maths.isMultipleOf
 import maths.isOdd
 import maths.isPrime
 import maths.isSquare
-import solver.ClueId
-import solver.Crossnumber
+import solver.GlobalClue
 import solver.ISolution
-import solver.Orientation
 import solver.PartialSolution
 import solver.clue.calculationWithReference
 import solver.clue.emptyClue
@@ -28,41 +26,7 @@ import solver.factoryCrossnumber
  * https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-20/
  */
 fun main() {
-    val result = CROSSNUMBER_20.solve()
-    printGlobalStates(result)
-
-    // There are 6-9 squares, so must be 9 squares - hardcode the square numbers available
-    val newResult = result.replaceSolution(ClueId(17, Orientation.ACROSS), listOf(25))
-        .replaceSolution(ClueId(47, Orientation.ACROSS), listOf(16))
-        .replaceSolution(ClueId(48, Orientation.ACROSS), listOf(8100))
-        .solve()
-
-    printGlobalStates(newResult)
-
-    // Now there are 19-20 odds, so we can filter out the odd possibility for 53A and finish
-    val finalResult = newResult.replaceSolution(ClueId(53, Orientation.ACROSS), listOf(65554)).solve()
-    printGlobalStates(finalResult)
-    println(finalResult.digitsFromRow(3)?.sum())
-}
-
-private fun printGlobalStates(crossnumber: Crossnumber) {
-    println("---------------------")
-    printGlobalState(crossnumber, "Evens", isEven)
-    printGlobalState(crossnumber, "Odds", isOdd)
-    printGlobalState(crossnumber, "Primes", ::isPrime)
-    printGlobalState(crossnumber, "Squares", ::isSquare)
-    printGlobalState(crossnumber, "Multiples of 3", isMultipleOf(3))
-    println("---------------------")
-}
-
-private fun printGlobalState(crossnumber: Crossnumber, description: String, predicate: (Long) -> Boolean) {
-    val solutions = crossnumber.solutions.values.filterIsInstance<PartialSolution>()
-    val knownAnswers = solutions.filter(ISolution::isSolved).flatMap { it.possibilities }
-    val unknowns = solutions.filterNot(ISolution::isSolved).map { it.possibilities }
-
-    val knownMatches = knownAnswers.count(predicate)
-    val possibleExtras = unknowns.count { it.any(predicate) }
-    println("$description: $knownMatches known, $possibleExtras more are possible")
+    CROSSNUMBER_20.solve()
 }
 
 private val grid = """
@@ -146,4 +110,23 @@ private val clueMap = clueMap(
     *"55D".singleReference("54D") { it + 3 }
 )
 
-val CROSSNUMBER_20 = factoryCrossnumber(grid, clueMap)
+private val globalClues = listOf(
+    numberOfCluesOfTypeIsAlsoOfType(isEven),
+    numberOfCluesOfTypeIsAlsoOfType(isOdd),
+    numberOfCluesOfTypeIsAlsoOfType(::isPrime),
+    numberOfCluesOfTypeIsAlsoOfType(::isSquare),
+    numberOfCluesOfTypeIsAlsoOfType(isMultipleOf(3))
+)
+
+private fun numberOfCluesOfTypeIsAlsoOfType(predicate: (Long) -> Boolean): GlobalClue = { crossnumber ->
+    val solutions = crossnumber.solutions.values.filterIsInstance<PartialSolution>()
+    val knownAnswers = solutions.filter(ISolution::isSolved).flatMap { it.possibilities }
+    val unknowns = solutions.filterNot(ISolution::isSolved).map { it.possibilities }
+    val knownMatches = knownAnswers.count(predicate)
+    val possibleExtras = unknowns.count { it.any(predicate) }
+
+    val allPossibilities = knownMatches..(knownMatches + possibleExtras).toLong()
+    allPossibilities.any(predicate)
+}
+
+val CROSSNUMBER_20 = factoryCrossnumber(grid, clueMap, globalClues = globalClues)
