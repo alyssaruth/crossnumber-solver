@@ -4,7 +4,6 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-src/main/kotlin/puzzles/Crossnumber20.kt
 src/main/kotlin/puzzles/Crossnumber21.kt
 
 ### IntelliJ IDEA ###
