@@ -103,4 +103,9 @@ class PuzzleTests {
     fun `Crossnumber 20`() {
         CROSSNUMBER_20.solve().digitsFromRow(3)?.sum() shouldBe 34
     }
+
+    @Test
+    fun `Crossnumber 21`() {
+        solveCrossnumber21().digitsFromRow(3)?.sum() shouldBe 52
+    }
 }
