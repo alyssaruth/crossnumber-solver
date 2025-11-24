@@ -25,7 +25,9 @@ data class Crossnumber(
     val digitReducers: List<DigitReducerConstructor>,
     val globalClues: List<GlobalClue>,
     val loopThreshold: Long = LOOP_THRESHOLD,
-    val creationTime: Long = System.currentTimeMillis()
+    val exploringGuess: Boolean = false,
+    val creationTime: Long = System.currentTimeMillis(),
+    val guessThreshold: Int,
 ) {
     fun solve(): Crossnumber = solve(1)
 
@@ -36,10 +38,12 @@ data class Crossnumber(
 
         val newCrossnumber = reduced.iterateAllClues(log)
         if (newCrossnumber.isSolved()) {
-            println("------------------------------------------")
-            println(newCrossnumber.substituteKnownDigits().prettyString())
-            println("------------------------------------------")
-            println("Time elapsed: ${(System.currentTimeMillis() - creationTime) / 1000}s")
+            if (log) {
+                println("------------------------------------------")
+                println(newCrossnumber.substituteKnownDigits().prettyString())
+                println("------------------------------------------")
+                println("Time elapsed: ${(System.currentTimeMillis() - creationTime) / 1000}s")
+            }
             return newCrossnumber
         }
 
@@ -100,18 +104,22 @@ data class Crossnumber(
     }
 
     private fun handleLackOfProgress(pass: Int, log: Boolean): Crossnumber {
+        if (exploringGuess) {
+            return this
+        }
+
         if (awaitAsyncWork()) {
             return solve(pass + 1)
+        }
+
+        val reducedByGuessing = ruleOutBadGuesses(log)
+        if (reducedByGuessing != null) {
+            return reducedByGuessing.solve(pass + 1, log)
         }
 
         val newLoopThreshold = escalateLoopThreshold()
         if (newLoopThreshold != null) {
             return copy(loopThreshold = newLoopThreshold).solve(pass + 1)
-        }
-
-        val reducedByGuessing = copy(loopThreshold = LOOP_THRESHOLD).ruleOutBadGuesses(log)
-        if (reducedByGuessing != null) {
-            return reducedByGuessing.solve(pass + 1, log)
         }
 
         if (log) println("Made no progress this pass, exiting.".red())
@@ -120,10 +128,11 @@ data class Crossnumber(
     }
 
     private fun ruleOutBadGuesses(log: Boolean): Crossnumber? {
-        val cluesToTry = partialSolutions().filterValues { !it.isSolved() && it.possibilities.size < 50 }
+        val cluesToTry = partialSolutions().filterValues { !it.isSolved() && it.possibilities.size < guessThreshold }
+        val sortedPairs = cluesToTry.entries.sortedBy { it.value.possibilities.size }
 
         val startTime = System.currentTimeMillis()
-        return cluesToTry.firstNotNullOfOrNull { reduceByContradiction(it.key, it.value, startTime, log) }
+        return sortedPairs.firstNotNullOfOrNull { reduceByContradiction(it.key, it.value, startTime, log) }
     }
 
     private fun reduceByContradiction(
@@ -134,9 +143,9 @@ data class Crossnumber(
     ): Crossnumber? {
         val possibles = solution.possibilities
         val badPossibles = possibles.filter { possible ->
-            val newCrossnumber = replaceSolution(clueId, listOf(possible))
+            val newCrossnumber = copy(exploringGuess = true).replaceSolution(clueId, listOf(possible))
             try {
-                newCrossnumber.iterateAllClues(false)
+                newCrossnumber.solve(1, false)
                 false
             } catch (ex: Exception) {
                 true

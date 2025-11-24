@@ -138,7 +138,7 @@ private val clueMap: Map<String, ClueConstructor> = clueMap(
     "38D" to simpleClue(isMultipleOf(10))
 )
 
-val CROSSNUMBER_2 = factoryCrossnumber(grid, clueMap, digitReducers)
+val CROSSNUMBER_2 = factoryCrossnumber(grid, clueMap, digitReducers, guessThreshold = 10)
 
 /**
  * The 2nd, 4th, 6th, 8th, 10th, 12th and 14th digits of this number are each larger than the digits either side of them. (15)

@@ -61,22 +61,27 @@ class Grid(private val pointMap: Map<Point, String>) {
             return null
         }
 
-        val unitVector = if (orientation == Orientation.ACROSS) Point(1, 0) else Point(0, 1)
-        if (lookupPoint(startPt - unitVector) == WHITE) {
+        // Edge case for a single isolated white square (e.g. Crossnumber 22)
+        val neighbours = Orientation.entries.flatMap { listOf(startPt + it.unitVector(), startPt - it.unitVector()) }
+        if (neighbours.all { lookupPoint(it) == BLACK}) {
+            return Word(ClueId(number, orientation), listOf(startPt))
+        }
+
+        if (lookupPoint(startPt - orientation.unitVector()) == WHITE) {
             // White square to our left/above
             return null
         }
 
-        if (lookupPoint(startPt + unitVector) == BLACK) {
+        if (lookupPoint(startPt + orientation.unitVector()) == BLACK) {
             // Black square or edge to our right/below
             return null
         }
 
         val allPts = mutableListOf(startPt)
-        var nextPt = startPt + unitVector
+        var nextPt = startPt + orientation.unitVector()
         while (lookupPoint(nextPt) == WHITE) {
             allPts.add(nextPt)
-            nextPt += unitVector
+            nextPt += orientation.unitVector()
         }
 
         return Word(ClueId(number, orientation), allPts.toList())

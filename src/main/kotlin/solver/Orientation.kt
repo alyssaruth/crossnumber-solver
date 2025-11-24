@@ -8,4 +8,9 @@ enum class Orientation {
         ACROSS -> "A"
         DOWN -> "D"
     }
+
+    fun unitVector() = when (this) {
+        ACROSS -> Point(1, 0)
+        DOWN -> Point(0, 1)
+    }
 }
