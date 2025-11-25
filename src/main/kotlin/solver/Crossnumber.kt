@@ -108,6 +108,11 @@ data class Crossnumber(
             return this
         }
 
+        val reducedByGuessingSquare = ruleOutBadSquares(log)
+        if (reducedByGuessingSquare != null) {
+            return reducedByGuessingSquare.solve(pass + 1, log)
+        }
+
         if (awaitAsyncWork()) {
             return solve(pass + 1)
         }
@@ -119,12 +124,52 @@ data class Crossnumber(
 
         val newLoopThreshold = escalateLoopThreshold()
         if (newLoopThreshold != null) {
-            return copy(loopThreshold = newLoopThreshold).solve(pass + 1)
+            return copy(loopThreshold = newLoopThreshold).solve(pass + 1, log)
         }
 
         if (log) println("Made no progress this pass, exiting.".red())
         if (log) dumpFailureInfo()
         return this
+    }
+
+    private fun ruleOutBadSquares(log: Boolean): Crossnumber? {
+        // val pendingSolutionSquares = pendingSolutions().values.map { it.squares }.flatten()
+        val squaresToGuess = digitMap.keys.filter {
+            digitMap.getValue(it).size > 1
+        }
+
+        return squaresToGuess.firstNotNullOfOrNull { reduceDigitsByContradiction(it, log) }
+    }
+
+    private fun reduceDigitsByContradiction(square: Point, log: Boolean): Crossnumber? {
+        val startTime = System.currentTimeMillis()
+        val possibles = digitMap.getValue(square)
+        val badPossibles = possibles.filter { possible ->
+            val newDigitMap = digitMap + (square to listOf(possible))
+            val newCrossnumber = copy(exploringGuess = true, digitMap = newDigitMap)
+            try {
+                newCrossnumber.solve(1, false)
+                false
+            } catch (_: Exception) {
+                true
+            }
+        }
+
+        if (log) {
+            val timeTaken = System.currentTimeMillis() - startTime
+            if (badPossibles.isNotEmpty()) {
+                println("Reduced digits by ${badPossibles.size}" + " (by contradiction)".orange() + timeTakenString(timeTaken))
+            } else if (timeTaken > 1000) {
+                println("Failed to reduce digits" + " (by contradiction)".orange() + timeTakenString(timeTaken))
+            }
+        }
+
+        return if (badPossibles.isNotEmpty()) {
+            val newDigitMap = digitMap + (square to (possibles - badPossibles))
+            copy(digitMap = newDigitMap)
+        } else {
+            null
+        }
     }
 
     private fun ruleOutBadGuesses(log: Boolean): Crossnumber? {

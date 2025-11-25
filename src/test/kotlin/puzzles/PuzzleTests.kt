@@ -86,7 +86,9 @@ class PuzzleTests {
 
     @Test
     fun `Crossnumber 17`() {
-        CROSSNUMBER_17.solve().digitsFromRow(2)?.sum() shouldBe 29
+        val result = CROSSNUMBER_17.solve()
+        result.isSolved() shouldBe false // This one doesn't have a unique solution, it turns out.
+        result.digitsFromRow(2)?.sum() shouldBe 29
     }
 
     @Test
@@ -109,8 +111,8 @@ class PuzzleTests {
         solveCrossnumber21().digitsFromRow(3)?.sum() shouldBe 52
     }
 
-//    @Test
-//    fun `Crossnumber 22`() {
-//        CROSSNUMBER_22.solve().digitsFromRow(6)?.sum() shouldBe // redacted
-//    }
+    @Test
+    fun `Crossnumber 22`() {
+        CROSSNUMBER_22.solve().digitsFromRow(6)?.sum() shouldBe 16
+    }
 }
