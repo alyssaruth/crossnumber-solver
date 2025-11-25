@@ -26,6 +26,8 @@ tasks.create("solve", JavaExec::class) {
             group = "run"
             classpath = project.the<SourceSetContainer>()["main"].runtimeClasspath
             mainClass.set("EntrypointKt")
+            minHeapSize = "1024m"
+            maxHeapSize = "1024m"
 
             val puzzleNumber = properties["uzzle"]
             if (puzzleNumber != null) {

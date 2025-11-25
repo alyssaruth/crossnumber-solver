@@ -15,6 +15,6 @@ jobs:
           java-version: 17.0.15
           cache: gradle
       - name: Compile
-        run: ./gradlew compileKotlin
+        run: ./gradlew classes
       - name: Solve
         run: ./gradlew solve -Puzzle=${{ matrix.puzzle }}
