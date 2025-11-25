@@ -147,16 +147,16 @@ data class Crossnumber(
             try {
                 newCrossnumber.solve(1, false)
                 false
-            } catch (ex: Exception) {
+            } catch (_: Exception) {
                 true
             }
         }
 
+        val newCrossnumber = replaceSolution(clueId, possibles - badPossibles)
+        if (log) logChanges(clueId, this, newCrossnumber, startTime, " (by contradiction)".orange())
+
         return if (badPossibles.isNotEmpty()) {
-            val newCrossnumber =
-                replaceSolution(clueId, possibles - badPossibles)
-            if (log) logChanges(clueId, this, newCrossnumber, startTime, " (by contradiction)".orange())
-            newCrossnumber.iterateSolution(clueId, false)
+            newCrossnumber
         } else {
             null
         }
@@ -239,7 +239,7 @@ data class Crossnumber(
 
         if (oldCrossnumber.solutions == newCrossnumber.solutions && timeTaken > 1000) {
             val solution = newCrossnumber.solutions.getValue(id)
-            println("$id: ${solution.status()} -> ${"unchanged".orange()}${timeTakenString(timeTaken)}")
+            println("$id: ${solution.status()} -> ${"unchanged".orange()}$suffix${timeTakenString(timeTaken)}")
         }
     }
 

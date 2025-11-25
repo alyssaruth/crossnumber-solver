@@ -21,7 +21,7 @@ fun factoryCrossnumber(
     digitReducers: List<DigitReducerConstructor> = emptyList(),
     globalClues: List<GlobalClue> = emptyList(),
     skipSymmetryCheck: Boolean = false,
-    guessThreshold: Int = 50,
+    guessThreshold: Int = 25,
 ): Crossnumber {
     val clues = rawClues.mapKeys { (clueStr, _) -> ClueId.fromString(clueStr) }
     val grid = parseGrid(gridString)
