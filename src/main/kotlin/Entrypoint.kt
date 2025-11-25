@@ -8,7 +8,9 @@ import puzzles.CROSSNUMBER_15
 import puzzles.CROSSNUMBER_16
 import puzzles.CROSSNUMBER_17
 import puzzles.CROSSNUMBER_18
+import puzzles.CROSSNUMBER_19
 import puzzles.CROSSNUMBER_2
+import puzzles.CROSSNUMBER_20
 import puzzles.CROSSNUMBER_3
 import puzzles.CROSSNUMBER_4
 import puzzles.CROSSNUMBER_5
@@ -17,6 +19,7 @@ import puzzles.CROSSNUMBER_7
 import puzzles.CROSSNUMBER_8
 import puzzles.CROSSNUMBER_9
 import puzzles.solveCrossnumber14
+import puzzles.solveCrossnumber21
 import solver.Crossnumber
 import kotlin.system.exitProcess
 
@@ -39,6 +42,9 @@ private val puzzles = mapOf<String, () -> Crossnumber>(
     "16" to CROSSNUMBER_16::solve,
     "17" to CROSSNUMBER_17::solve,
     "18" to CROSSNUMBER_18::solve,
+    "19" to CROSSNUMBER_19::solve,
+    "20" to CROSSNUMBER_20::solve,
+    "21" to ::solveCrossnumber21,
 )
 
 fun main(args: Array<String>) {
