@@ -133,8 +133,8 @@ data class Crossnumber(
     }
 
     private fun ruleOutBadSquares(log: Boolean): Crossnumber? {
-        // val pendingSolutionSquares = pendingSolutions().values.map { it.squares }.flatten()
-        val squaresToGuess = digitMap.keys.filter {
+        val pendingSolutionSquares = pendingSolutions().values.map { it.squares }.flatten()
+        val squaresToGuess = pendingSolutionSquares.filter {
             digitMap.getValue(it).size > 1
         }
 
