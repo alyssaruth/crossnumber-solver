@@ -1,11 +1,16 @@
 package maths
 
 import solver.Clue
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
 import kotlin.math.log2
+import kotlin.math.max
 
 fun isCoprimeWith(other: Long): Clue = { areCoprime(it, other) }
 
 fun areCoprime(x: Long, y: Long) = hcf(x, y) == 1L
+
+fun isPrimeInt(value: Int) = isPrime(value.toLong())
 
 fun isPrime(value: Long): Boolean {
     if (value == 1L) return false
@@ -50,7 +55,28 @@ fun firstPrimeFactor(n: Long) = findFirstPrimeFactor(n)
 private tailrec fun findFirstPrimeFactor(n: Long, currentPrime: Long = 2): Long =
     if (isMultipleOf(currentPrime)(n)) currentPrime else findFirstPrimeFactor(n, nextPrime(currentPrime))
 
-fun countPrimesUpTo(n: Long) = (3..n step 2).count(::isPrime) + 1
+fun countPrimesUpTo(n: Int): Int {
+    if (n < 100000) {
+        return (3..n step 2).count(::isPrimeInt) + 1
+    }
+
+    val startPoints = listOf(3) + (1..9).map { it * n/10 } + listOf(n)
+    val ranges = startPoints.windowed(2).map {  (a, b) ->
+        val start = if (isEven(a.toLong())) a + 1 else a
+        (start until b step 2)
+    }
+
+    val total = AtomicInteger(1)
+
+    val threads = ranges.map { chunk -> Thread {
+        total.addAndGet(chunk.count(::isPrimeInt))
+    }}
+
+    threads.forEach { it.start() }
+    threads.forEach { it.join() }
+
+    return total.get()
+}
 
 /**
  * Of the form 2^(2^k) + 1 for some k

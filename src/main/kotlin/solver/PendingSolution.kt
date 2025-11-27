@@ -6,8 +6,7 @@ import solver.clue.MinimumClue
 
 // Limits to prevent OOMs or slowness due to doomed loops
 const val MAX_LOOP_THRESHOLD = 5_000_000_000
-const val LOOP_THRESHOLD = 100_000_000L
-const val RAM_THRESHOLD = 6_000_000
+const val RAM_THRESHOLD = 6_000_000L
 
 /**
  * A solution that hasn't yet been exploded out into remaining possibilities (because there are too many)
@@ -103,7 +102,7 @@ data class PendingSolution(
         digitList: List<List<Int>>,
         possibilities: Long,
         crossnumber: Crossnumber,
-        ramThreshold: Int,
+        ramThreshold: Long,
         currentValueStr: String? = startingValue(digitList),
         possibleSoFar: MutableList<Long> = mutableListOf()
     ): List<Long>? {

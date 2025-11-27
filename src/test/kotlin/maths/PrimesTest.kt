@@ -62,6 +62,8 @@ class PrimesTest {
         countPrimesUpTo(2) shouldBe 1
         countPrimesUpTo(10) shouldBe 4
 
+        countPrimesUpTo(9_999_998) shouldBe 664579
+        countPrimesUpTo(9_999_999) shouldBe 664579
         countPrimesUpTo(10_000_000) shouldBe 664579
     }
 

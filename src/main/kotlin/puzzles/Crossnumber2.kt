@@ -50,7 +50,8 @@ import solver.clue.transformedEqualsRef
 import solver.clueMap
 import solver.digitReducer.DigitReducerConstructor
 import solver.digitReducer.digitIndices
-import solver.digitReducer.simpleReducer
+import solver.digitReducer.digitReference
+import solver.digitReducer.nthDigit
 import solver.factoryCrossnumber
 import java.util.Calendar
 
@@ -83,9 +84,16 @@ private val a19Prime = nextPrime(370262)
 
 private val a16 = (10..99).first { inPence(it).size == 5 }
 
-private val digitReducers: List<DigitReducerConstructor> = listOf(
-    "4D".simpleReducer(digitIndices(1, 3, 5, 7, 9, 11, 12, 13)) { it > 0 }
-)
+/**
+ * The 2nd, 4th, 6th, 8th, 10th, 12th and 14th digits of this number are each larger than the digits either side of them. (15)
+ * Correction: The 13th digit is actually larger than the 14th.
+ */
+private val digitReducers: List<DigitReducerConstructor> = (1..11 step 2).flatMap {
+    listOf("4D".digitGreaterThan(it, it-1), "4D".digitGreaterThan(it, it+1))
+} + listOf(
+        "4D".digitGreaterThan(13, 14),
+        "4D".digitGreaterThan(12, 13)
+    )
 
 private val clueMap: Map<String, ClueConstructor> = clueMap(
     *"1A".isMultipleOf("24A"),
@@ -150,6 +158,9 @@ private fun fourDown(value: Long): Boolean {
 
     return digitIndices.all { digits[it] > digits[it - 1] && digits[it] > digits[it + 1] } && digits[13] > digits[14] && digits[13] < digits[12]
 }
+
+private fun String.digitGreaterThan(bigIx: Int, smallIx: Int): DigitReducerConstructor =
+    digitReference(digitIndices(bigIx), this, nthDigit(smallIx)) { myDigit, otherOptions -> myDigit > otherOptions.min() }
 
 /**
  * The number of sequences of 16 (strictly) positive numbers such that:

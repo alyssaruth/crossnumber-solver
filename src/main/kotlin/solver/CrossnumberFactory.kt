@@ -22,6 +22,7 @@ fun factoryCrossnumber(
     globalClues: List<GlobalClue> = emptyList(),
     skipSymmetryCheck: Boolean = false,
     guessThreshold: Int = 25,
+    baseLoopThreshold: Long = RAM_THRESHOLD,
 ): Crossnumber {
     val clues = rawClues.mapKeys { (clueStr, _) -> ClueId.fromString(clueStr) }
     val grid = parseGrid(gridString)
@@ -41,7 +42,7 @@ fun factoryCrossnumber(
         word.clueId to PendingSolution(word.squares, myClues, digitMap)
     }
 
-    return Crossnumber(grid, digitMap, pendingSolutions, digitReducers, globalClues, guessThreshold = guessThreshold)
+    return Crossnumber(grid, digitMap, pendingSolutions, digitReducers, globalClues, guessThreshold = guessThreshold, baseLoopThreshold = baseLoopThreshold)
 }
 
 private fun initialiseDigitMap(solutions: List<Word>): DigitMap {

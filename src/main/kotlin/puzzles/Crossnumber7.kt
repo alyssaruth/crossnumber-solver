@@ -131,7 +131,7 @@ private val clueMap = clueMap(
     *"33D".singleReference("9A", ::digitProduct)
 )
 
-val CROSSNUMBER_7 = factoryCrossnumber(grid, clueMap, digitReducers, skipSymmetryCheck = true)
+val CROSSNUMBER_7 = factoryCrossnumber(grid, clueMap, digitReducers, skipSymmetryCheck = true, baseLoopThreshold = 50_000_000)
 
 /**
  * 1A and 34A's product are a multiple of 1,000,000,000,000 = 2^12 * 5^12
