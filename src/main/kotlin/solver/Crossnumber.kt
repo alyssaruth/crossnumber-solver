@@ -26,7 +26,7 @@ data class Crossnumber(
     val globalClues: List<GlobalClue>,
     val baseLoopThreshold: Long,
     val loopThreshold: Long = baseLoopThreshold,
-    val exploringGuess: Boolean = false,
+    val allowFallbackTactics: Boolean,
     val creationTime: Long = System.currentTimeMillis(),
     val guessThreshold: Int,
 ) {
@@ -105,7 +105,7 @@ data class Crossnumber(
     }
 
     private fun handleLackOfProgress(pass: Int, log: Boolean): Crossnumber {
-        if (exploringGuess) {
+        if (!allowFallbackTactics) {
             return this
         }
 
@@ -163,7 +163,7 @@ data class Crossnumber(
         val possibles = digitMap.getValue(square)
         val badPossibles = possibles.filter { possible ->
             val newDigitMap = digitMap + (square to listOf(possible))
-            val newCrossnumber = copy(exploringGuess = true, digitMap = newDigitMap)
+            val newCrossnumber = copy(allowFallbackTactics = false, digitMap = newDigitMap)
             try {
                 newCrossnumber.solve(1, false)
                 false
@@ -196,7 +196,7 @@ data class Crossnumber(
     ): Crossnumber? {
         val possibles = solution.possibilities
         val badPossibles = possibles.filter { possible ->
-            val newCrossnumber = copy(exploringGuess = true).replaceSolution(clueId, listOf(possible))
+            val newCrossnumber = copy(allowFallbackTactics = false).replaceSolution(clueId, listOf(possible))
             try {
                 newCrossnumber.solve(1, false)
                 false
@@ -302,7 +302,7 @@ data class Crossnumber(
         }
     }
 
-    fun replaceSolution(clueId: ClueId, possibilities: List<Long>): Crossnumber {
+    private fun replaceSolution(clueId: ClueId, possibilities: List<Long>): Crossnumber {
         val existing = solutions.getValue(clueId)
         return replaceSolution(clueId, PartialSolution(existing.squares, existing.clue, possibilities))
     }

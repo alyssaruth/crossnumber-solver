@@ -145,7 +145,7 @@ Below are the crossnumbers this can solve so far, along with roughly how long ea
 | 6   | 5        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-06/     |
 | 7   | 90       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-07/     |
 | 8   | 5        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-08/     |
-| 9   | 20       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-09/     |
+| 9   | 5        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-09/     |
 | 10  | 20       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-10/     |
 | 11  | 15       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-11/     |
 | 12  | 0        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-12/     |
@@ -157,7 +157,7 @@ Below are the crossnumbers this can solve so far, along with roughly how long ea
 | 18  | 20       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-18/     |
 | 19  | 0        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-19/     |
 | 20  | 0        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-20/     |
-| 21  | 60       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-21/     |
+| 21  | 35       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-21/     |
 | 22* | 1        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-22/     |
 
 *Not pushed to the repo yet (competition still active)

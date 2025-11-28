@@ -242,4 +242,4 @@ private val grid = """
     .....#....#...
 """.trimIndent()
 
-val CROSSNUMBER_21 = factoryCrossnumber(grid, emptyMap())
+val CROSSNUMBER_21 = factoryCrossnumber(grid, emptyMap(), allowGuessing = false)
