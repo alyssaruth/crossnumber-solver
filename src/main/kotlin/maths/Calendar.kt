@@ -1,6 +1,7 @@
 package maths
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
+
 
 /**
  * Using "Rata Die" method, see https://en.wikipedia.org/wiki/Determination_of_the_day_of_the_week#Rata_Die

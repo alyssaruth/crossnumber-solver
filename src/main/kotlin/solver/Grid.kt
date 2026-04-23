@@ -25,7 +25,7 @@ class Grid(private val pointMap: Map<Point, String>) {
     fun rotate() = pointMap.mapKeys { (pt, _) -> Point(xMax - pt.y, pt.x) }.let(::Grid)
 
     fun prettyString() = (0..yMax).joinToString("\n") { y ->
-        (0..xMax).joinToString("") { x -> pointMap.getValue(Point(x, y)).toString() }
+        (0..xMax).joinToString("") { x -> pointMap.getValue(Point(x, y)) }
     }
 
     fun validate(skipSymmetry: Boolean = false) {

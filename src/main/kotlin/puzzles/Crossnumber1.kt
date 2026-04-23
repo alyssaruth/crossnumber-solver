@@ -1,6 +1,5 @@
 package puzzles
 
-import kotlinx.datetime.Instant
 import maths.canBeWrittenInSomeBaseAs
 import maths.containsDigit
 import maths.digitProduct
@@ -45,6 +44,7 @@ import solver.digitReducer.DigitReducerConstructor
 import solver.digitReducer.allDigits
 import solver.digitReducer.simpleReducer
 import solver.factoryCrossnumber
+import kotlin.time.Instant
 
 /**
  * https://chalkdustmagazine.com/regulars/100-prize-crossnumber-issue-01/

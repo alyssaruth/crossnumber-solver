@@ -2,7 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-    kotlin("jvm") version "1.9.23"
+    kotlin("jvm") version "2.3.0"
 }
 
 group = "com.github.alyssaruth"
@@ -13,14 +13,14 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.6.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.7.1")
 
     testImplementation(kotlin("test"))
 
-    testImplementation("io.kotest:kotest-assertions-core:5.5.4")
+    testImplementation("io.kotest:kotest-assertions-core:6.1.11")
 }
 
-tasks.create("solve", JavaExec::class) {
+tasks.register("solve", JavaExec::class) {
     configure(
         closureOf<JavaExec> {
             group = "run"
@@ -49,5 +49,5 @@ tasks.test {
     }
 }
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(25)
 }

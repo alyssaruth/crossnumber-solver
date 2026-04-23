@@ -139,21 +139,21 @@ Below are the crossnumbers this can solve so far, along with roughly how long ea
 |----|----------|------------------------------------------------------------------------------------|
 | 1  | 15       | https://chalkdustmagazine.com/regulars/100-prize-crossnumber-issue-01/             |
 | 2  | 30       | https://chalkdustmagazine.com/regulars/crossnumber/100-prize-crossnumber-issue-02/ |
-| 3  | 25       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-03/     |
+| 3  | 10       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-03/     |
 | 4  | 15       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-04/     |
 | 5  | 10       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-05/     |
 | 6  | 5        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-06/     |
-| 7  | 90       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-07/     |
+| 7  | 75       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-07/     |
 | 8  | 5        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-08/     |
 | 9  | 5        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-09/     |
-| 10 | 20       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-10/     |
-| 11 | 15       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-11/     |
+| 10 | 25       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-10/     |
+| 11 | 10       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-11/     |
 | 12 | 0        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-12/     |
-| 13 | 3        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-13/     |
+| 13 | 1        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-13/     |
 | 14 | 0        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-14/     |
 | 15 | N/A      | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-15/     |
 | 16 | 3        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-16/     |
-| 17 | 25       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-17/     |
+| 17 | 20       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-17/     |
 | 18 | 20       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-18/     |
 | 19 | 0        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-19/     |
 | 20 | 0        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-20/     |
