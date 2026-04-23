@@ -39,11 +39,13 @@ private fun unknownDigitsStr(possibilities: Int) = when (possibilities) {
 
 fun Crossnumber.printLoopBanner(pass: Int) {
     val solved = solutions.values.count(ISolution::isSolved)
-    val solvedStr = if (solved < 10) " $solved" else solved.toString()
-    val extraStar = if (solved < 10) "" else "*"
-    println("********************$extraStar")
-    println("* PASS $pass ($solvedStr / ${solutions.size}) *")
-    println("********************$extraStar")
+    val digitOptions = digitMap.values.sumOf { it.size - 1 }
+    val starCount = digitOptions.toString().length + pass.toString().length + solved.toString().length
+    val extraStars = "*".repeat(starCount)
+
+    println("********************$extraStars")
+    println("* PASS $pass ($solved / ${solutions.size} - $digitOptions) *")
+    println("********************$extraStars")
 }
 
 fun Crossnumber.dumpFailureInfo() {

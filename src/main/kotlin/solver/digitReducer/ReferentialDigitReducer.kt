@@ -11,7 +11,7 @@ class ReferentialDigitReducer(
     otherClueId: ClueId,
     otherSquareSelector: SquareSelector,
     crossnumber: Crossnumber
-) : AbstractDigitReducer(clueId, squareSelector, crossnumber) {
+) : ClueDigitReducer(clueId, squareSelector, crossnumber) {
     private val otherOptions = currentOptions(otherClueId, otherSquareSelector)
 
     private fun currentOptions(otherClueId: ClueId, otherSquareSelector: SquareSelector): List<Int> {

@@ -91,7 +91,11 @@ fun Long.lastNDigits(n: Int): Long {
     return digits.subList(length - n, length).fromDigits()
 }
 
+fun hasDistinctDigits(value: Long) = value.digits().size == value.digits().distinct().size
+
 fun Long.concatenate(other: Long) = "$this$other".toLong()
+
+fun onlyContainsDigits(vararg digits: Int): Clue = { value -> (value.digits().toSet() - digits.toSet()).isEmpty() }
 
 fun containsDigit(digit: Int): Clue = { value -> value.digits().contains(digit) }
 

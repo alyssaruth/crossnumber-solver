@@ -5,7 +5,7 @@ import solver.Crossnumber
 import solver.DigitMap
 
 class EqualToDigitReducer(clueA: ClueId, clueB: ClueId, crossnumber: Crossnumber) :
-    AbstractDigitReducer(clueA, allDigits(), crossnumber) {
+    ClueDigitReducer(clueA, allDigits(), crossnumber) {
     private val otherSquares = selectSquares(clueB, allDigits())
 
     override fun apply(digitMap: DigitMap) = digitMap.mapValues { (square, digits) ->

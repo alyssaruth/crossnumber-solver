@@ -21,12 +21,22 @@ typealias DigitReducerConstructor = (crossnumber: Crossnumber) -> AbstractDigitR
  *
  * Most crossnumbers don't *require* these, but some do (like Crossnumber 7), and others can get a speed benefit too
  */
-abstract class AbstractDigitReducer(
+abstract class ClueDigitReducer(
     val clueId: ClueId,
     squareSelector: MultiSquareSelector,
-    protected val crossnumber: Crossnumber
+    crossnumber: Crossnumber
+): AbstractDigitReducer(crossnumber) {
+    override val squares = selectSquares(clueId, squareSelector)
+
+    override val descriptor = clueId.toString()
+}
+
+abstract class AbstractDigitReducer(
+    protected val crossnumber: Crossnumber,
 ) {
-    protected val squares = selectSquares(clueId, squareSelector)
+    protected abstract val squares: List<Point>
+
+    abstract val descriptor: String
 
     protected fun selectSquares(clueId: ClueId, squareSelector: MultiSquareSelector): List<Point> {
         val clueSquares = crossnumber.solutions.getValue(clueId).squares

@@ -63,7 +63,7 @@ data class Crossnumber(
             val oldSize = currentMap.values.sumOf { it.size }
             val newSize = newMap.values.sumOf { it.size }
             if (newSize < oldSize) {
-                if (log) println("${reducer.clueId}: Reduced digits by ${oldSize - newSize}")
+                if (log) println("${reducer.descriptor}: Reduced digits by ${oldSize - newSize}")
             }
 
             newMap

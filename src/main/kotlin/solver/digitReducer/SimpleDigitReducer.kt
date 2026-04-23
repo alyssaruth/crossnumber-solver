@@ -9,7 +9,7 @@ class SimpleDigitReducer(
     clueId: ClueId,
     squareSelector: MultiSquareSelector,
     crossnumber: Crossnumber
-) : AbstractDigitReducer(clueId, squareSelector, crossnumber) {
+) : ClueDigitReducer(clueId, squareSelector, crossnumber) {
     override fun apply(digitMap: DigitMap) = digitMap.mapValues { (square, digits) ->
         if (squares.contains(square)) digits.filter(filterFn) else digits
     }

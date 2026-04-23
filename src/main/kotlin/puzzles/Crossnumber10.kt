@@ -36,7 +36,7 @@ import solver.clue.simpleClue
 import solver.clue.singleReference
 import solver.clue.unorderedCalculationWithReferences
 import solver.clueMap
-import solver.digitReducer.AbstractDigitReducer
+import solver.digitReducer.ClueDigitReducer
 import solver.digitReducer.DigitReducerConstructor
 import solver.digitReducer.allDigits
 import solver.factoryCrossnumber
@@ -153,7 +153,7 @@ val CROSSNUMBER_10 = factoryCrossnumber(grid, clueMap, digitReducers = digitRedu
  * Pure optimisation, it's not needed but helps to reduce 27A to something more manageable
  */
 private class TwentySevenAcross(crossnumber: Crossnumber) :
-    AbstractDigitReducer(ClueId(27, Orientation.ACROSS), allDigits(), crossnumber) {
+    ClueDigitReducer(ClueId(27, Orientation.ACROSS), allDigits(), crossnumber) {
 
     override fun apply(digitMap: DigitMap): DigitMap {
         val lambda: (Int, Int, Int) -> Boolean = { a, b, c -> b == a + c || b == abs(a - c) }

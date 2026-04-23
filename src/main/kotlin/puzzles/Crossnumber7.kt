@@ -35,7 +35,7 @@ import solver.clue.singleReference
 import solver.clue.singleReferenceFlattened
 import solver.clue.transformedEquals
 import solver.clueMap
-import solver.digitReducer.AbstractDigitReducer
+import solver.digitReducer.ClueDigitReducer
 import solver.digitReducer.DigitReducerConstructor
 import solver.digitReducer.allDigits
 import solver.digitReducer.digitReference
@@ -177,7 +177,7 @@ private fun String.mightBeMultipleOf25(other: String) = digitReference(
  * digit options for 31A
  */
 private class DigitProductIs(clueId: ClueId, otherClue: ClueId, crossnumber: Crossnumber) :
-    AbstractDigitReducer(clueId, allDigits(), crossnumber) {
+    ClueDigitReducer(clueId, allDigits(), crossnumber) {
     private val otherAnswers = crossnumber.lookupAnswers(otherClue)
 
     override fun apply(digitMap: DigitMap): DigitMap {
@@ -208,7 +208,7 @@ private fun String.digitProductIs(other: String): DigitReducerConstructor = { cr
  * the maximum any remaining digit of 34A can be
  */
 private class DigitSumIs(clueId: ClueId, otherClue: ClueId, crossnumber: Crossnumber) :
-    AbstractDigitReducer(clueId, allDigits(), crossnumber) {
+    ClueDigitReducer(clueId, allDigits(), crossnumber) {
     private val otherAnswers = crossnumber.lookupAnswers(otherClue)
 
     override fun apply(digitMap: DigitMap): DigitMap {
