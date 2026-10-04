@@ -12,6 +12,7 @@ import puzzles.CROSSNUMBER_19
 import puzzles.CROSSNUMBER_2
 import puzzles.CROSSNUMBER_20
 import puzzles.CROSSNUMBER_22
+import puzzles.CROSSNUMBER_23
 import puzzles.CROSSNUMBER_3
 import puzzles.CROSSNUMBER_4
 import puzzles.CROSSNUMBER_5
@@ -47,6 +48,7 @@ private val puzzles = mapOf<String, () -> Crossnumber>(
     "20" to CROSSNUMBER_20::solve,
     "21" to ::solveCrossnumber21,
     "22" to CROSSNUMBER_22::solve,
+    "23" to CROSSNUMBER_23::solve,
 )
 
 fun main(args: Array<String>) {
