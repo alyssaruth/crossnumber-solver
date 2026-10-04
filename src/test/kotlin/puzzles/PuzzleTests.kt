@@ -115,4 +115,9 @@ class PuzzleTests {
     fun `Crossnumber 22`() {
         CROSSNUMBER_22.solve().digitsFromRow(6)?.sum() shouldBe 16
     }
+
+    @Test
+    fun `Crossnumber 23`() {
+        CROSSNUMBER_23.solve().digitsFromRow(6)?.joinToString("") shouldBe "7198264305"
+    }
 }

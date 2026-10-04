@@ -159,5 +159,6 @@ Below are the crossnumbers this can solve so far, along with roughly how long ea
 | 20 | 0        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-20/     |
 | 21 | 35       | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-21/     |
 | 22 | 1        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-22/     |
+| 23 | 2        | https://chalkdustmagazine.com/regulars/crossnumber/prize-crossnumber-issue-23/     |
 
 *Not pushed to the repo yet (competition still active)
